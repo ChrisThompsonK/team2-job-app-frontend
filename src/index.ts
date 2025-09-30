@@ -25,7 +25,7 @@ class App {
   private setupMiddleware(): void {
     // Add JSON parsing middleware
     this.server.use(express.json());
-    
+
     // Add URL-encoded parsing middleware
     this.server.use(express.urlencoded({ extended: true }));
   }
@@ -38,7 +38,7 @@ class App {
         app: this.config.name,
         version: this.config.version,
         environment: this.config.environment,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
   }
@@ -65,8 +65,8 @@ class App {
 const appConfig: AppConfig = {
   name: 'team2-job-app-frontend',
   version: '1.0.0',
-  environment: process.env['NODE_ENV'] ?? 'development',
-  port: parseInt(process.env['PORT'] ?? '3000', 10)
+  environment: process.env.NODE_ENV ?? 'development',
+  port: parseInt(process.env.PORT ?? '3000', 10),
 };
 
 // Initialize and start the application
