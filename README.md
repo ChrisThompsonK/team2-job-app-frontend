@@ -1,3 +1,5 @@
+[![Code Quality](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/code-quality.yml/badge.svg)](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/code-quality.yml)
+
 # Team 2 Job App Frontend
 
 A modern Node.js TypeScript application with ES modules support.
