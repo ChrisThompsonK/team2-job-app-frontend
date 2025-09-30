@@ -20,6 +20,7 @@ A modern Node.js TypeScript application with ES modules support.
 ├── dist/                 # Compiled JavaScript output
 ├── package.json          # Project configuration
 ├── tsconfig.json         # TypeScript configuration
+├── vitest.config.ts      # Vitest testing configuration
 ├── biome.json           # Biome linter and formatter configuration
 └── .gitignore           # Git ignore rules
 ```
@@ -32,6 +33,13 @@ A modern Node.js TypeScript application with ES modules support.
 - **`npm start`**: Run the compiled JavaScript application
 - **`npm run type-check`**: Type check without emitting files
 
+### Testing (Vitest)
+- **`npm test`**: Run tests in watch mode
+- **`npm run test:run`**: Run all tests once
+- **`npm run test:watch`**: Run tests in watch mode
+- **`npm run test:ui`**: Open Vitest UI for interactive testing
+- **`npm run test:coverage`**: Run tests with coverage report
+
 ### Code Quality (Biome)
 - **`npm run lint`**: Check for linting issues
 - **`npm run lint:fix`**: Fix linting issues automatically
@@ -43,9 +51,10 @@ A modern Node.js TypeScript application with ES modules support.
 ## 🔧 Development
 
 1. **Development Mode**: Use `npm run dev` for fast development with tsx
-2. **Type Checking**: Run `npm run type-check` to validate TypeScript without compilation
-3. **Code Quality**: Use `npm run check:fix` to automatically fix linting and formatting issues
-4. **Production Build**: Use `npm run build` to compile for production
+2. **Testing**: Run `npm test` for watch mode or `npm run test:run` for single run
+3. **Type Checking**: Run `npm run type-check` to validate TypeScript without compilation
+4. **Code Quality**: Use `npm run check:fix` to automatically fix linting and formatting issues
+5. **Production Build**: Use `npm run build` to compile for production
 
 ### Code Quality Workflow
 ```bash
@@ -61,6 +70,8 @@ npm run format:fix  # Fix formatting issues
 
 - **Node.js**: Runtime environment
 - **TypeScript**: Type-safe JavaScript
+- **Express**: Fast web framework for Node.js
+- **Vitest**: Next generation testing framework
 - **tsx**: TypeScript execution engine
 - **ES Modules**: Modern module system
 - **Biome**: Fast formatter, linter, and import organizer
@@ -73,6 +84,13 @@ The project uses modern TypeScript configuration with:
 - Strict type checking enabled
 - Source maps and declarations generated
 - Comprehensive compiler options for better code quality
+
+### Vitest Configuration
+- **Environment**: Node.js testing environment
+- **Globals**: Enabled (describe, it, expect available globally)
+- **Coverage**: V8 provider with HTML/JSON/text reports
+- **File Patterns**: Tests in `**/*.{test,spec}.{js,ts,tsx}` files
+- **UI**: Interactive testing interface available
 
 ### Biome Configuration
 - **Linting**: Recommended rules with TypeScript support
