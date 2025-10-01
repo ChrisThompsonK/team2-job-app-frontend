@@ -5,38 +5,390 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        :root {
+            --kainos-navy: #2E4374;
+            --kainos-navy-light: #3b5998;
+            --kainos-green: #8BC34A;
+            --kainos-green-light: #a8d168;
+            --kainos-light-blue: #5C85D6;
+            --kainos-dark-blue: #1A2952;
+            --kainos-white: #FFFFFF;
+            --kainos-light-gray: #F5F7FA;
+            --kainos-shadow: rgba(46, 67, 116, 0.15);
+            --kainos-shadow-hover: rgba(46, 67, 116, 0.25);
+        }
+        
+        /* Enhanced animations */
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { 
+                box-shadow: 0 0 10px var(--kainos-green), 0 0 20px rgba(139, 195, 74, 0.3);
+            }
+            50% { 
+                box-shadow: 0 0 20px var(--kainos-green), 0 0 40px rgba(139, 195, 74, 0.5);
+            }
+        }
+        
+        @keyframes slide-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes scale-in {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes rotate-in {
+            from {
+                opacity: 0;
+                transform: rotate(-10deg) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: rotate(0deg) scale(1);
+            }
+        }
+        
+        /* Hero gradient with shimmer */
+        .kainos-hero-gradient {
+            background: linear-gradient(135deg, var(--kainos-navy) 0%, #4c6ef5 25%, var(--kainos-light-blue) 50%, #3b82f6 75%, var(--kainos-navy) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kainos-hero-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 5s infinite;
+        }
+        
+        /* Floating elements */
+        .floating-element {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        /* Enhanced cards */
+        .kainos-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px var(--kainos-shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            animation: slide-in-up 0.8s ease-out forwards;
+        }
+        
+        .kainos-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--kainos-green) 0%, var(--kainos-green-light) 50%, var(--kainos-green) 100%);
+            transform: scaleX(0);
+            transition: transform 0.5s ease;
+        }
+        
+        .kainos-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 30px 60px var(--kainos-shadow-hover), 0 15px 30px rgba(139, 195, 74, 0.2);
+        }
+        
+        .kainos-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        /* Enhanced stat cards */
+        .kainos-stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(46, 67, 116, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border-left: 4px solid var(--kainos-green);
+            animation: scale-in 0.6s ease-out forwards;
+        }
+        
+        .kainos-stat-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(46, 67, 116, 0.2);
+        }
+        
+        /* Enhanced buttons */
+        .kainos-btn-primary {
+            background: linear-gradient(135deg, var(--kainos-navy) 0%, var(--kainos-navy-light) 50%, var(--kainos-green) 100%);
+            border: none;
+            color: white;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            font-weight: 700;
+            border-radius: 16px;
+        }
+        
+        .kainos-btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .kainos-btn-primary:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(46, 67, 116, 0.4), 0 10px 20px rgba(139, 195, 74, 0.3);
+        }
+        
+        .kainos-btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        .kainos-btn-outline {
+            background: transparent;
+            border: 3px solid var(--kainos-navy);
+            color: var(--kainos-navy);
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border-radius: 16px;
+        }
+        
+        .kainos-btn-outline:hover {
+            background: var(--kainos-navy);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(46, 67, 116, 0.3);
+        }
+        
+        /* Enhanced alert */
+        .kainos-alert {
+            background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
+            border-left: 5px solid var(--kainos-green);
+            border-radius: 16px;
+            animation: rotate-in 0.8s ease-out forwards;
+        }
+        
+        /* Icon enhancements */
+        .kainos-icon-wrapper {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .kainos-icon-wrapper:hover {
+            transform: rotate(12deg) scale(1.2);
+        }
+        
+        /* Text styling */
+        .kainos-logo-text {
+            font-family: 'Segoe UI', 'Roboto', 'Inter', 'Arial', sans-serif;
+            font-weight: 300;
+            letter-spacing: -2px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .kainos-navy-text {
+            color: var(--kainos-navy);
+        }
+        
+        .kainos-green-text {
+            color: var(--kainos-green);
+        }
+        
+        .kainos-green-bg {
+            background: linear-gradient(135deg, var(--kainos-green) 0%, var(--kainos-green-light) 100%);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        
+        /* Badge styling */
+        .kainos-badge {
+            background: linear-gradient(135deg, var(--kainos-navy) 0%, var(--kainos-light-blue) 100%);
+            color: white;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kainos-badge::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+        
+        .kainos-badge:hover::before {
+            width: 120%;
+            height: 120%;
+        }
+        
+        /* Staggered animations */
+        .staggered-animation {
+            animation-delay: calc(var(--index, 0) * 0.15s);
+        }
+        
+        /* Glass effect */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Hover lift effect */
+        .hover-lift:hover {
+            transform: translateY(-3px);
+            transition: transform 0.2s ease;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans">
-    <div class="max-w-4xl mx-auto p-8">
-        <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-                <h1 class="card-title text-3xl">{{ title }}</h1>
-                <div class="alert alert-info">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span>🎉 Successfully set up Nunjucks templating engine with daisyUI!</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-                    <div class="stat bg-base-200 rounded-lg">
-                        <div class="stat-title">Message</div>
-                        <div class="stat-value text-lg">{{ message }}</div>
+<body class="bg-gray-50" style="background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);">
+    <div class="max-w-6xl mx-auto p-8">
+        
+        <!-- Hero Section -->
+        <div class="kainos-hero-gradient rounded-3xl shadow-2xl mb-12 overflow-hidden">
+            <div class="p-12 text-white relative">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center space-x-6">
+                        <!-- Kainos Logo -->
+                        <div class="flex items-center space-x-4 floating-element">
+                            <span class="kainos-logo-text text-6xl font-light">kainos</span>
+                            <div class="w-5 h-5 rounded-full kainos-green-bg"></div>
+                        </div>
                     </div>
-                    <div class="stat bg-base-200 rounded-lg">
-                        <div class="stat-title">Application</div>
-                        <div class="stat-value text-lg text-primary">{{ app }}</div>
-                    </div>
-                    <div class="stat bg-base-200 rounded-lg">
-                        <div class="stat-title">Version</div>
-                        <div class="stat-value text-lg text-secondary">{{ version }}</div>
-                    </div>
-                    <div class="stat bg-base-200 rounded-lg">
-                        <div class="stat-title">Environment</div>
-                        <div class="stat-value text-lg text-accent">{{ environment }}</div>
+                    <!-- Floating decorative elements -->
+                    <div class="flex space-x-2">
+                        <div class="w-3 h-3 rounded-full bg-white opacity-60 floating-element" style="animation-delay: 0s;"></div>
+                        <div class="w-2 h-2 rounded-full bg-white opacity-40 floating-element" style="animation-delay: 0.5s;"></div>
+                        <div class="w-4 h-4 rounded-full bg-white opacity-20 floating-element" style="animation-delay: 1s;"></div>
                     </div>
                 </div>
-                <div class="badge badge-outline">Current Time: {{ timestamp }}</div>
-                <div class="card-actions justify-end mt-4">
-                    <a href="/job-roles" class="btn btn-primary">View Job Roles</a>
-                    <button class="btn btn-outline">Learn More</button>
+                <h1 class="text-6xl font-light mb-6 kainos-logo-text">{{ title }}</h1>
+                <div class="glass-effect rounded-2xl p-6 flex items-center space-x-4">
+                    <div class="kainos-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 text-green-300">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <span class="text-2xl font-light">🎉 Successfully set up with premium UI components!</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Card -->
+        <div class="kainos-card mb-12">
+            <div class="p-12">
+                
+                <!-- Success Alert -->
+                <div class="kainos-alert p-6 mb-8 flex items-center space-x-4">
+                    <div class="kainos-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 kainos-green-text">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <span class="text-lg font-semibold kainos-navy-text">Enhanced Nunjucks templating with premium daisyUI components!</span>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    <div class="kainos-stat-card p-6 hover-lift staggered-animation" style="--index: 0">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm font-semibold kainos-navy-text opacity-70">MESSAGE</div>
+                            <div class="w-3 h-3 rounded-full kainos-green-bg floating-element"></div>
+                        </div>
+                        <div class="text-xl font-bold kainos-navy-text">{{ message }}</div>
+                    </div>
+                    
+                    <div class="kainos-stat-card p-6 hover-lift staggered-animation" style="--index: 1">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm font-semibold kainos-navy-text opacity-70">APPLICATION</div>
+                            <div class="w-3 h-3 rounded-full kainos-green-bg floating-element" style="animation-delay: 0.5s;"></div>
+                        </div>
+                        <div class="text-xl font-bold kainos-green-text">{{ app }}</div>
+                    </div>
+                    
+                    <div class="kainos-stat-card p-6 hover-lift staggered-animation" style="--index: 2">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm font-semibold kainos-navy-text opacity-70">VERSION</div>
+                            <div class="w-3 h-3 rounded-full kainos-green-bg floating-element" style="animation-delay: 1s;"></div>
+                        </div>
+                        <div class="text-xl font-bold" style="color: var(--kainos-light-blue);">{{ version }}</div>
+                    </div>
+                    
+                    <div class="kainos-stat-card p-6 hover-lift staggered-animation" style="--index: 3">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm font-semibold kainos-navy-text opacity-70">ENVIRONMENT</div>
+                            <div class="w-3 h-3 rounded-full kainos-green-bg floating-element" style="animation-delay: 1.5s;"></div>
+                        </div>
+                        <div class="text-xl font-bold kainos-green-text">{{ environment }}</div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Badge -->
+                <div class="flex justify-center mb-8">
+                    <div class="kainos-badge px-6 py-3 text-lg font-semibold">
+                        ⏰ Current Time: {{ timestamp }}
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                    <a href="/job-roles" class="kainos-btn-primary px-10 py-4 text-xl font-bold rounded-2xl inline-flex items-center space-x-3">
+                        <span>Explore Opportunities</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                        </svg>
+                    </a>
+                    <button class="kainos-btn-outline px-8 py-4 text-lg font-bold rounded-2xl">
+                        Learn More About Kainos
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="text-center">
+            <div class="glass-effect rounded-2xl p-6 inline-block">
+                <div class="flex items-center space-x-3">
+                    <div class="w-2 h-2 rounded-full kainos-green-bg floating-element"></div>
+                    <span class="kainos-navy-text font-semibold">Powered by Kainos Innovation</span>
+                    <div class="w-2 h-2 rounded-full kainos-green-bg floating-element" style="animation-delay: 1s;"></div>
                 </div>
             </div>
         </div>

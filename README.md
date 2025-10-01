@@ -18,6 +18,10 @@ A modern Node.js TypeScript application with ES modules support.
 - **Vitest**: Next generation testing framework with coverage support
 - **Strict Configuration**: Comprehensive TypeScript compiler options
 - **Job Roles Management**: View available job positions at Kainos with full details
+- **Kainos Brand Theme**: Custom blue, green, and white color scheme matching Kainos branding
+- **Premium UI Experience**: Enhanced home page and job roles with smooth animations and premium effects
+- **Advanced Animation System**: Shimmer effects, floating elements, staggered loading, and micro-interactions
+- **Glass Morphism Design**: Modern translucent effects with backdrop blur for contemporary aesthetics
 - **API Integration**: Axios-based HTTP client with fallback to mock data
 - **Dependency Injection**: Clean architecture with service layer separation
 
@@ -125,8 +129,8 @@ npm run build:css        # Generate CSS with daisyUI components
 The application includes a comprehensive job roles management system:
 
 ### Routes
-- **`/`**: Home page with navigation to job roles
-- **`/job-roles`**: View all available job positions
+- **`/`**: Enhanced home page with premium animations, hero section, and interactive stat cards
+- **`/job-roles`**: Premium job listings with smooth card animations and enhanced visual effects
 
 ### Architecture
 - **JobRoleService**: Handles API communication with axios, includes fallback to mock data
@@ -136,11 +140,18 @@ The application includes a comprehensive job roles management system:
 
 ### Features
 - Display job roles with role name, location, capability, band, and closing date
-- Responsive card-based layout with icons and badges
+- **Kainos Brand Identity**: Professional theme with navy blue (#2E4374), green (#8BC34A), and white colors
+- **Advanced Animation System**: Smooth CSS animations with staggered loading, floating elements, and pulse effects
+- **Interactive UI Elements**: Enhanced hover effects with scale transforms, gradient backgrounds, and cubic-bezier transitions
+- **Premium Visual Effects**: Shimmer animations, glass morphism, glow effects, and 3D button interactions
+- **Micro-Interactions**: Icon rotations, badge ripple effects, card lift animations, and smooth color transitions
+- Responsive card-based layout with custom Kainos styling and rounded corners
+- **Enhanced Visual Design**: Custom animated icons with color-coded gradient backgrounds and premium branded buttons
+- **Staggered Animations**: Cards appear with sequential timing for smooth loading experience
 - **JSON Data Source**: Comprehensive job roles data loaded from JSON file
 - Automatic fallback to mock data when API is unavailable
-- Error handling with user-friendly error pages
-- Beautiful UI using daisyUI components
+- Error handling with user-friendly error pages styled to match Kainos branding
+- Beautiful UI combining daisyUI components with custom advanced CSS animations and effects
 
 ### Data Management
 - **Primary Data**: JSON file (`src/data/job-roles.json`) with 12 diverse job roles
