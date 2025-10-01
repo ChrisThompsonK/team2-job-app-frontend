@@ -11,7 +11,7 @@ import express, {
 } from "express";
 import nunjucks from "nunjucks";
 import { JobRoleController } from "./controllers/job-role-controller.js";
-import { JobRoleService } from "./services/job-role-service.js";
+import { HttpJobRoleServiceWithJsonFallback } from "./services/job-role-service.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,7 +26,7 @@ interface AppConfig {
 class App {
 	private config: AppConfig;
 	private server: Application;
-	private jobRoleService: JobRoleService;
+	private jobRoleService: HttpJobRoleServiceWithJsonFallback;
 	private jobRoleController: JobRoleController;
 
 	constructor(config: AppConfig) {
@@ -34,7 +34,7 @@ class App {
 		this.server = express();
 
 		// Initialize services with dependency injection
-		this.jobRoleService = new JobRoleService();
+		this.jobRoleService = new HttpJobRoleServiceWithJsonFallback();
 		this.jobRoleController = new JobRoleController(this.jobRoleService);
 
 		this.setupTemplating();

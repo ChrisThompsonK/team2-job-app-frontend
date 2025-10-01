@@ -3,12 +3,12 @@
  */
 
 import type { Request, Response } from "express";
-import type { IJobRoleService } from "../services/job-role-service.js";
+import type { JobRoleService } from "../services/job-role-service.js";
 
 export class JobRoleController {
-	private jobRoleService: IJobRoleService;
+	private jobRoleService: JobRoleService;
 
-	constructor(jobRoleService: IJobRoleService) {
+	constructor(jobRoleService: JobRoleService) {
 		this.jobRoleService = jobRoleService;
 	}
 

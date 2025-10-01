@@ -11,11 +11,15 @@ import type { JobRoleResponse } from "../models/job-role-response.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export interface IJobRoleService {
+export interface JobRoleService {
 	getJobRoles(): Promise<JobRoleResponse[]>;
 }
 
-export class JobRoleService implements IJobRoleService {
+/**
+ * HTTP-based Job Role Service implementation with JSON fallback
+ * Fetches job roles from REST API with graceful degradation to local JSON data
+ */
+export class HttpJobRoleServiceWithJsonFallback implements JobRoleService {
 	private baseURL: string;
 
 	constructor(
@@ -42,28 +46,19 @@ export class JobRoleService implements IJobRoleService {
 			return response.data;
 		} catch (error) {
 			console.error("Error fetching job roles:", error);
-			// Return mock data for development/testing
-			return await this.getMockJobRoles();
-		}
-	}
-
-	/**
-	 * Provides mock data for development when API is not available
-	 * @returns JobRoleResponse[] Mock job roles data
-	 */
-	private async getMockJobRoles(): Promise<JobRoleResponse[]> {
-		try {
-			const jsonPath = path.join(__dirname, "..", "data", "job-roles.json");
-			const jsonData = await fs.readFile(jsonPath, "utf-8");
-			const data = JSON.parse(jsonData) as { jobRoles: JobRoleResponse[] };
-			return data.jobRoles;
-		} catch (error) {
-			console.error("Error reading job roles JSON file:", error);
-			// Return empty array if JSON file is not available
-			console.warn(
-				"No job roles data available - both API and JSON file failed"
-			);
-			return [];
+			// Fallback to JSON file data directly
+			try {
+				const jsonPath = path.join(__dirname, "..", "data", "job-roles.json");
+				const jsonData = await fs.readFile(jsonPath, "utf-8");
+				const data = JSON.parse(jsonData) as { jobRoles: JobRoleResponse[] };
+				return data.jobRoles;
+			} catch (jsonError) {
+				console.error("Error reading job roles JSON file:", jsonError);
+				console.warn(
+					"No job roles data available - both API and JSON file failed"
+				);
+				return [];
+			}
 		}
 	}
 }
