@@ -17,16 +17,29 @@ A modern Node.js TypeScript application with ES modules support.
 - **Biome**: Ultra-fast formatter, linter, and code quality tools
 - **Vitest**: Next generation testing framework with coverage support
 - **Strict Configuration**: Comprehensive TypeScript compiler options
+- **Job Roles Management**: View available job positions at Kainos with full details
+- **API Integration**: Axios-based HTTP client with fallback to mock data
+- **Dependency Injection**: Clean architecture with service layer separation
 
 ## 📦 Project Structure
 ```
 ├── src/
 │   ├── index.ts          # Main application entry point
 │   ├── testing.ts        # Utility functions
+│   ├── controllers/
+│   │   └── job-role-controller.ts  # Job roles route handler
+│   ├── services/
+│   │   └── job-role-service.ts     # Job roles API service with axios
+│   ├── models/
+│   │   └── job-role-response.ts    # Job role data models
+│   ├── data/
+│   │   └── job-roles.json          # JSON data source with job roles
 │   ├── styles/
 │   │   └── input.css     # Tailwind CSS + daisyUI imports
 │   └── views/
-│       └── index.njk     # Nunjucks template with daisyUI components
+│       ├── index.njk     # Home page template with daisyUI components
+│       ├── job-role-list.njk  # Job roles listing template
+│       └── error.njk     # Error page template
 ├── public/
 │   └── css/
 │       └── styles.css    # Generated Tailwind + daisyUI styles
@@ -101,10 +114,39 @@ npm run build:css        # Generate CSS with daisyUI components
 - **Nunjucks**: Rich templating engine with inheritance, async, and more
 - **Tailwind CSS 4**: Utility-first CSS framework (latest version)
 - **daisyUI 5.1.26**: Semantic component classes for Tailwind CSS
+- **Axios**: Promise-based HTTP client for API calls
 - **Vitest**: Next generation testing framework with coverage
 - **tsx**: TypeScript execution engine
 - **ES Modules**: Modern module system
 - **Biome**: Fast formatter, linter, and import organizer
+
+## 🎯 Job Roles Feature
+
+The application includes a comprehensive job roles management system:
+
+### Routes
+- **`/`**: Home page with navigation to job roles
+- **`/job-roles`**: View all available job positions
+
+### Architecture
+- **JobRoleService**: Handles API communication with axios, includes fallback to mock data
+- **JobRoleController**: Express route handlers with proper error handling
+- **JobRoleResponse**: TypeScript models for type safety
+- **Dependency Injection**: Clean separation of concerns with service layer
+
+### Features
+- Display job roles with role name, location, capability, band, and closing date
+- Responsive card-based layout with icons and badges
+- **JSON Data Source**: Comprehensive job roles data loaded from JSON file
+- Automatic fallback to mock data when API is unavailable
+- Error handling with user-friendly error pages
+- Beautiful UI using daisyUI components
+
+### Data Management
+- **Primary Data**: JSON file (`src/data/job-roles.json`) with 12 diverse job roles
+- **API Integration**: Attempts to fetch from backend API first
+- **Graceful Fallback**: Falls back to JSON data when API is unavailable
+- **Fallback Safety**: Hardcoded fallback data if JSON file fails to load
 
 ## 📝 Configuration
 

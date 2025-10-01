@@ -10,6 +10,8 @@ import express, {
 	type Response,
 } from "express";
 import nunjucks from "nunjucks";
+import { JobRoleController } from "./controllers/job-role-controller.js";
+import { JsonJobRoleService } from "./services/job-role-service.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,10 +26,17 @@ interface AppConfig {
 class App {
 	private config: AppConfig;
 	private server: Application;
+	private jobRoleService: JsonJobRoleService;
+	private jobRoleController: JobRoleController;
 
 	constructor(config: AppConfig) {
 		this.config = config;
 		this.server = express();
+
+		// Initialize services with dependency injection
+		this.jobRoleService = new JsonJobRoleService();
+		this.jobRoleController = new JobRoleController(this.jobRoleService);
+
 		this.setupTemplating();
 		this.setupMiddleware();
 		this.setupRoutes();
@@ -67,6 +76,9 @@ class App {
 				timestamp: new Date().toISOString(),
 			});
 		});
+
+		// Job Roles endpoint
+		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
 	}
 
 	public start(): void {
