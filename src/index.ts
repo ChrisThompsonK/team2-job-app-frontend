@@ -49,6 +49,10 @@ class App {
 
 		// Add URL-encoded parsing middleware
 		this.server.use(express.urlencoded({ extended: true }));
+
+		// Serve static files from public directory
+		const publicPath = path.join(__dirname, "..", "public");
+		this.server.use(express.static(publicPath));
 	}
 
 	private setupRoutes(): void {

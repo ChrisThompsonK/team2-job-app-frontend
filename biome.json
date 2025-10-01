@@ -1,7 +1,8 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
   "files": {
-    "includes": ["src/**/*"]
+    "includes": ["src/**/*"],
+    "ignoreUnknown": false
   },
   "linter": {
     "enabled": true,
@@ -9,6 +10,9 @@
       "recommended": true,
       "complexity": {
         "useLiteralKeys": "off"
+      },
+      "suspicious": {
+        "noUnknownAtRules": "off"
       }
     }
   },
