@@ -35,7 +35,12 @@ class App {
 
 	private setupMiddleware(): void {
 		// Configure Nunjucks templating engine
-		const viewsPath = path.join(__dirname, "..", "views");
+		// In development (tsx), views are in ../views
+		// In production (compiled), views are in ./views (copied to dist/)
+		const viewsPath = __filename.includes("src")
+			? path.join(__dirname, "..", "views")
+			: path.join(__dirname, "views");
+
 		nunjucks.configure(viewsPath, {
 			autoescape: true,
 			express: this.server,

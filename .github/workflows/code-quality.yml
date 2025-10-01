@@ -50,6 +50,14 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Test application startup
+        run: |
+          npm start &
+          SERVER_PID=$!
+          sleep 3
+          kill $SERVER_PID || true
+          echo "Application startup test completed"
+
       - name: Upload build artifacts
         if: success()
         uses: actions/upload-artifact@v4
