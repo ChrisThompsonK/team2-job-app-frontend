@@ -37,19 +37,35 @@ class App {
 		this.jobRoleService = new JsonJobRoleService();
 		this.jobRoleController = new JobRoleController(this.jobRoleService);
 
-		this.setupTemplating();
-		this.setupMiddleware();
-		this.setupRoutes();
+		this.initialize();
 	}
 
-	private setupTemplating(): void {
+	private async initialize(): Promise<void> {
+		await this.setupTemplating();
+		this.setupMiddleware();
+		this.setupRoutes();
+		this.start();
+	}
+
+	private async setupTemplating(): Promise<void> {
 		// Configure Nunjucks
-		const viewsPath = path.join(__dirname, "views");
-		nunjucks.configure(viewsPath, {
+		const viewsPath = path.join(__dirname, "..", "src", "views");
+		const env = nunjucks.configure(viewsPath, {
 			autoescape: true,
 			express: this.server,
 			watch: true, // Enable auto-reloading in development
 		});
+
+		// Import the Lucide icon helper
+		const { renderLucideIcon, lucideIconFilter } = await import(
+			"./utils/lucide-helper.js"
+		);
+
+		// Add Lucide icon filter to Nunjucks
+		env.addFilter("lucideIcon", lucideIconFilter);
+
+		// Add global function for rendering icons
+		env.addGlobal("lucideIcon", renderLucideIcon);
 	}
 
 	private setupMiddleware(): void {
@@ -68,7 +84,6 @@ class App {
 		// Hello World endpoint - now renders a Nunjucks view
 		this.server.get("/", (_req: Request, res: Response) => {
 			res.render("index.njk", {
-				title: "Welcome to Team2 Job App",
 				message: "Hello World!",
 				app: this.config.name,
 				version: this.config.version,
@@ -110,7 +125,7 @@ const appConfig: AppConfig = {
 };
 
 // Initialize and start the application
-const app = new App(appConfig);
-app.start();
+export const app = new App(appConfig);
+// Note: The start() method is called automatically after async initialization
 
 export { App, type AppConfig };

@@ -21,14 +21,12 @@ export class JobRoleController {
 			const jobRoles = await this.jobRoleService.getJobRoles();
 
 			res.render("job-role-list.njk", {
-				title: "Available Job Roles at Kainos",
 				jobRoles,
 				totalRoles: jobRoles.length,
 			});
 		} catch (error) {
 			console.error("Error in JobRoleController.getJobRoles:", error);
 			res.status(500).render("error.njk", {
-				title: "Error Loading Job Roles",
 				message:
 					"Sorry, we couldn't load the job roles at this time. Please try again later.",
 			});
