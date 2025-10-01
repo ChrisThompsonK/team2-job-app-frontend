@@ -2,14 +2,14 @@
  * Main entry point for the Express application
  */
 
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import express, {
 	type Application,
 	type Request,
 	type Response,
 } from "express";
 import nunjucks from "nunjucks";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 
 // ES modules equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -77,7 +77,9 @@ class App {
 		this.server.get("/health", (_req: Request, res: Response) => {
 			const uptimeSeconds = process.uptime();
 			const uptimeFormatted = this.formatUptime(uptimeSeconds);
-			const memoryUsage = this.formatMemoryUsage(process.memoryUsage().heapUsed);
+			const memoryUsage = this.formatMemoryUsage(
+				process.memoryUsage().heapUsed
+			);
 
 			res.render("health", {
 				title: "Health Check",
