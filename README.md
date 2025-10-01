@@ -10,16 +10,30 @@ A modern Node.js TypeScript application with ES modules support.
 - **ES Modules**: Modern JavaScript module system
 - **tsx**: Fast TypeScript execution for development
 - **Modern Node.js**: Latest JavaScript features (ES2022)
+- **Express**: Fast, unopinionated web framework for Node.js
+- **Nunjucks**: Powerful templating engine for dynamic HTML generation
+- **Tailwind CSS 4**: Latest version of utility-first CSS framework
+- **daisyUI 5.1.26**: Beautiful UI component library built on Tailwind CSS
 - **Biome**: Ultra-fast formatter, linter, and code quality tools
+- **Vitest**: Next generation testing framework with coverage support
 - **Strict Configuration**: Comprehensive TypeScript compiler options
 
 ## 📦 Project Structure
 ```
 ├── src/
-│   └── index.ts          # Main application entry point
+│   ├── index.ts          # Main application entry point
+│   ├── testing.ts        # Utility functions
+│   ├── styles/
+│   │   └── input.css     # Tailwind CSS + daisyUI imports
+│   └── views/
+│       └── index.njk     # Nunjucks template with daisyUI components
+├── public/
+│   └── css/
+│       └── styles.css    # Generated Tailwind + daisyUI styles
 ├── dist/                 # Compiled JavaScript output
 ├── package.json          # Project configuration
 ├── tsconfig.json         # TypeScript configuration
+├── tailwind.config.js    # Tailwind CSS configuration
 ├── vitest.config.ts      # Vitest testing configuration
 ├── biome.json           # Biome linter and formatter configuration
 └── .gitignore           # Git ignore rules
@@ -29,7 +43,10 @@ A modern Node.js TypeScript application with ES modules support.
 
 ### Development & Build
 - **`npm run dev`**: Run the application in development mode with tsx
-- **`npm run build`**: Compile TypeScript to JavaScript
+- **`npm run build`**: Build CSS and compile TypeScript to JavaScript
+- **`npm run build:css`**: Generate Tailwind CSS with daisyUI components
+- **`npm run build:css:watch`**: Watch mode for CSS generation during development
+- **`npm run build:css:prod`**: Generate minified CSS for production
 - **`npm start`**: Run the compiled JavaScript application
 - **`npm run type-check`**: Type check without emitting files
 
@@ -66,12 +83,25 @@ npm run lint:fix    # Fix linting issues
 npm run format:fix  # Fix formatting issues
 ```
 
+### UI Development Workflow
+```bash
+# Start development with CSS watching
+npm run build:css:watch  # In one terminal (watches CSS changes)
+npm run dev              # In another terminal (runs the app)
+
+# Or build CSS manually after changes
+npm run build:css        # Generate CSS with daisyUI components
+```
+
 ## 🏗️ Tech Stack
 
 - **Node.js**: Runtime environment
 - **TypeScript**: Type-safe JavaScript
 - **Express**: Fast web framework for Node.js
-- **Vitest**: Next generation testing framework
+- **Nunjucks**: Rich templating engine with inheritance, async, and more
+- **Tailwind CSS 4**: Utility-first CSS framework (latest version)
+- **daisyUI 5.1.26**: Semantic component classes for Tailwind CSS
+- **Vitest**: Next generation testing framework with coverage
 - **tsx**: TypeScript execution engine
 - **ES Modules**: Modern module system
 - **Biome**: Fast formatter, linter, and import organizer
@@ -91,6 +121,13 @@ The project uses modern TypeScript configuration with:
 - **Coverage**: V8 provider with HTML/JSON/text reports
 - **File Patterns**: Tests in `**/*.{test,spec}.{js,ts,tsx}` files
 - **UI**: Interactive testing interface available
+
+### Tailwind CSS + daisyUI Configuration
+- **Tailwind CSS 4**: Latest version with modern CSS features
+- **daisyUI Integration**: Uses `@plugin "daisyui"` directive in CSS
+- **Content Sources**: Configured to scan `src/**/*.{html,js,ts,njk}` files
+- **Component Classes**: Full access to daisyUI's semantic component library
+- **Build Process**: Automated CSS generation with component tree-shaking
 
 ### Biome Configuration
 - **Linting**: Recommended rules with TypeScript support
