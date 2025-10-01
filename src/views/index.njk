@@ -8,17 +8,37 @@
 </head>
 <body class="bg-gray-100 font-sans">
     <div class="max-w-4xl mx-auto p-8">
-        <div class="bg-white p-8 rounded-lg shadow-lg">
-            <h1 class="text-3xl font-bold text-gray-900 border-b-2 border-blue-600 pb-2 mb-6">{{ title }}</h1>
-            <div class="bg-gray-50 p-4 rounded-md mb-4">
-                <p class="mb-2"><strong>Message:</strong> {{ message }}</p>
-                <p class="mb-2"><strong>Application:</strong> <span class="text-blue-600 font-bold">{{ app }}</span></p>
-                <p class="mb-2"><strong>Version:</strong> <span class="text-blue-600 font-bold">{{ version }}</span></p>
-                <p class="mb-2"><strong>Environment:</strong> <span class="text-blue-600 font-bold">{{ environment }}</span></p>
-                <p class="mb-0"><strong>Current Time:</strong> {{ timestamp }}</p>
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h1 class="card-title text-3xl">{{ title }}</h1>
+                <div class="alert alert-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>🎉 Successfully set up Nunjucks templating engine with daisyUI!</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                    <div class="stat bg-base-200 rounded-lg">
+                        <div class="stat-title">Message</div>
+                        <div class="stat-value text-lg">{{ message }}</div>
+                    </div>
+                    <div class="stat bg-base-200 rounded-lg">
+                        <div class="stat-title">Application</div>
+                        <div class="stat-value text-lg text-primary">{{ app }}</div>
+                    </div>
+                    <div class="stat bg-base-200 rounded-lg">
+                        <div class="stat-title">Version</div>
+                        <div class="stat-value text-lg text-secondary">{{ version }}</div>
+                    </div>
+                    <div class="stat bg-base-200 rounded-lg">
+                        <div class="stat-title">Environment</div>
+                        <div class="stat-value text-lg text-accent">{{ environment }}</div>
+                    </div>
+                </div>
+                <div class="badge badge-outline">Current Time: {{ timestamp }}</div>
+                <div class="card-actions justify-end mt-4">
+                    <button class="btn btn-primary">Get Started</button>
+                    <button class="btn btn-outline">Learn More</button>
+                </div>
             </div>
-            <p class="text-lg mb-4">🎉 Successfully set up Nunjucks templating engine!</p>
-            <p class="text-gray-700">This page is now rendered using Nunjucks instead of returning JSON.</p>
         </div>
     </div>
 </body>
