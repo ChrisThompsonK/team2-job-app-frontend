@@ -1,11 +1,10 @@
 /**
- * Job Role Service for handling API calls to job-roles endpoints
+ * Job Role Service for handling job role data from local JSON file
  */
 
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import axios from "axios";
 import type { JobRoleResponse } from "../models/job-role-response.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -16,49 +15,23 @@ export interface JobRoleService {
 }
 
 /**
- * HTTP-based Job Role Service implementation with JSON fallback
- * Fetches job roles from REST API with graceful degradation to local JSON data
+ * JSON-based Job Role Service implementation
+ * Reads job roles directly from local JSON data file
  */
-export class HttpJobRoleServiceWithJsonFallback implements JobRoleService {
-	private baseURL: string;
-
-	constructor(
-		baseURL: string = process.env["API_BASE_URL"] ?? "http://localhost:8080"
-	) {
-		this.baseURL = baseURL;
-	}
-
+export class JsonJobRoleService implements JobRoleService {
 	/**
-	 * Fetches all job roles from the API
+	 * Fetches all job roles from the local JSON file
 	 * @returns Promise<JobRoleResponse[]> List of job roles
 	 */
 	async getJobRoles(): Promise<JobRoleResponse[]> {
 		try {
-			const response = await axios.get<JobRoleResponse[]>(
-				`${this.baseURL}/job-roles`,
-				{
-					timeout: 5000,
-					headers: {
-						"Content-Type": "application/json",
-					},
-				}
-			);
-			return response.data;
+			const jsonPath = path.join(__dirname, "..", "data", "job-roles.json");
+			const jsonData = await fs.readFile(jsonPath, "utf-8");
+			const data = JSON.parse(jsonData) as { jobRoles: JobRoleResponse[] };
+			return data.jobRoles;
 		} catch (error) {
-			console.error("Error fetching job roles:", error);
-			// Fallback to JSON file data directly
-			try {
-				const jsonPath = path.join(__dirname, "..", "data", "job-roles.json");
-				const jsonData = await fs.readFile(jsonPath, "utf-8");
-				const data = JSON.parse(jsonData) as { jobRoles: JobRoleResponse[] };
-				return data.jobRoles;
-			} catch (jsonError) {
-				console.error("Error reading job roles JSON file:", jsonError);
-				console.warn(
-					"No job roles data available - both API and JSON file failed"
-				);
-				return [];
-			}
+			console.error("Error reading job roles JSON file:", error);
+			return [];
 		}
 	}
 }
