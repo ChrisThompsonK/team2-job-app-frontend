@@ -7,6 +7,13 @@ import express, {
 	type Request,
 	type Response,
 } from "express";
+import nunjucks from "nunjucks";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+// ES modules equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 interface AppConfig {
 	name: string;
@@ -27,24 +34,74 @@ class App {
 	}
 
 	private setupMiddleware(): void {
+		// Configure Nunjucks templating engine
+		const viewsPath = path.join(__dirname, "..", "views");
+		nunjucks.configure(viewsPath, {
+			autoescape: true,
+			express: this.server,
+			watch: false, // Disable watching for now
+		});
+
+		// Set view engine
+		this.server.set("view engine", "njk");
+
 		// Add JSON parsing middleware
 		this.server.use(express.json());
 
 		// Add URL-encoded parsing middleware
 		this.server.use(express.urlencoded({ extended: true }));
+
+		// Add middleware for global template variables
+		this.server.use((_req, res, next) => {
+			res.locals["appName"] = this.config.name;
+			res.locals["currentYear"] = new Date().getFullYear();
+			next();
+		});
 	}
 
 	private setupRoutes(): void {
-		// Hello World endpoint
+		// Home page
 		this.server.get("/", (_req: Request, res: Response) => {
-			res.json({
+			res.render("home", {
+				title: this.config.name,
 				message: "Hello World!",
 				app: this.config.name,
 				version: this.config.version,
 				environment: this.config.environment,
 				timestamp: new Date().toISOString(),
+				requestId: Math.random().toString(36).substr(2, 9),
 			});
 		});
+
+		// Health check endpoint
+		this.server.get("/health", (_req: Request, res: Response) => {
+			const uptimeSeconds = process.uptime();
+			const uptimeFormatted = this.formatUptime(uptimeSeconds);
+			const memoryUsage = this.formatMemoryUsage(process.memoryUsage().heapUsed);
+
+			res.render("health", {
+				title: "Health Check",
+				status: "OK",
+				uptime: uptimeSeconds,
+				uptimeFormatted,
+				memoryUsage,
+				timestamp: new Date().toISOString(),
+				nodeVersion: process.version,
+				platform: process.platform,
+			});
+		});
+	}
+
+	private formatUptime(seconds: number): string {
+		const hours = Math.floor(seconds / 3600);
+		const minutes = Math.floor((seconds % 3600) / 60);
+		const secs = Math.floor(seconds % 60);
+		return `${hours}h ${minutes}m ${secs}s`;
+	}
+
+	private formatMemoryUsage(bytes: number): string {
+		const mb = bytes / 1024 / 1024;
+		return `${mb.toFixed(1)} MB`;
 	}
 
 	public start(): void {
@@ -53,7 +110,7 @@ class App {
 			console.log(`📦 Environment: ${this.config.environment}`);
 			console.log(`🌐 Server running on http://localhost:${this.config.port}`);
 			console.log(
-				"✅ Application is running with TypeScript, ES Modules, and Express!"
+				"✅ Application is running with TypeScript, ES Modules, Express & Nunjucks!"
 			);
 		});
 	}

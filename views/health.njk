@@ -1,0 +1,57 @@
+{% extends "layouts/base.njk" %}
+
+{% block title %}Health Check - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-6 mx-auto">
+    <div class="card shadow-sm">
+      <div class="card-header bg-success text-white">
+        <h3 class="card-title mb-0">
+          <i class="bi bi-heart-pulse"></i>
+          System Health Check
+        </h3>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-success" role="alert">
+          <h4 class="alert-heading">✅ {{ status }}</h4>
+          <p>All systems are running normally.</p>
+        </div>
+        
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="card bg-light">
+              <div class="card-body text-center">
+                <h5 class="text-muted">Uptime</h5>
+                <h3 class="text-primary">{{ uptimeFormatted }}</h3>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-sm-6">
+            <div class="card bg-light">
+              <div class="card-body text-center">
+                <h5 class="text-muted">Memory Usage</h5>
+                <h3 class="text-info">{{ memoryUsage }}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-3">
+          <h6>Additional Information:</h6>
+          <ul class="list-unstyled">
+            <li><strong>Last Check:</strong> {{ timestamp }}</li>
+            <li><strong>Node Version:</strong> {{ nodeVersion }}</li>
+            <li><strong>Platform:</strong> {{ platform }}</li>
+          </ul>
+        </div>
+        
+        <div class="d-grid">
+          <a href="/" class="btn btn-primary">Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

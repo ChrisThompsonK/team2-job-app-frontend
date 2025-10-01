@@ -1,0 +1,64 @@
+{% extends "layouts/base.njk" %}
+
+{% block title %}Home - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+    <div class="card shadow-sm">
+      <div class="card-body text-center">
+        <h1 class="card-title display-4 text-primary">{{ message }}</h1>
+        <p class="lead">Welcome to our modern Node.js TypeScript application!</p>
+        
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <div class="card bg-light">
+              <div class="card-body">
+                <h5 class="card-title">Application Info</h5>
+                <ul class="list-unstyled">
+                  <li><strong>Name:</strong> {{ app }}</li>
+                  <li><strong>Version:</strong> {{ version }}</li>
+                  <li><strong>Environment:</strong> 
+                    <span class="badge {{ 'bg-success' if environment === 'production' else 'bg-warning' }}">
+                      {{ environment }}
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="card bg-light">
+              <div class="card-body">
+                <h5 class="card-title">Tech Stack</h5>
+                <ul class="list-unstyled">
+                  <li>🟢 Node.js & TypeScript</li>
+                  <li>⚡ Express.js</li>
+                  <li>🎨 Nunjucks Templates</li>
+                  <li>🧪 Vitest Testing</li>
+                  <li>🔧 Biome Tooling</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-4">
+          <a href="/health" class="btn btn-outline-primary">Check Health Status</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-lg-8 mx-auto">
+    <div class="alert alert-info">
+      <h6 class="alert-heading">Server Information</h6>
+      <p class="mb-1"><strong>Current Time:</strong> {{ timestamp }}</p>
+      <p class="mb-0"><strong>Request ID:</strong> <code>{{ requestId }}</code></p>
+    </div>
+  </div>
+</div>
+{% endblock %}
