@@ -2,11 +2,17 @@
  * Main entry point for the Express application
  */
 
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import express, {
 	type Application,
 	type Request,
 	type Response,
 } from "express";
+import nunjucks from "nunjucks";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 interface AppConfig {
 	name: string;
@@ -22,8 +28,19 @@ class App {
 	constructor(config: AppConfig) {
 		this.config = config;
 		this.server = express();
+		this.setupTemplating();
 		this.setupMiddleware();
 		this.setupRoutes();
+	}
+
+	private setupTemplating(): void {
+		// Configure Nunjucks
+		const viewsPath = path.join(__dirname, "views");
+		nunjucks.configure(viewsPath, {
+			autoescape: true,
+			express: this.server,
+			watch: true, // Enable auto-reloading in development
+		});
 	}
 
 	private setupMiddleware(): void {
@@ -35,9 +52,10 @@ class App {
 	}
 
 	private setupRoutes(): void {
-		// Hello World endpoint
+		// Hello World endpoint - now renders a Nunjucks view
 		this.server.get("/", (_req: Request, res: Response) => {
-			res.json({
+			res.render("index.njk", {
+				title: "Welcome to Team2 Job App",
 				message: "Hello World!",
 				app: this.config.name,
 				version: this.config.version,
