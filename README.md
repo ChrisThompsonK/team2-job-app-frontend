@@ -114,11 +114,66 @@ npm run build:css        # Generate CSS with daisyUI components
 - **Nunjucks**: Rich templating engine with inheritance, async, and more
 - **Tailwind CSS 4**: Utility-first CSS framework (latest version)
 - **daisyUI 5.1.26**: Semantic component classes for Tailwind CSS
+- **Lucide**: Beautiful & consistent SVG icon library with 1000+ icons
 - **Axios**: Promise-based HTTP client for API calls
 - **Vitest**: Next generation testing framework with coverage
 - **tsx**: TypeScript execution engine
 - **ES Modules**: Modern module system
 - **Biome**: Fast formatter, linter, and import organizer
+
+## 🎨 Icon System (Lucide)
+
+The application uses [Lucide](https://lucide.dev/) for beautiful, consistent SVG icons:
+
+### Features
+- **1000+ Icons**: Comprehensive collection of clean, consistent icons
+- **SVG-Based**: Crisp icons that scale perfectly at any size
+- **Customizable**: Full control over size, stroke width, color, and styling
+- **Performance**: Optimized SVG markup with minimal overhead
+- **Accessibility**: Semantic SVG markup with proper attributes
+
+### Usage in Templates
+
+#### Basic Usage
+```njk
+{{ lucideIcon('info', { size: 24, className: 'text-blue-500' }) | safe }}
+```
+
+#### Available Icons
+- `info` - Information/help icon
+- `map-pin`, `location` - Location/address icon  
+- `tag` - Category/capability icon
+- `briefcase`, `band` - Job role/level icon
+- `calendar` - Date/schedule icon
+- `x-circle`, `error` - Error/close icon
+
+#### Configuration Options
+```typescript
+{
+  size?: number;          // Icon size (default: 24)
+  strokeWidth?: number;   // Line thickness (default: 2)
+  className?: string;     // CSS classes (default: '')
+  color?: string;         // Stroke color (default: 'currentColor')
+}
+```
+
+#### Example Implementation
+```njk
+<!-- Job role location with custom styling -->
+<div class="flex items-center gap-2">
+  {{ lucideIcon('map-pin', { 
+    size: 20, 
+    className: 'w-5 h-5 text-secondary' 
+  }) | safe }}
+  <span>{{ jobRole.location }}</span>
+</div>
+```
+
+### Icon Helper Implementation
+- **Server-Side Rendering**: Icons are generated server-side for optimal performance
+- **Nunjucks Integration**: Available as both global function and filter
+- **Type Safety**: Full TypeScript support with proper type definitions
+- **Fallback Handling**: Graceful degradation for missing icons
 
 ## 🎯 Job Roles Feature
 
@@ -133,20 +188,27 @@ The application includes a comprehensive job roles management system:
 - **JobRoleController**: Express route handlers with proper error handling
 - **JobRoleResponse**: TypeScript models for type safety
 - **Dependency Injection**: Clean separation of concerns with service layer
+- **View-Based Titles**: Page titles are defined directly in templates for better maintainability
 
 ### Features
 - Display job roles with role name, location, capability, band, and closing date
-- Responsive card-based layout with icons and badges
+- Responsive card-based layout with **Lucide SVG icons** and badges
 - **JSON Data Source**: Comprehensive job roles data loaded from JSON file
 - Automatic fallback to mock data when API is unavailable
 - Error handling with user-friendly error pages
-- Beautiful UI using daisyUI components
+- Beautiful UI using daisyUI components and Lucide icons
 
 ### Data Management
 - **Primary Data**: JSON file (`src/data/job-roles.json`) with 12 diverse job roles
 - **API Integration**: Attempts to fetch from backend API first
 - **Graceful Fallback**: Falls back to JSON data when API is unavailable
 - **Fallback Safety**: Hardcoded fallback data if JSON file fails to load
+
+### Template Architecture
+- **View-Driven Titles**: Page titles are defined directly in Nunjucks templates rather than passed from controllers
+- **Separation of Concerns**: Controllers focus on data handling, views handle presentation
+- **Maintainability**: Title changes can be made directly in templates without touching controller code
+- **Consistency**: Each template owns its title and heading content
 
 ## 📝 Configuration
 

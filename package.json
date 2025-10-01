@@ -48,6 +48,7 @@
   },
   "dependencies": {
     "express": "^5.1.0",
+    "lucide": "^0.544.0",
     "nunjucks": "^3.2.4"
   }
 }
