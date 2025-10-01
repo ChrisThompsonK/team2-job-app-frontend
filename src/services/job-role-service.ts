@@ -28,7 +28,7 @@ export class JsonJobRoleService implements JobRoleService {
 			const jsonPath = path.join(__dirname, "..", "data", "job-roles.json");
 			const jsonData = await fs.readFile(jsonPath, "utf-8");
 			const data = JSON.parse(jsonData) as { jobRoles: JobRoleResponse[] };
-			return data.jobRoles;
+			return data.jobRoles || [];
 		} catch (error) {
 			console.error("Error reading job roles JSON file:", error);
 			return [];

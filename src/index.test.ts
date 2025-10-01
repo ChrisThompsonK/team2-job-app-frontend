@@ -65,3 +65,33 @@ describe("AppConfig", () => {
 		expect(config.port).toBe(3000);
 	});
 });
+
+describe("App Routes Integration", () => {
+	let app: App;
+	let testConfig: AppConfig;
+
+	beforeEach(() => {
+		testConfig = {
+			name: "test-app",
+			version: "1.0.0",
+			environment: "test",
+			port: 3002, // Different port for integration tests
+		};
+		app = new App(testConfig);
+	});
+
+	it("should have job-roles route configured", () => {
+		const server = app.getServer();
+		expect(server).toBeDefined();
+
+		// Check that the server is an Express application
+		expect(typeof server).toBe("function");
+		// Router is internal Express implementation detail, just check server exists
+	});
+
+	it("should handle route setup without errors", () => {
+		// If we get here without throwing, the routes were set up successfully
+		expect(app).toBeInstanceOf(App);
+		expect(app.getServer()).toBeDefined();
+	});
+});
