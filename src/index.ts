@@ -2,14 +2,14 @@
  * Main entry point for the Express application
  */
 
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import express, {
 	type Application,
 	type Request,
 	type Response,
 } from "express";
 import nunjucks from "nunjucks";
-import path from "path";
-import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

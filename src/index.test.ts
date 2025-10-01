@@ -2,8 +2,7 @@
  * Tests for the main App class and configuration
  */
 
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
-import type { Server } from "http";
+import { beforeEach, describe, expect, it } from "vitest";
 import { App, type AppConfig } from "./index";
 
 describe("App", () => {
@@ -36,7 +35,7 @@ describe("App", () => {
 		it("should return a copy of the configuration", () => {
 			const config = app.getConfig();
 			expect(config).toEqual(testConfig);
-			
+
 			// Verify it's a copy, not the original
 			config.name = "modified";
 			expect(app.getConfig().name).toBe("test-app");
