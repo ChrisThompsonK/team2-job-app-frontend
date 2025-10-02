@@ -83,8 +83,9 @@ class App {
 			});
 		});
 
-		// Job Roles endpoint
+		// Job Roles endpoints
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
+		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
 	}
 
 	public start(): void {
