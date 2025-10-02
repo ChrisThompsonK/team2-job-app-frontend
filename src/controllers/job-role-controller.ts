@@ -38,15 +38,19 @@ export class JobRoleController {
 	 * GET /job-roles/{id}
 	 * Renders the job role information view with detailed data for a specific role
 	 */
-	public getJobRoleById = async (req: Request, res: Response): Promise<void> => {
+	public getJobRoleById = async (
+		req: Request,
+		res: Response
+	): Promise<void> => {
 		try {
 			const id = req.params["id"];
-			
+
 			const jobRoleId = validateJobRoleId(id);
-			
+
 			if (jobRoleId === null) {
 				res.status(400).render("error.njk", {
-					message: "Invalid job role ID provided. Please provide a valid numeric ID.",
+					message:
+						"Invalid job role ID provided. Please provide a valid numeric ID.",
 				});
 				return;
 			}
@@ -55,7 +59,8 @@ export class JobRoleController {
 
 			if (!jobRole) {
 				res.status(404).render("error.njk", {
-					message: "Job role not found. The role you're looking for may have been removed or doesn't exist.",
+					message:
+						"Job role not found. The role you're looking for may have been removed or doesn't exist.",
 				});
 				return;
 			}

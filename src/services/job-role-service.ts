@@ -5,8 +5,8 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { JobRoleResponse } from "../models/job-role-response.js";
 import type { JobRoleDetailedResponse } from "../models/job-role-detailed-response.js";
+import type { JobRoleResponse } from "../models/job-role-response.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,8 +39,10 @@ export class JsonJobRoleService implements JobRoleService {
 
 		try {
 			const jsonData = await fs.readFile(this.jsonPath, "utf-8");
-			const data = JSON.parse(jsonData) as { jobRoles: JobRoleDetailedResponse[] };
-			
+			const data = JSON.parse(jsonData) as {
+				jobRoles: JobRoleDetailedResponse[];
+			};
+
 			// Validate data structure
 			if (!data.jobRoles || !Array.isArray(data.jobRoles)) {
 				throw new Error("Invalid JSON structure: jobRoles array not found");
@@ -50,7 +52,9 @@ export class JsonJobRoleService implements JobRoleService {
 			return this.cachedData;
 		} catch (error) {
 			console.error("Error loading job roles data:", error);
-			throw new Error(`Failed to load job roles: ${error instanceof Error ? error.message : 'Unknown error'}`);
+			throw new Error(
+				`Failed to load job roles: ${error instanceof Error ? error.message : "Unknown error"}`
+			);
 		}
 	}
 
@@ -68,9 +72,9 @@ export class JsonJobRoleService implements JobRoleService {
 	async getJobRoles(): Promise<JobRoleResponse[]> {
 		try {
 			const fullData = await this.loadJobRolesData();
-			
+
 			// Map to lighter JobRoleResponse format for list view
-			return fullData.map(role => ({
+			return fullData.map((role) => ({
 				jobRoleId: role.jobRoleId,
 				roleName: role.roleName,
 				location: role.location,
@@ -97,7 +101,7 @@ export class JsonJobRoleService implements JobRoleService {
 
 		try {
 			const allRoles = await this.loadJobRolesData();
-			return allRoles.find(role => role.jobRoleId === id) || null;
+			return allRoles.find((role) => role.jobRoleId === id) || null;
 		} catch (error) {
 			console.error("Error in getJobRoleById:", error);
 			return null;

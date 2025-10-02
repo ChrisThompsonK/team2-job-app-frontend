@@ -8,19 +8,19 @@
  * @returns Parsed ID number or null if invalid
  */
 export function validateJobRoleId(idString: string | undefined): number | null {
-	if (!idString || typeof idString !== 'string') {
+	if (!idString || typeof idString !== "string") {
 		return null;
 	}
 
 	const trimmed = idString.trim();
-	if (trimmed === '') {
+	if (trimmed === "") {
 		return null;
 	}
 
 	const parsed = parseInt(trimmed, 10);
-	
+
 	// Check if it's a valid positive integer
-	if (isNaN(parsed) || parsed <= 0 || !Number.isInteger(parsed)) {
+	if (Number.isNaN(parsed) || parsed <= 0 || !Number.isInteger(parsed)) {
 		return null;
 	}
 
@@ -39,7 +39,7 @@ export function validateDateString(dateString: string): boolean {
 	}
 
 	const date = new Date(dateString);
-	return date instanceof Date && !isNaN(date.getTime());
+	return date instanceof Date && !Number.isNaN(date.getTime());
 }
 
 /**
@@ -49,10 +49,10 @@ export function validateDateString(dateString: string): boolean {
  */
 export function sanitizeString(input: string): string {
 	return input
-		.replace(/&/g, '&amp;')
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;')
-		.replace(/"/g, '&quot;')
-		.replace(/'/g, '&#x27;')
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#x27;")
 		.trim();
 }

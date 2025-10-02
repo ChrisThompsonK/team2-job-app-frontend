@@ -1,7 +1,10 @@
 /**
  * Job Role Response model representing the essential data structure for job roles list view
  */
-import type { JobRoleCapability, JobRoleBand } from "./job-role-detailed-response.js";
+import type {
+	JobRoleBand,
+	JobRoleCapability,
+} from "./job-role-detailed-response.js";
 
 export interface JobRoleResponse {
 	jobRoleId: number;
