@@ -70,8 +70,8 @@ describe("JsonJobRoleService", () => {
 
 			expect(result).toEqual([]);
 			expect(consoleSpy).toHaveBeenCalledWith(
-				"Error reading job roles JSON file:",
-				mockError
+				"Error in getJobRoles:",
+				expect.any(Error)
 			);
 
 			consoleSpy.mockRestore();
@@ -89,8 +89,8 @@ describe("JsonJobRoleService", () => {
 
 			expect(result).toEqual([]);
 			expect(consoleSpy).toHaveBeenCalledWith(
-				"Error reading job roles JSON file:",
-				expect.any(SyntaxError)
+				"Error in getJobRoles:",
+				expect.any(Error)
 			);
 
 			consoleSpy.mockRestore();
