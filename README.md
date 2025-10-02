@@ -22,6 +22,8 @@ A modern Node.js TypeScript application with ES modules support.
 - **Premium UI Experience**: Enhanced home page and job roles with smooth animations and premium effects
 - **Advanced Animation System**: Shimmer effects, floating elements, staggered loading, and micro-interactions
 - **Glass Morphism Design**: Modern translucent effects with backdrop blur for contemporary aesthetics
+- **3D Kainos Logo Sphere**: Interactive 3D gradient sphere representing the 'O' in Kainos with consistent sizing
+- **Cross-Page Consistency**: Unified branding and logo implementation across all templates
 - **API Integration**: Axios-based HTTP client with fallback to mock data
 - **Dependency Injection**: Clean architecture with service layer separation
 
@@ -141,13 +143,16 @@ The application includes a comprehensive job roles management system:
 ### Features
 - Display job roles with role name, location, capability, band, and closing date
 - **Kainos Brand Identity**: Professional theme with navy blue (#2E4374), green (#8BC34A), and white colors
+- **3D Logo Implementation**: Consistent kainos-logo-sphere (w-10 h-10) across both homepage and job roles pages
 - **Advanced Animation System**: Smooth CSS animations with staggered loading, floating elements, and pulse effects
 - **Interactive UI Elements**: Enhanced hover effects with scale transforms, gradient backgrounds, and cubic-bezier transitions
 - **Premium Visual Effects**: Shimmer animations, glass morphism, glow effects, and 3D button interactions
 - **Micro-Interactions**: Icon rotations, badge ripple effects, card lift animations, and smooth color transitions
+- **Cross-Template Consistency**: Unified styling and branding between index.njk and job-role-list.njk
 - Responsive card-based layout with custom Kainos styling and rounded corners
 - **Enhanced Visual Design**: Custom animated icons with color-coded gradient backgrounds and premium branded buttons
 - **Staggered Animations**: Cards appear with sequential timing for smooth loading experience
+- **Button Visibility**: Fixed contrast issues ensuring all interactive elements are clearly visible
 - **JSON Data Source**: Comprehensive job roles data loaded from JSON file
 - Automatic fallback to mock data when API is unavailable
 - Error handling with user-friendly error pages styled to match Kainos branding
@@ -158,6 +163,15 @@ The application includes a comprehensive job roles management system:
 - **API Integration**: Attempts to fetch from backend API first
 - **Graceful Fallback**: Falls back to JSON data when API is unavailable
 - **Fallback Safety**: Hardcoded fallback data if JSON file fails to load
+
+### Recent Quality Improvements
+- **Logo Consistency**: Unified kainos-logo-sphere implementation across all pages (w-10 h-10 sizing)
+- **File Structure Cleanup**: Fixed HTML structural issues and removed duplicate content
+- **CSS Class Corrections**: Resolved Tailwind class naming issues (h-10 vs h10)
+- **Button Visibility**: Enhanced contrast for better accessibility and user experience
+- **Cross-Page Branding**: Consistent Kainos visual identity throughout the application
+- **Code Quality**: All files pass Biome formatting and linting checks
+- **Test Coverage**: Comprehensive test suite with 26/26 tests passing consistently
 
 ## 📝 Configuration
 

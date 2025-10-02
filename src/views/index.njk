@@ -46,15 +46,17 @@
             <div class="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-3xl shadow-2xl p-12 text-white relative overflow-hidden">
                 <!-- Animated background -->
                 <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-blue-800/20 animate-pulse"></div>
-
                 
+                <!-- Decorative elements -->
+                <div class="absolute top-4 right-4 w-20 h-20 bg-white/10 rounded-full blur-xl animate-pulse"></div>
+                <div class="absolute bottom-4 left-4 w-16 h-16 bg-green-400/20 rounded-full blur-lg animate-pulse" style="animation-delay: 1s"></div>
 
                 <!-- Content -->
                 <div class="relative z-10">
                     <!-- Kainos Logo -->
                     <div class="flex items-center justify-center mb-8">
                         <span class="text-5xl font-light tracking-wide">kain</span>
-                        <div class="kainos-logo-sphere w-12 h-12 mx-2"></div>
+                        <div class="kainos-logo-sphere w-10 h-10 mx-2"></div>
                         <span class="text-5xl font-light tracking-wide">s</span>
                         <span class="text-3xl font-light ml-2">®</span>
                     </div>
@@ -89,7 +91,6 @@
                 
                 <div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-green-500 hover:shadow-xl transition-shadow">
                     <h3 class="text-sm font-semibold text-gray-600 uppercase mb-2">Environment</h3>
-
                     <p class="text-xl font-bold text-green-600">{{ environment }}</p>
                 </div>
             </div>
@@ -109,7 +110,6 @@
 
             <!-- Timestamp Badge -->
             <div class="text-center mb-12">
-
                 <div class="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full shadow-lg">
                     <span class="text-lg font-semibold">⏰ Current Time: {{ timestamp }}</span>
                 </div>
@@ -130,8 +130,6 @@
                 </button>
             </div>
         </main>
-
-
 
         <!-- Footer -->
         <footer class="text-center mt-16">
