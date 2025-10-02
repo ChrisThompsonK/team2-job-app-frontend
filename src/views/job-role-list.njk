@@ -156,11 +156,16 @@
         .kainos-btn {
             background: linear-gradient(135deg, var(--kainos-navy) 0%, var(--kainos-navy-light) 50%, var(--kainos-green) 100%);
             border: none;
-            color: white;
+            color: white !important;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
             font-weight: 600;
+        }
+        
+        .kainos-btn span,
+        .kainos-btn svg {
+            color: white !important;
         }
         
         .kainos-btn::before {
