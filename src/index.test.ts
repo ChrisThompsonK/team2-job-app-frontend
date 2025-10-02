@@ -19,34 +19,28 @@ describe("App", () => {
 		app = new App(testConfig);
 	});
 
-	describe("constructor", () => {
-		it("should create an app instance with correct config", () => {
-			expect(app.getConfig()).toEqual(testConfig);
-		});
-
-		it("should create an Express server instance", () => {
-			const server = app.getServer();
-			expect(server).toBeDefined();
-			expect(typeof server).toBe("function"); // Express app is a function
-		});
+	it("should create an app instance with correct config", () => {
+		expect(app.getConfig()).toEqual(testConfig);
 	});
 
-	describe("getConfig", () => {
-		it("should return a copy of the configuration", () => {
-			const config = app.getConfig();
-			expect(config).toEqual(testConfig);
-
-			// Verify it's a copy, not the original
-			config.name = "modified";
-			expect(app.getConfig().name).toBe("test-app");
-		});
+	it("should create an Express server instance", () => {
+		const server = app.getServer();
+		expect(server).toBeDefined();
+		expect(typeof server).toBe("function"); // Express app is a function
 	});
 
-	describe("getServer", () => {
-		it("should return the Express server instance", () => {
-			const server = app.getServer();
-			expect(server).toBeDefined();
-		});
+	it("should return a copy of the configuration", () => {
+		const config = app.getConfig();
+		expect(config).toEqual(testConfig);
+
+		// Verify it's a copy, not the original
+		config.name = "modified";
+		expect(app.getConfig().name).toBe("test-app");
+	});
+
+	it("should return the Express server instance", () => {
+		const server = app.getServer();
+		expect(server).toBeDefined();
 	});
 });
 
