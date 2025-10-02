@@ -50,22 +50,13 @@ class App {
 	private async setupTemplating(): Promise<void> {
 		// Configure Nunjucks
 		const viewsPath = path.join(__dirname, "..", "src", "views");
-		const env = nunjucks.configure(viewsPath, {
+		nunjucks.configure(viewsPath, {
 			autoescape: true,
 			express: this.server,
 			watch: true, // Enable auto-reloading in development
 		});
 
-		// Import the Lucide icon helper
-		const { renderLucideIcon, lucideIconFilter } = await import(
-			"./utils/lucide-helper.js"
-		);
-
-		// Add Lucide icon filter to Nunjucks
-		env.addFilter("lucideIcon", lucideIconFilter);
-
-		// Add global function for rendering icons
-		env.addGlobal("lucideIcon", renderLucideIcon);
+		// Templating setup complete - no additional filters needed for current premium UI
 	}
 
 	private setupMiddleware(): void {

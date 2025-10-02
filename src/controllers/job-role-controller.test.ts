@@ -63,7 +63,6 @@ describe("JobRoleController", () => {
 
 			expect(mockJobRoleService.getJobRoles).toHaveBeenCalledTimes(1);
 			expect(res.render).toHaveBeenCalledWith("job-role-list.njk", {
-				title: "Available Job Roles at Kainos",
 				jobRoles: mockJobRoles,
 				totalRoles: 2,
 			});
@@ -78,7 +77,6 @@ describe("JobRoleController", () => {
 
 			expect(mockJobRoleService.getJobRoles).toHaveBeenCalledTimes(1);
 			expect(res.render).toHaveBeenCalledWith("job-role-list.njk", {
-				title: "Available Job Roles at Kainos",
 				jobRoles: [],
 				totalRoles: 0,
 			});
@@ -101,7 +99,6 @@ describe("JobRoleController", () => {
 			);
 			expect(res.status).toHaveBeenCalledWith(500);
 			expect(res.render).toHaveBeenCalledWith("error.njk", {
-				title: "Error Loading Job Roles",
 				message:
 					"Sorry, we couldn't load the job roles at this time. Please try again later.",
 			});
@@ -129,7 +126,6 @@ describe("JobRoleController", () => {
 
 			expect(mockJobRoleService.getJobRoles).toHaveBeenCalledTimes(1);
 			expect(res.render).toHaveBeenCalledWith("job-role-list.njk", {
-				title: "Available Job Roles at Kainos",
 				jobRoles: mockJobRoles,
 				totalRoles: 100,
 			});
@@ -147,7 +143,6 @@ describe("JobRoleController", () => {
 
 			expect(res.status).toHaveBeenCalledWith(500);
 			expect(res.render).toHaveBeenCalledWith("error.njk", {
-				title: "Error Loading Job Roles",
 				message:
 					"Sorry, we couldn't load the job roles at this time. Please try again later.",
 			});
