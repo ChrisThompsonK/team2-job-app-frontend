@@ -78,7 +78,7 @@
                                 </svg>
                             </div>
                             <div class="flex items-center">
-                                <span class="bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">{{ role.bandLevel }}</span>
+                                <span class="bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">{{ role.band }}</span>
                             </div>
                         </div>
                         
@@ -93,13 +93,22 @@
                         </div>
                     </div>
                     
-                    <!-- Apply Button -->
-                    <button class="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white font-medium py-3 px-4 rounded-lg hover:from-blue-700 hover:to-green-700 transition-colors duration-200 flex items-center justify-center">
-                        Apply Now
-                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                    </button>
+                    <!-- Action Buttons -->
+                    <div class="flex gap-3">
+                        <a href="/job-roles/{{ role.jobRoleId }}" class="flex-1 bg-white border-2 border-blue-600 text-blue-600 font-medium py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors duration-200 flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            View Details
+                        </a>
+                        <button class="flex-1 bg-gradient-to-r from-blue-600 to-green-600 text-white font-medium py-3 px-4 rounded-lg hover:from-blue-700 hover:to-green-700 transition-colors duration-200 flex items-center justify-center">
+                            Apply Now
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             {% endfor %}
         </section>

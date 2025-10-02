@@ -17,7 +17,7 @@ A modern Node.js TypeScript application with ES modules support.
 - **Biome**: Ultra-fast formatter, linter, and code quality tools
 - **Vitest**: Next generation testing framework with coverage support
 - **Strict Configuration**: Comprehensive TypeScript compiler options
-- **Job Roles Management**: View available job positions at Kainos with full details
+- **Job Roles Management**: Comprehensive job listing with "View Details" and "Apply Now" buttons for seamless navigation and application process
 - **Kainos Brand Theme**: Custom blue, green, and white color scheme matching Kainos branding
 - **Premium UI Experience**: Enhanced home page and job roles with smooth animations and premium effects
 - **Advanced Animation System**: Shimmer effects, floating elements, staggered loading, and micro-interactions
@@ -193,6 +193,7 @@ The application includes a comprehensive job roles management system:
 ### Routes
 - **`/`**: Enhanced home page with premium animations, hero section, and interactive stat cards
 - **`/job-roles`**: Premium job listings with smooth card animations and enhanced visual effects
+- **`/job-roles/{id}`**: Individual job role details accessible via "View Details" button with comprehensive role information
 
 ### Architecture
 - **JobRoleService**: Handles API communication with axios, includes fallback to mock data
@@ -203,6 +204,8 @@ The application includes a comprehensive job roles management system:
 
 ### Features
 - Display job roles with role name, location, capability, band, and closing date
+- **Dual Action Buttons**: Each job role card features both "View Details" (secondary style) and "Apply Now" (primary gradient) buttons for complete user workflow
+- **Seamless Navigation**: "View Details" button links to individual job role information pages (`/job-roles/{id}`) with proper routing
 - **Kainos Brand Identity**: Professional theme with navy blue (#2E4374), green (#8BC34A), and white colors
 - **3D Logo Implementation**: Consistent kainos-logo-sphere (w-10 h-10) across both homepage and job roles pages
 - **Advanced Animation System**: Smooth CSS animations with staggered loading, floating elements, and pulse effects
