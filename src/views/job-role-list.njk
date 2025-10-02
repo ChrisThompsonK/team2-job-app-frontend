@@ -13,7 +13,7 @@
             <div class="card-body">
                 <h1 class="card-title text-3xl text-primary">Available Job Roles at Kainos</h1>
                 <div class="alert alert-info">
-                    {{ lucideIcon('info', { size: 24, className: 'stroke-current shrink-0 w-6 h-6' }) | safe }}
+                    {{ lucideIcon('info') | safe }}
                     <span>Showing {{ totalRoles }} open job role{{ 's' if totalRoles != 1 else '' }}</span>
                 </div>
             </div>
@@ -25,7 +25,11 @@
                 {% for jobRole in jobRoles %}
                     <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow">
                         <div class="card-body">
-                            <h2 class="card-title text-xl text-primary">{{ jobRole.roleName }}</h2>
+                            <h2 class="card-title text-xl text-primary">
+                                <a href="/job-roles/{{ jobRole.jobRoleId }}" class="hover:underline">
+                                    {{ jobRole.roleName }}
+                                </a>
+                            </h2>
                             
                             <div class="space-y-3 mt-4">
                                 <div class="flex items-center gap-2">
@@ -49,7 +53,11 @@
                                 </div>
                             </div>
                             
-                            <div class="card-actions justify-end mt-4">
+                            <div class="card-actions justify-between mt-4">
+                                <a href="/job-roles/{{ jobRole.jobRoleId }}" class="btn btn-outline btn-sm">
+                                    {{ lucideIcon('info', { size: 16, className: 'w-4 h-4 mr-1' }) | safe }}
+                                    View Details
+                                </a>
                                 <button class="btn btn-primary btn-sm">Apply Now</button>
                             </div>
                         </div>

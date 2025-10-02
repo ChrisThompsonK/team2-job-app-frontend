@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ jobRole.roleName }} - Job Details | Kainos</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-gray-100 font-sans">
+    {# Macro for status badge styling #}
+    {% macro statusBadge(status) %}
+        {%- set badgeClass = 'badge-success' if status == 'Open' else ('badge-warning' if status == 'Closing Soon' else 'badge-error') -%}
+        <div class="badge {{ badgeClass }} badge-lg">{{ status }}</div>
+    {% endmacro %}
+    
+    <div class="max-w-4xl mx-auto p-8">
+        <!-- Header -->
+        <div class="card bg-base-100 shadow-xl mb-8">
+            <div class="card-body">
+                <h1 class="card-title text-4xl text-primary mb-4">{{ jobRole.roleName }}</h1>
+                
+                <!-- Key Information Bar -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="flex items-center gap-2">
+                        {{ lucideIcon('map-pin', { className: 'text-secondary' }) | safe }}
+                        <span class="font-medium">{{ jobRole.location }}</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        {{ lucideIcon('tag', { className: 'text-accent' }) | safe }}
+                        <span>{{ jobRole.capability }}</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        {{ lucideIcon('briefcase', { className: 'text-info' }) | safe }}
+                        <span class="badge badge-outline badge-lg">{{ jobRole.band }}</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        {{ lucideIcon('users', { className: 'text-warning' }) | safe }}
+                        <span>{{ jobRole.numberOfOpenPositions }} position{{ 's' if jobRole.numberOfOpenPositions != 1 else '' }}</span>
+                    </div>
+                </div>
+                
+                <!-- Status and Closing Date -->
+                <div class="flex flex-wrap gap-4 items-center">
+                    {{ statusBadge(jobRole.status) }}
+                    
+                    <div class="flex items-center gap-2">
+                        {{ lucideIcon('calendar', { className: 'text-gray-500' }) | safe }}
+                        <span class="text-sm">Closes: {{ jobRole.closingDate }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Description -->
+        <div class="card bg-base-100 shadow-xl mb-8">
+            <div class="card-body">
+                <h2 class="card-title text-2xl text-primary mb-4">
+                    {{ lucideIcon('file-text') | safe }}
+                    Job Description
+                </h2>
+                <p class="text-lg leading-relaxed">{{ jobRole.description }}</p>
+            </div>
+        </div>
+
+        <!-- Key Responsibilities -->
+        <div class="card bg-base-100 shadow-xl mb-8">
+            <div class="card-body">
+                <h2 class="card-title text-2xl text-primary mb-4">
+                    {{ lucideIcon('check-circle') | safe }}
+                    Key Responsibilities
+                </h2>
+                <div class="whitespace-pre-line">
+                    {{ jobRole.responsibilities }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Specification Link -->
+        <div class="card bg-base-100 shadow-xl mb-8">
+            <div class="card-body">
+                <h2 class="card-title text-2xl text-primary mb-4">
+                    {{ lucideIcon('external-link') | safe }}
+                    Additional Information
+                </h2>
+                <p class="mb-4">For detailed job specifications, requirements, and application process, please visit our SharePoint portal:</p>
+                <a href="{{ jobRole.jobSpecLink }}" target="_blank" class="btn btn-primary">
+                    {{ lucideIcon('external-link', { className: 'mr-2' }) | safe }}
+                    View Full Job Specification
+                </a>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-4 justify-center">
+            <a href="/job-roles" class="btn btn-outline">
+                {{ lucideIcon('arrow-left', { className: 'mr-2' }) | safe }}
+                Back to All Roles
+            </a>
+            
+            <button class="btn btn-primary btn-lg">
+                {{ lucideIcon('send', { className: 'mr-2' }) | safe }}
+                Apply Now
+            </button>
+        </div>
+
+        <!-- Back to Home -->
+        <div class="text-center mt-8">
+            <a href="/" class="btn btn-ghost">← Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>
