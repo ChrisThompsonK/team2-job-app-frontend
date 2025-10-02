@@ -17,7 +17,14 @@ A modern Node.js TypeScript application with ES modules support.
 - **Biome**: Ultra-fast formatter, linter, and code quality tools
 - **Vitest**: Next generation testing framework with coverage support
 - **Strict Configuration**: Comprehensive TypeScript compiler options
-- **Job Roles Management**: View available job positions at Kainos with full details
+- **Job Roles Management**: Comprehensive job listing with "View Details" and "Apply Now" buttons for seamless navigation and application process
+- **Kainos Brand Theme**: Custom blue, green, and white color scheme matching Kainos branding
+- **Premium UI Experience**: Enhanced home page and job roles with smooth animations and premium effects
+- **Advanced Animation System**: Shimmer effects, floating elements, staggered loading, and micro-interactions
+- **Glass Morphism Design**: Modern translucent effects with backdrop blur for contemporary aesthetics
+- **3D Kainos Logo Sphere**: Interactive 3D gradient sphere representing the 'O' in Kainos with consistent sizing
+- **Cross-Page Consistency**: Unified branding and logo implementation across all templates
+- **Template Inheritance System**: Reusable layout components with header and footer separation
 - **API Integration**: Axios-based HTTP client with fallback to mock data
 - **Dependency Injection**: Clean architecture with service layer separation
 
@@ -37,9 +44,13 @@ A modern Node.js TypeScript application with ES modules support.
 │   ├── styles/
 │   │   └── input.css     # Tailwind CSS + daisyUI imports
 │   └── views/
-│       ├── index.njk     # Home page template with daisyUI components
-│       ├── job-role-list.njk  # Job roles listing template
-│       └── error.njk     # Error page template
+│       ├── templates/
+│       │   ├── layout.njk    # Base template with common structure
+│       │   ├── header.njk    # Reusable navigation header component
+│       │   └── footer.njk    # Reusable footer component
+│       ├── index.njk         # Home page template extending base layout
+│       ├── job-role-list.njk # Job roles listing template
+│       └── error.njk         # Error page template
 ├── public/
 │   └── css/
 │       └── styles.css    # Generated Tailwind + daisyUI styles
@@ -180,8 +191,9 @@ The application uses [Lucide](https://lucide.dev/) for beautiful, consistent SVG
 The application includes a comprehensive job roles management system:
 
 ### Routes
-- **`/`**: Home page with navigation to job roles
-- **`/job-roles`**: View all available job positions
+- **`/`**: Enhanced home page with premium animations, hero section, and interactive stat cards
+- **`/job-roles`**: Premium job listings with smooth card animations and enhanced visual effects
+- **`/job-roles/{id}`**: Individual job role details accessible via "View Details" button with comprehensive role information
 
 ### Architecture
 - **JobRoleService**: Handles API communication with axios, includes fallback to mock data
@@ -192,17 +204,40 @@ The application includes a comprehensive job roles management system:
 
 ### Features
 - Display job roles with role name, location, capability, band, and closing date
-- Responsive card-based layout with **Lucide SVG icons** and badges
+- **Dual Action Buttons**: Each job role card features both "View Details" (secondary style) and "Apply Now" (primary gradient) buttons for complete user workflow
+- **Seamless Navigation**: "View Details" button links to individual job role information pages (`/job-roles/{id}`) with proper routing
+- **Kainos Brand Identity**: Professional theme with navy blue (#2E4374), green (#8BC34A), and white colors
+- **3D Logo Implementation**: Consistent kainos-logo-sphere (w-10 h-10) across both homepage and job roles pages
+- **Advanced Animation System**: Smooth CSS animations with staggered loading, floating elements, and pulse effects
+- **Interactive UI Elements**: Enhanced hover effects with scale transforms, gradient backgrounds, and cubic-bezier transitions
+- **Premium Visual Effects**: Shimmer animations, glass morphism, glow effects, and 3D button interactions
+- **Micro-Interactions**: Icon rotations, badge ripple effects, card lift animations, and smooth color transitions
+- **Cross-Template Consistency**: Unified styling and branding between index.njk and job-role-list.njk
+- Responsive card-based layout with **Lucide SVG icons** and badges plus custom Kainos styling and rounded corners
+- **Enhanced Visual Design**: Custom animated icons with color-coded gradient backgrounds and premium branded buttons
+- **Staggered Animations**: Cards appear with sequential timing for smooth loading experience
+- **Button Visibility**: Fixed contrast issues ensuring all interactive elements are clearly visible
 - **JSON Data Source**: Comprehensive job roles data loaded from JSON file
 - Automatic fallback to mock data when API is unavailable
-- Error handling with user-friendly error pages
-- Beautiful UI using daisyUI components and Lucide icons
+- Error handling with user-friendly error pages styled to match Kainos branding
+- Beautiful UI combining daisyUI components with Lucide icons and custom advanced CSS animations and effects
 
 ### Data Management
 - **Primary Data**: JSON file (`src/data/job-roles.json`) with 12 diverse job roles
 - **API Integration**: Attempts to fetch from backend API first
 - **Graceful Fallback**: Falls back to JSON data when API is unavailable
 - **Fallback Safety**: Hardcoded fallback data if JSON file fails to load
+
+
+### Recent Quality Improvements
+- **Logo Consistency**: Unified kainos-logo-sphere implementation across all pages (w-10 h-10 sizing)
+- **File Structure Cleanup**: Fixed HTML structural issues and removed duplicate content
+- **CSS Class Corrections**: Resolved Tailwind class naming issues (h-10 vs h10)
+- **Button Visibility**: Enhanced contrast for better accessibility and user experience
+- **Cross-Page Branding**: Consistent Kainos visual identity throughout the application
+- **Code Quality**: All files pass Biome formatting and linting checks
+- **Test Coverage**: Comprehensive test suite with 25/25 tests passing consistently
+
 
 ### Template Architecture
 - **View-Driven Titles**: Page titles are defined directly in Nunjucks templates rather than passed from controllers

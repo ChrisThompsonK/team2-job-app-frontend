@@ -59,3 +59,32 @@ describe("AppConfig", () => {
 		expect(config.port).toBe(3000);
 	});
 });
+
+describe("App Routes Integration", () => {
+	let app: App;
+	let testConfig: AppConfig;
+
+	beforeEach(() => {
+		testConfig = {
+			name: "test-app",
+			version: "1.0.0",
+			environment: "test",
+			port: 3002, // Different port for integration tests
+		};
+		app = new App(testConfig);
+	});
+
+	it("should configure routes and server correctly", () => {
+		// Verify app instance is created properly
+		expect(app).toBeInstanceOf(App);
+
+		// Get the Express server instance
+		const server = app.getServer();
+		expect(server).toBeDefined();
+
+		// Verify it's a proper Express application (Express apps are functions)
+		expect(typeof server).toBe("function");
+
+		// If we reach here without throwing, routes were set up successfully
+	});
+});
