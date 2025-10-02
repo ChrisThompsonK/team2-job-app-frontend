@@ -1,11 +1,13 @@
 /**
- * Job Role Response model representing the data structure for job roles
+ * Job Role Response model representing the essential data structure for job roles list view
  */
+import type { JobRoleCapability, JobRoleBand } from "./job-role-detailed-response.js";
+
 export interface JobRoleResponse {
 	jobRoleId: number;
 	roleName: string;
 	location: string;
-	capability: string;
-	band: string;
-	closingDate: string;
+	capability: JobRoleCapability;
+	band: JobRoleBand;
+	closingDate: string; // ISO date string (YYYY-MM-DD)
 }

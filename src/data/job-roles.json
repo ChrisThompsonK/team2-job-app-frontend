@@ -2,99 +2,163 @@
 	"jobRoles": [
 		{
 			"jobRoleId": 1,
-			"roleName": "Software Engineer",
+			"roleName": "User Research Lead (Manager)",
+			"description": "Lead our user research initiatives and drive user-centered design across multiple projects. As a User Research Lead, you'll manage a team of researchers and work closely with design and product teams to ensure our solutions meet real user needs.",
+			"responsibilities": [
+				"Lead and manage a team of user researchers",
+				"Develop and implement user research strategies across projects",
+				"Conduct stakeholder interviews and user research sessions",
+				"Translate research insights into actionable design recommendations",
+				"Collaborate with design and product teams to inform product decisions",
+				"Mentor junior researchers and promote research best practices"
+			],
+			"jobSpecLink": "https://kainossoftwareltd.sharepoint.com/:b:/r/sites/Career/JobProfiles/Experience%20Design/Job%20Specification%20-%20User%20Research%20Lead%20(Manager).pdf?csf=1&web=1&e=GWPXqR",
 			"location": "Belfast",
-			"capability": "Engineering",
-			"band": "Trainee",
-			"closingDate": "2025-01-15"
+			"capability": "Experience Design",
+			"band": "Manager",
+			"closingDate": "2025-01-31",
+			"status": "Open",
+			"numberOfOpenPositions": 1
 		},
 		{
 			"jobRoleId": 2,
-			"roleName": "Senior Software Engineer",
+			"roleName": "Service Designer (Consultant)",
+			"description": "Design end-to-end service experiences that delight users and drive business value. Work with multidisciplinary teams to create service blueprints and journey maps for complex digital transformations.",
+			"responsibilities": [
+				"Design comprehensive service experiences and customer journeys",
+				"Create service blueprints and process flows",
+				"Collaborate with stakeholders to understand service requirements",
+				"Conduct service design workshops and co-creation sessions",
+				"Develop prototypes and test service concepts with users",
+				"Provide strategic design guidance to client teams"
+			],
+			"jobSpecLink": "https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Forms/AllItems.aspx?id=%2Fsites%2FCareer%2FJobProfiles%2FExperience%20Design%2FJob%20Specification%20%2D%20Service%20Designer%20%28Consultant%29%2Epdf&parent=%2Fsites%2FCareer%2FJobProfiles%2FExperience%20Design",
 			"location": "London",
-			"capability": "Engineering",
-			"band": "Senior Associate",
-			"closingDate": "2025-02-28"
+			"capability": "Experience Design",
+			"band": "Consultant",
+			"closingDate": "2025-02-15",
+			"status": "Open",
+			"numberOfOpenPositions": 2
 		},
 		{
 			"jobRoleId": 3,
-			"roleName": "Business Analyst",
+			"roleName": "User Researcher (Senior Associate)",
+			"description": "Conduct user research to inform product and service design decisions. Use a variety of research methods to understand user needs, behaviors, and motivations across different touchpoints.",
+			"responsibilities": [
+				"Plan and conduct user research studies using various methodologies",
+				"Recruit research participants and manage research logistics",
+				"Analyze research data and synthesize insights",
+				"Present research findings to stakeholders and design teams",
+				"Collaborate with designers and product managers on research strategy",
+				"Maintain research repositories and knowledge sharing"
+			],
+			"jobSpecLink": "https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Forms/AllItems.aspx?id=%2Fsites%2FCareer%2FJobProfiles%2FExperience%20Design%2FJob%20Specification%20%2D%20Service%20Designer%20%28Consultant%29%2Epdf&parent=%2Fsites%2FCareer%2FJobProfiles%2FExperience%20Design",
 			"location": "Edinburgh",
-			"capability": "Business Analysis",
-			"band": "Associate",
-			"closingDate": "2024-12-20"
+			"capability": "Experience Design",
+			"band": "Senior Associate",
+			"closingDate": "2025-01-20",
+			"status": "Open",
+			"numberOfOpenPositions": 2
 		},
 		{
 			"jobRoleId": 4,
-			"roleName": "UX Designer",
+			"roleName": "UX Designer (Associate)",
+			"description": "Create user-centered design solutions for digital products and services. Work collaboratively with researchers, developers, and product teams to design intuitive and accessible user experiences.",
+			"responsibilities": [
+				"Design user interfaces and interaction flows for digital products",
+				"Create wireframes, prototypes, and high-fidelity designs",
+				"Collaborate with user researchers to understand user needs",
+				"Work with developers to ensure design implementation",
+				"Conduct usability testing and iterate on designs",
+				"Maintain design systems and component libraries"
+			],
+			"jobSpecLink": "https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Forms/AllItems.aspx?id=%2Fsites%2FCareer%2FJobProfiles%2FExperience%20Design%2FJob%20Specification%20%2D%20UX%20Designer%20%28Associate%29%2Epdf&parent=%2Fsites%2FCareer%2FJobProfiles%2FExperience%20Design",
 			"location": "Belfast",
-			"capability": "Design",
-			"band": "Senior Associate",
-			"closingDate": "2025-01-31"
+			"capability": "Experience Design",
+			"band": "Associate",
+			"closingDate": "2025-01-25",
+			"status": "Open",
+			"numberOfOpenPositions": 3
 		},
 		{
 			"jobRoleId": 5,
-			"roleName": "DevOps Engineer",
-			"location": "London",
+			"roleName": "Low Code Engineer",
+			"description": "Develop innovative solutions using low-code platforms and tools. Work with business stakeholders to rapidly prototype and deploy applications that solve real business problems.",
+			"responsibilities": [
+				"Develop applications using low-code platforms and tools",
+				"Collaborate with business stakeholders to understand requirements",
+				"Design and implement automated workflows and processes",
+				"Integrate low-code solutions with existing enterprise systems",
+				"Provide technical guidance on low-code best practices",
+				"Support testing and deployment of low-code applications"
+			],
+			"jobSpecLink": "https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Forms/AllItems.aspx?id=%2Fsites%2FCareer%2FJobProfiles%2FEngineering%2FJob%20specification%20%2D%20Low%20Code%20Engineer%20%28A%29%20%2D%20Low%20Code%2Epdf&parent=%2Fsites%2FCareer%2FJobProfiles%2FEngineering",
+			"location": "Glasgow",
 			"capability": "Engineering",
-			"band": "Principal",
-			"closingDate": "2025-03-15"
+			"band": "Associate",
+			"closingDate": "2025-02-28",
+			"status": "Open",
+			"numberOfOpenPositions": 2
 		},
 		{
 			"jobRoleId": 6,
-			"roleName": "Data Scientist",
-			"location": "Glasgow",
-			"capability": "Data & Analytics",
-			"band": "Associate",
-			"closingDate": "2025-02-10"
+			"roleName": "Experience Strategy Lead (Manager)",
+			"description": "Define and lead experience strategy across large-scale digital transformation projects. Work with senior stakeholders to align business objectives with user experience goals.",
+			"responsibilities": [
+				"Develop experience strategy and vision for large-scale projects",
+				"Lead strategic workshops with senior client stakeholders",
+				"Define experience principles and design standards",
+				"Manage and coordinate multidisciplinary design teams",
+				"Present strategic recommendations to C-level executives",
+				"Drive innovation and thought leadership in experience design"
+			],
+			"jobSpecLink": "https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Forms/AllItems.aspx?id=%2Fsites%2FCareer%2FJobProfiles%2FExperience%20Design%2FJob%20Specification%20%2D%20Experience%20Strategy%20Lead%20%28Manager%29%2Epdf&parent=%2Fsites%2FCareer%2FJobProfiles%2FExperience%20Design",
+			"location": "London",
+			"capability": "Experience Design",
+			"band": "Manager",
+			"closingDate": "2025-03-15",
+			"status": "Open",
+			"numberOfOpenPositions": 1
 		},
 		{
 			"jobRoleId": 7,
-			"roleName": "Product Manager",
-			"location": "London",
-			"capability": "Product Management",
-			"band": "Senior Associate",
-			"closingDate": "2025-01-25"
-		},
-		{
-			"jobRoleId": 8,
-			"roleName": "Cyber Security Analyst",
+			"roleName": "Security Engineer",
+			"description": "Protect our digital assets and client systems by implementing robust security measures and monitoring for threats. Work with development teams to ensure security is built into every solution.",
+			"responsibilities": [
+				"Design and implement security architectures and controls",
+				"Conduct security assessments and vulnerability testing",
+				"Monitor security events and respond to incidents",
+				"Collaborate with development teams on secure coding practices",
+				"Maintain security policies and compliance frameworks",
+				"Provide security training and awareness to team members"
+			],
+			"jobSpecLink": "https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Forms/AllItems.aspx?id=%2Fsites%2FCareer%2FJobProfiles%2FCyber%20Security%2FJob%20profile%20%2D%20Security%20Engineer%20%28Associate%29%2Epdf&parent=%2Fsites%2FCareer%2FJobProfiles%2FCyber%20Security",
 			"location": "Belfast",
 			"capability": "Cyber Security",
 			"band": "Associate",
-			"closingDate": "2025-02-14"
+			"closingDate": "2025-02-10",
+			"status": "Open",
+			"numberOfOpenPositions": 2
 		},
 		{
-			"jobRoleId": 9,
-			"roleName": "Frontend Developer",
+			"jobRoleId": 8,
+			"roleName": "Front End Engineer (Associate)",
+			"description": "Build responsive, accessible, and performant user interfaces using modern web technologies. Work closely with designers and backend engineers to create seamless user experiences.",
+			"responsibilities": [
+				"Develop responsive web applications using modern JavaScript frameworks",
+				"Implement pixel-perfect designs with attention to detail",
+				"Ensure cross-browser compatibility and web accessibility",
+				"Optimize application performance and user experience",
+				"Collaborate with UX designers and backend developers",
+				"Write clean, maintainable, and testable code"
+			],
+			"jobSpecLink": "https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Forms/AllItems.aspx?id=%2Fsites%2FCareer%2FJobProfiles%2FEngineering%2FJob%20Profile%20%2D%20Front%2DEnd%20Engineer%20%28A%29%2Epdf&parent=%2Fsites%2FCareer%2FJobProfiles%2FEngineering",
 			"location": "Edinburgh",
 			"capability": "Engineering",
-			"band": "Trainee",
-			"closingDate": "2024-12-31"
-		},
-		{
-			"jobRoleId": 10,
-			"roleName": "Technical Architect",
-			"location": "London",
-			"capability": "Architecture",
-			"band": "Manager",
-			"closingDate": "2025-03-30"
-		},
-		{
-			"jobRoleId": 11,
-			"roleName": "Scrum Master",
-			"location": "Glasgow",
-			"capability": "Delivery Management",
-			"band": "Senior Associate",
-			"closingDate": "2025-01-10"
-		},
-		{
-			"jobRoleId": 12,
-			"roleName": "Cloud Engineer",
-			"location": "Belfast",
-			"capability": "Platform Engineering",
 			"band": "Associate",
-			"closingDate": "2025-02-20"
+			"closingDate": "2025-01-15",
+			"status": "Open",
+			"numberOfOpenPositions": 4
 		}
 	]
 }

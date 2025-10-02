@@ -4,6 +4,7 @@
 
 import type { Request, Response } from "express";
 import type { JobRoleService } from "../services/job-role-service.js";
+import { validateJobRoleId } from "../utils/validation.js";
 
 export class JobRoleController {
 	private jobRoleService: JobRoleService;
@@ -29,6 +30,44 @@ export class JobRoleController {
 			res.status(500).render("error.njk", {
 				message:
 					"Sorry, we couldn't load the job roles at this time. Please try again later.",
+			});
+		}
+	};
+
+	/**
+	 * GET /job-roles/{id}
+	 * Renders the job role information view with detailed data for a specific role
+	 */
+	public getJobRoleById = async (req: Request, res: Response): Promise<void> => {
+		try {
+			const id = req.params["id"];
+			
+			const jobRoleId = validateJobRoleId(id);
+			
+			if (jobRoleId === null) {
+				res.status(400).render("error.njk", {
+					message: "Invalid job role ID provided. Please provide a valid numeric ID.",
+				});
+				return;
+			}
+
+			const jobRole = await this.jobRoleService.getJobRoleById(jobRoleId);
+
+			if (!jobRole) {
+				res.status(404).render("error.njk", {
+					message: "Job role not found. The role you're looking for may have been removed or doesn't exist.",
+				});
+				return;
+			}
+
+			res.render("job-role-information.njk", {
+				jobRole,
+			});
+		} catch (error) {
+			console.error("Error in JobRoleController.getJobRoleById:", error);
+			res.status(500).render("error.njk", {
+				message:
+					"Sorry, we couldn't load the job role information at this time. Please try again later.",
 			});
 		}
 	};
