@@ -22,22 +22,22 @@
                 <!-- Key Information Bar -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     <div class="flex items-center gap-2">
-                        {{ lucideIcon('map-pin', { size: 20, className: 'w-5 h-5 text-secondary' }) | safe }}
+                        {{ lucideIcon('map-pin', { className: 'text-secondary' }) | safe }}
                         <span class="font-medium">{{ jobRole.location }}</span>
                     </div>
                     
                     <div class="flex items-center gap-2">
-                        {{ lucideIcon('tag', { size: 20, className: 'w-5 h-5 text-accent' }) | safe }}
+                        {{ lucideIcon('tag', { className: 'text-accent' }) | safe }}
                         <span>{{ jobRole.capability }}</span>
                     </div>
                     
                     <div class="flex items-center gap-2">
-                        {{ lucideIcon('briefcase', { size: 20, className: 'w-5 h-5 text-info' }) | safe }}
+                        {{ lucideIcon('briefcase', { className: 'text-info' }) | safe }}
                         <span class="badge badge-outline badge-lg">{{ jobRole.band }}</span>
                     </div>
                     
                     <div class="flex items-center gap-2">
-                        {{ lucideIcon('users', { size: 20, className: 'w-5 h-5 text-warning' }) | safe }}
+                        {{ lucideIcon('users', { className: 'text-warning' }) | safe }}
                         <span>{{ jobRole.numberOfOpenPositions }} position{{ 's' if jobRole.numberOfOpenPositions != 1 else '' }}</span>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                     {{ statusBadge(jobRole.status) }}
                     
                     <div class="flex items-center gap-2">
-                        {{ lucideIcon('calendar', { size: 20, className: 'w-5 h-5 text-gray-500' }) | safe }}
+                        {{ lucideIcon('calendar', { className: 'text-gray-500' }) | safe }}
                         <span class="text-sm">Closes: {{ jobRole.closingDate }}</span>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
         <div class="card bg-base-100 shadow-xl mb-8">
             <div class="card-body">
                 <h2 class="card-title text-2xl text-primary mb-4">
-                    {{ lucideIcon('file-text', { size: 24, className: 'w-6 h-6' }) | safe }}
+                    {{ lucideIcon('file-text') | safe }}
                     Job Description
                 </h2>
                 <p class="text-lg leading-relaxed">{{ jobRole.description }}</p>
@@ -69,13 +69,13 @@
         <div class="card bg-base-100 shadow-xl mb-8">
             <div class="card-body">
                 <h2 class="card-title text-2xl text-primary mb-4">
-                    {{ lucideIcon('check-circle', { size: 24, className: 'w-6 h-6' }) | safe }}
+                    {{ lucideIcon('check-circle') | safe }}
                     Key Responsibilities
                 </h2>
                 <ul class="space-y-3">
                     {% for responsibility in jobRole.responsibilities %}
                         <li class="flex items-start gap-3">
-                            {{ lucideIcon('chevron-right', { size: 20, className: 'w-5 h-5 text-primary mt-0.5 flex-shrink-0' }) | safe }}
+                            {{ lucideIcon('chevron-right', { className: 'text-primary mt-0.5 flex-shrink-0' }) | safe }}
                             <span>{{ responsibility }}</span>
                         </li>
                     {% endfor %}
@@ -87,12 +87,12 @@
         <div class="card bg-base-100 shadow-xl mb-8">
             <div class="card-body">
                 <h2 class="card-title text-2xl text-primary mb-4">
-                    {{ lucideIcon('external-link', { size: 24, className: 'w-6 h-6' }) | safe }}
+                    {{ lucideIcon('external-link') | safe }}
                     Additional Information
                 </h2>
                 <p class="mb-4">For detailed job specifications, requirements, and application process, please visit our SharePoint portal:</p>
                 <a href="{{ jobRole.jobSpecLink }}" target="_blank" class="btn btn-primary">
-                    {{ lucideIcon('external-link', { size: 20, className: 'w-5 h-5 mr-2' }) | safe }}
+                    {{ lucideIcon('external-link', { className: 'mr-2' }) | safe }}
                     View Full Job Specification
                 </a>
             </div>
@@ -101,12 +101,12 @@
         <!-- Action Buttons -->
         <div class="flex flex-wrap gap-4 justify-center">
             <a href="/job-roles" class="btn btn-outline">
-                {{ lucideIcon('arrow-left', { size: 20, className: 'w-5 h-5 mr-2' }) | safe }}
+                {{ lucideIcon('arrow-left', { className: 'mr-2' }) | safe }}
                 Back to All Roles
             </a>
             
             <button class="btn btn-primary btn-lg">
-                {{ lucideIcon('send', { size: 20, className: 'w-5 h-5 mr-2' }) | safe }}
+                {{ lucideIcon('send', { className: 'mr-2' }) | safe }}
                 Apply Now
             </button>
         </div>
