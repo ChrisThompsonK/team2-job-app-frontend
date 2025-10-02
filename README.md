@@ -149,14 +149,14 @@ The application includes a comprehensive job roles management system:
 - **Premium Visual Effects**: Shimmer animations, glass morphism, glow effects, and 3D button interactions
 - **Micro-Interactions**: Icon rotations, badge ripple effects, card lift animations, and smooth color transitions
 - **Cross-Template Consistency**: Unified styling and branding between index.njk and job-role-list.njk
-- Responsive card-based layout with custom Kainos styling and rounded corners
+- Responsive card-based layout with **Lucide SVG icons** and badges plus custom Kainos styling and rounded corners
 - **Enhanced Visual Design**: Custom animated icons with color-coded gradient backgrounds and premium branded buttons
 - **Staggered Animations**: Cards appear with sequential timing for smooth loading experience
 - **Button Visibility**: Fixed contrast issues ensuring all interactive elements are clearly visible
 - **JSON Data Source**: Comprehensive job roles data loaded from JSON file
 - Automatic fallback to mock data when API is unavailable
 - Error handling with user-friendly error pages styled to match Kainos branding
-- Beautiful UI combining daisyUI components with custom advanced CSS animations and effects
+- Beautiful UI combining daisyUI components with Lucide icons and custom advanced CSS animations and effects
 
 ### Data Management
 - **Primary Data**: JSON file (`src/data/job-roles.json`) with 12 diverse job roles
@@ -172,6 +172,12 @@ The application includes a comprehensive job roles management system:
 - **Cross-Page Branding**: Consistent Kainos visual identity throughout the application
 - **Code Quality**: All files pass Biome formatting and linting checks
 - **Test Coverage**: Comprehensive test suite with 26/26 tests passing consistently
+
+### Template Architecture
+- **View-Driven Titles**: Page titles are defined directly in Nunjucks templates rather than passed from controllers
+- **Separation of Concerns**: Controllers focus on data handling, views handle presentation
+- **Maintainability**: Title changes can be made directly in templates without touching controller code
+- **Consistency**: Each template owns its title and heading content
 
 ## 📝 Configuration
 
