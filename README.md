@@ -24,6 +24,7 @@ A modern Node.js TypeScript application with ES modules support.
 - **Glass Morphism Design**: Modern translucent effects with backdrop blur for contemporary aesthetics
 - **3D Kainos Logo Sphere**: Interactive 3D gradient sphere representing the 'O' in Kainos with consistent sizing
 - **Cross-Page Consistency**: Unified branding and logo implementation across all templates
+- **Template Inheritance System**: Reusable layout components with header and footer separation
 - **API Integration**: Axios-based HTTP client with fallback to mock data
 - **Dependency Injection**: Clean architecture with service layer separation
 
@@ -43,9 +44,13 @@ A modern Node.js TypeScript application with ES modules support.
 │   ├── styles/
 │   │   └── input.css     # Tailwind CSS + daisyUI imports
 │   └── views/
-│       ├── index.njk     # Home page template with daisyUI components
-│       ├── job-role-list.njk  # Job roles listing template
-│       └── error.njk     # Error page template
+│       ├── templates/
+│       │   ├── layout.njk    # Base template with common structure
+│       │   ├── header.njk    # Reusable navigation header component
+│       │   └── footer.njk    # Reusable footer component
+│       ├── index.njk         # Home page template extending base layout
+│       ├── job-role-list.njk # Job roles listing template
+│       └── error.njk         # Error page template
 ├── public/
 │   └── css/
 │       └── styles.css    # Generated Tailwind + daisyUI styles
