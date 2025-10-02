@@ -5,6 +5,25 @@
 import { describe, expect, it } from "vitest";
 import type { JobRoleResponse } from "../models/job-role-response";
 
+/**
+ * Helper function to create mock JobRoleResponse objects with customizable fields
+ * @param overrides - Object containing fields to override from the defaults
+ * @returns JobRoleResponse object with defaults applied and overrides merged
+ */
+function getMockJobRoleResponse(
+	overrides: Partial<JobRoleResponse> = {}
+): JobRoleResponse {
+	return {
+		jobRoleId: 1,
+		roleName: "Test Role",
+		location: "Test Location",
+		capability: "Test Capability",
+		band: "Senior",
+		closingDate: "2024-12-31",
+		...overrides,
+	};
+}
+
 describe("JobRoleResponse", () => {
 	it("should accept valid job role data", () => {
 		const validJobRole: JobRoleResponse = {
@@ -36,14 +55,11 @@ describe("JobRoleResponse", () => {
 		];
 
 		bands.forEach((band, index) => {
-			const jobRole: JobRoleResponse = {
+			const jobRole = getMockJobRoleResponse({
 				jobRoleId: index + 1,
 				roleName: `Test Role ${index + 1}`,
-				location: "Test Location",
-				capability: "Test Capability",
 				band,
-				closingDate: "2024-12-31",
-			};
+			});
 
 			expect(jobRole.band).toBe(band);
 		});
@@ -59,14 +75,11 @@ describe("JobRoleResponse", () => {
 		];
 
 		locations.forEach((location, index) => {
-			const jobRole: JobRoleResponse = {
+			const jobRole = getMockJobRoleResponse({
 				jobRoleId: index + 1,
 				roleName: `Test Role ${index + 1}`,
 				location,
-				capability: "Test Capability",
-				band: "Senior",
-				closingDate: "2024-12-31",
-			};
+			});
 
 			expect(jobRole.location).toBe(location);
 		});
@@ -86,14 +99,11 @@ describe("JobRoleResponse", () => {
 		];
 
 		capabilities.forEach((capability, index) => {
-			const jobRole: JobRoleResponse = {
+			const jobRole = getMockJobRoleResponse({
 				jobRoleId: index + 1,
 				roleName: `Test Role ${index + 1}`,
-				location: "Belfast",
 				capability,
-				band: "Senior",
-				closingDate: "2024-12-31",
-			};
+			});
 
 			expect(jobRole.capability).toBe(capability);
 		});
@@ -108,14 +118,11 @@ describe("JobRoleResponse", () => {
 		];
 
 		dateFormats.forEach((closingDate, index) => {
-			const jobRole: JobRoleResponse = {
+			const jobRole = getMockJobRoleResponse({
 				jobRoleId: index + 1,
 				roleName: `Test Role ${index + 1}`,
-				location: "Belfast",
-				capability: "Engineering",
-				band: "Senior",
 				closingDate,
-			};
+			});
 
 			expect(jobRole.closingDate).toBe(closingDate);
 		});
@@ -123,22 +130,20 @@ describe("JobRoleResponse", () => {
 
 	it("should create array of job roles", () => {
 		const jobRoles: JobRoleResponse[] = [
-			{
+			getMockJobRoleResponse({
 				jobRoleId: 1,
 				roleName: "Software Engineer",
 				location: "Belfast",
 				capability: "Engineering",
-				band: "Senior",
-				closingDate: "2024-12-31",
-			},
-			{
+			}),
+			getMockJobRoleResponse({
 				jobRoleId: 2,
 				roleName: "Data Analyst",
 				location: "London",
 				capability: "Data",
 				band: "Associate",
 				closingDate: "2024-11-30",
-			},
+			}),
 		];
 
 		expect(jobRoles).toHaveLength(2);

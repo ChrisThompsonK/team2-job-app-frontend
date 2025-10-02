@@ -80,18 +80,17 @@ describe("App Routes Integration", () => {
 		app = new App(testConfig);
 	});
 
-	it("should have job-roles route configured", () => {
+	it("should configure routes and server correctly", () => {
+		// Verify app instance is created properly
+		expect(app).toBeInstanceOf(App);
+
+		// Get the Express server instance
 		const server = app.getServer();
 		expect(server).toBeDefined();
 
-		// Check that the server is an Express application
+		// Verify it's a proper Express application (Express apps are functions)
 		expect(typeof server).toBe("function");
-		// Router is internal Express implementation detail, just check server exists
-	});
 
-	it("should handle route setup without errors", () => {
-		// If we get here without throwing, the routes were set up successfully
-		expect(app).toBeInstanceOf(App);
-		expect(app.getServer()).toBeDefined();
+		// If we reach here without throwing, routes were set up successfully
 	});
 });
