@@ -48,15 +48,29 @@ class App {
 	}
 
 	private async setupTemplating(): Promise<void> {
-		// Configure Nunjucks
-		const viewsPath = path.join(__dirname, "..", "src", "views");
-		nunjucks.configure(viewsPath, {
+		// Configure Nunjucks - Fix the views path to point to the correct location
+		// When running with tsx, __dirname points to src/, when compiled it points to dist/
+		const viewsPath = path.join(__dirname, "views");
+		console.log(`Templates path: ${viewsPath}`);
+
+		const env = nunjucks.configure(viewsPath, {
 			autoescape: true,
 			express: this.server,
 			watch: true, // Enable auto-reloading in development
 		});
 
-		// Templating setup complete - no additional filters needed for current premium UI
+		// Add Lucide icon filter for rendering SVG icons
+		env.addFilter(
+			"lucideIcon",
+			(iconName: string, options: { className?: string } = {}) => {
+				const className = options.className || "";
+				// Return a simple placeholder for icons since we don't have full Lucide integration
+				// In a full implementation, this would render actual SVG icons
+				return `<span class="icon ${className}" data-icon="${iconName}">🔹</span>`;
+			}
+		);
+
+		console.log("Nunjucks filters configured successfully");
 	}
 
 	private setupMiddleware(): void {
