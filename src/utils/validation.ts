@@ -17,6 +17,11 @@ export function validateJobRoleId(idString: string | undefined): number | null {
 		return null;
 	}
 
+	// Check if the trimmed string contains only digits (and optional leading zeros)
+	if (!/^\d+$/.test(trimmed)) {
+		return null;
+	}
+
 	const parsed = parseInt(trimmed, 10);
 
 	// Check if it's a valid positive integer
@@ -38,8 +43,35 @@ export function validateDateString(dateString: string): boolean {
 		return false;
 	}
 
-	const date = new Date(dateString);
-	return date instanceof Date && !Number.isNaN(date.getTime());
+	// Parse the date components manually to avoid timezone issues
+	const parts = dateString.split("-");
+	if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) {
+		return false;
+	}
+
+	const year = parseInt(parts[0], 10);
+	const month = parseInt(parts[1], 10);
+	const day = parseInt(parts[2], 10);
+
+	// Validate that all parts are valid numbers
+	if (Number.isNaN(year) || Number.isNaN(month) || Number.isNaN(day)) {
+		return false;
+	}
+
+	// Create date in UTC to avoid timezone offset issues
+	const date = new Date(Date.UTC(year, month - 1, day));
+
+	// Check if date is valid and the components match the input
+	if (date instanceof Date && !Number.isNaN(date.getTime())) {
+		// Verify that the date components match the input (catches invalid dates)
+		return (
+			date.getUTCFullYear() === year &&
+			date.getUTCMonth() === month - 1 &&
+			date.getUTCDate() === day
+		);
+	}
+
+	return false;
 }
 
 /**
