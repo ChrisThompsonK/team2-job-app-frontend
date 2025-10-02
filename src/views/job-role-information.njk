@@ -7,8 +7,8 @@
 <div class="container mx-auto px-4 py-8">
     {# Macro for status badge styling #}
     {% macro statusBadge(status) %}
-        {%- set badgeClass = 'bg-green-100 text-green-800' if status == 'Open' else ('bg-yellow-100 text-yellow-800' if status == 'Closing Soon' else 'bg-red-100 text-red-800') -%}
-        <div class="px-4 py-2 rounded-full text-sm font-semibold {{ badgeClass }}">{{ status }}</div>
+            {%- set badgeClass = 'badge-success' if status == 'Open' else ('badge-warning' if status == 'Closing Soon' else 'badge-error') -%}
+                    <div class="badge {{ badgeClass }} badge-lg">{{ status }}</div>
     {% endmacro %}
     
     <!-- Header Section -->
