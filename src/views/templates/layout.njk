@@ -7,8 +7,50 @@
     <link rel="icon" type="image/png" href="/favicon.png">
     <link href="/css/styles.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Dark mode styles */
+        .dark {
+            color-scheme: dark;
+        }
+        
+        .dark body {
+            background: linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a) !important;
+            color: #f1f5f9;
+        }
+        
+        .dark nav {
+            background-color: rgba(15, 23, 42, 0.8) !important;
+            backdrop-filter: blur(8px);
+            border-bottom-color: rgba(51, 65, 85, 0.6) !important;
+        }
+        
+        .dark nav a {
+            color: #cbd5e1 !important;
+        }
+        
+        .dark nav a:hover {
+            color: #60a5fa !important;
+        }
+        
+        .dark .bg-white {
+            background-color: #1e293b !important;
+            color: #f1f5f9 !important;
+        }
+        
+        .dark .text-slate-700, .dark .text-gray-900 {
+            color: #cbd5e1 !important;
+        }
+        
+        .dark .text-slate-600 {
+            color: #94a3b8 !important;
+        }
+        
+        .dark .border-green-500 {
+            border-color: #22c55e !important;
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 via-white to-slate-100 min-h-screen">
+<body class="bg-gradient-to-br from-slate-50 via-white to-slate-100 min-h-screen dark:bg-slate-900">
     <!-- Skip Link for Accessibility -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-md z-50 focus:z-50 transition-all duration-200">Skip to main content</a>
     
@@ -23,5 +65,87 @@
     
     <!-- Application Scripts -->
     <script src="/js/accessibility.js"></script>
+    
+    <!-- Fallback Dark Mode Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, checking for dark mode toggle...');
+        
+        // Fallback dark mode toggle in case the main script doesn't work
+        const fallbackToggle = document.getElementById('simple-dark-toggle');
+        if (fallbackToggle) {
+            console.log('Found simple dark toggle, adding fallback listener');
+            
+            // Load saved dark mode preference
+            const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (savedDarkMode) {
+                document.documentElement.classList.add('dark');
+                document.body.className = document.body.className.replace('bg-gradient-to-br from-slate-50 via-white to-slate-100', 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900');
+                
+                // Update button style to dark
+                fallbackToggle.className = 'bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm ml-4';
+                
+                // Update icon to sun
+                const icon = fallbackToggle.querySelector('i[data-lucide]');
+                if (icon) {
+                    icon.setAttribute('data-lucide', 'sun');
+                }
+            }
+            
+            fallbackToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Fallback dark toggle clicked');
+                
+                const isDark = document.documentElement.classList.contains('dark');
+                const newState = !isDark;
+                
+                console.log('Toggling dark mode:', isDark, '->', newState);
+                
+                // Toggle dark class
+                document.documentElement.classList.toggle('dark', newState);
+                
+                // Apply dark mode styles to body
+                if (newState) {
+                    document.body.className = document.body.className.replace('bg-gradient-to-br from-slate-50 via-white to-slate-100', 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900');
+                } else {
+                    document.body.className = document.body.className.replace('bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900', 'bg-gradient-to-br from-slate-50 via-white to-slate-100');
+                }
+                
+                // Save preference
+                localStorage.setItem('darkMode', newState.toString());
+                
+                // Switch header logo only
+                const headerLogo = document.querySelector('nav img[alt*="Kainos"]');
+                if (headerLogo) {
+                    if (newState) {
+                        headerLogo.src = '/kainos-dark-bg.png';
+                        headerLogo.alt = 'Kainos Logo (dark)';
+                    } else {
+                        headerLogo.src = '/KainosLogoNoBackground.png';
+                        headerLogo.alt = 'Kainos Logo';
+                    }
+                }
+                
+                // Update button icon
+                const icon = fallbackToggle.querySelector('i[data-lucide]');
+                if (icon) {
+                    icon.setAttribute('data-lucide', newState ? 'sun' : 'moon');
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }
+                
+                // Update button style
+                if (newState) {
+                    fallbackToggle.className = 'bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm ml-4';
+                } else {
+                    fallbackToggle.className = 'bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm ml-4';
+                }
+            });
+        } else {
+            console.log('Simple dark toggle not found');
+        }
+    });
+    </script>
 </body>
 </html>
