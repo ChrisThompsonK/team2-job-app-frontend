@@ -2,10 +2,18 @@
 @plugin "daisyui";
 
 /* Optimized text scaling - use inherit pattern and CSS custom properties */
-html.text-size-small { --text-scale: 0.875; }
-html.text-size-medium { --text-scale: 1; }
-html.text-size-large { --text-scale: 1.125; }
-html.text-size-xlarge { --text-scale: 1.25; }
+html.text-size-small {
+	--text-scale: 0.875;
+}
+html.text-size-medium {
+	--text-scale: 1;
+}
+html.text-size-large {
+	--text-scale: 1.125;
+}
+html.text-size-xlarge {
+	--text-scale: 1.25;
+}
 
 html[class*="text-size-"] body,
 html[class*="text-size-"] p,
@@ -40,7 +48,9 @@ html[class*="text-size-"] li {
 }
 
 /* Enhanced Focus Indicators - Optimized with grouped selectors */
-*:focus { outline: none; }
+*:focus {
+	outline: none;
+}
 
 /* Unified focus styles for interactive elements */
 button:focus,
@@ -52,7 +62,9 @@ textarea:focus {
 	outline: 3px solid #3b82f6;
 	outline-offset: 2px;
 	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-	transition: outline 0.2s ease, box-shadow 0.2s ease;
+	transition:
+		outline 0.2s ease,
+		box-shadow 0.2s ease;
 }
 
 /* Special focus for buttons with backgrounds */
@@ -63,7 +75,7 @@ button:focus:not(.text-size-btn),
 .text-size-btn:focus {
 	outline: 3px solid #ffffff;
 	outline-offset: 2px;
-	box-shadow: 
+	box-shadow:
 		0 0 0 3px rgba(255, 255, 255, 0.8),
 		0 0 0 6px rgba(59, 130, 246, 0.6);
 }
@@ -79,7 +91,7 @@ a:focus {
 .hover\:shadow-xl:focus {
 	outline: 2px solid #3b82f6;
 	outline-offset: 3px;
-	box-shadow: 
+	box-shadow:
 		0 0 0 2px rgba(59, 130, 246, 0.3),
 		0 10px 25px -3px rgba(0, 0, 0, 0.1),
 		0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -144,7 +156,12 @@ a:focus {
 .dark-mode .bg-gradient-to-br,
 .dark-mode .from-blue-600.to-green-600,
 .dark-mode .from-blue-600.via-blue-700.to-green-600 {
-	background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
+	background: linear-gradient(
+		135deg,
+		#1e293b 0%,
+		#334155 50%,
+		#475569 100%
+	) !important;
 	color: #f1f5f9 !important;
 	border: 1px solid #475569 !important;
 }
@@ -157,7 +174,12 @@ a:focus {
 }
 
 .dark-mode footer {
-	background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%) !important;
+	background: linear-gradient(
+		135deg,
+		#0f172a 0%,
+		#1e293b 50%,
+		#334155 100%
+	) !important;
 	border-top: 1px solid #334155 !important;
 }
 

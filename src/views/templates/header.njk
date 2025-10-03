@@ -13,19 +13,21 @@
             
             <!-- Navigation -->
             <div class="hidden md:flex items-center space-x-8">
-                <a href="/" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200">Home</a>
-                <a href="/job-roles" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200">Jobs</a>
-                <a href="#about" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200">About</a>
-                <a href="#contact" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200">Contact</a>
+                <nav role="navigation" aria-label="Main navigation">
+                    <a href="/" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200">Home</a>
+                    <a href="/job-roles" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 ml-8">Jobs</a>
+                    <a href="#about" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 ml-8">About</a>
+                    <a href="#contact" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 ml-8">Contact</a>
+                </nav>
                 
                 <!-- Accessibility Button -->
-                <div class="relative">
+                <div class="relative ml-8">
                     <button 
                         id="accessibility-btn"
                         class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm"
-                        aria-label="Accessibility options"
+                        aria-label="Accessibility options menu"
                         aria-expanded="false"
-                        aria-haspopup="true"
+                        aria-controls="accessibility-panel"
                     >
                         <i data-lucide="accessibility" class="w-4 h-4"></i>
                         <span class="text-sm font-medium">Accessibility</span>
@@ -34,9 +36,12 @@
                     <!-- Dropdown Panel -->
                     <div 
                         id="accessibility-panel"
-                        class="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg border border-slate-200 z-50 hidden"
-                        role="menu"
+                        class="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg border border-slate-200 z-50 hidden
+                               md:absolute md:right-0 md:top-full md:mt-2 md:w-64
+                               fixed right-4 top-20 w-80 max-w-[calc(100vw-2rem)]"
+                        role="region"
                         aria-labelledby="accessibility-btn"
+                        aria-label="Accessibility settings panel"
                     >
                         <div class="p-4">
                             <h3 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
@@ -51,16 +56,16 @@
                                     Text Size
                                 </h4>
                                 <div class="grid grid-cols-2 gap-2">
-                                    <button class="text-size-btn px-3 py-2 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition-colors focus:ring-2 focus:ring-blue-500" data-size="small">
+                                    <button class="text-size-btn px-3 py-2 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500" data-size="small">
                                         Small
                                     </button>
-                                    <button class="text-size-btn px-3 py-2 text-sm bg-blue-600 text-white rounded-md transition-colors focus:ring-2 focus:ring-blue-500 active" data-size="medium">
+                                    <button class="text-size-btn px-3 py-2 text-sm bg-blue-600 text-white rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 active" data-size="medium">
                                         Medium
                                     </button>
-                                    <button class="text-size-btn px-3 py-2 text-base bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition-colors focus:ring-2 focus:ring-blue-500" data-size="large">
+                                    <button class="text-size-btn px-3 py-2 text-base bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500" data-size="large">
                                         Large
                                     </button>
-                                    <button class="text-size-btn px-3 py-2 text-lg bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition-colors focus:ring-2 focus:ring-blue-500" data-size="xlarge">
+                                    <button class="text-size-btn px-3 py-2 text-lg bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500" data-size="xlarge">
                                         X-Large
                                     </button>
                                 </div>
@@ -76,7 +81,7 @@
                                 <!-- Dark Mode Toggle -->
                                 <button 
                                     id="dark-mode-toggle" 
-                                    class="w-full px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition-colors focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
+                                    class="w-full px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
                                     aria-pressed="false"
                                     aria-label="Toggle dark mode"
                                 >
@@ -98,16 +103,20 @@
                 <button 
                     id="accessibility-btn-mobile"
                     class="flex items-center bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    aria-label="Accessibility options"
+                    aria-label="Accessibility options menu"
                     aria-expanded="false"
-                    aria-haspopup="true"
+                    aria-controls="accessibility-panel"
                 >
                     <i data-lucide="accessibility" class="w-5 h-5"></i>
                 </button>
                 
                 <!-- Mobile Menu Button -->
-                <button class="text-slate-700 hover:text-blue-600 transition-colors duration-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button 
+                    class="text-slate-700 hover:text-blue-600 transition-colors duration-200"
+                    aria-label="Open mobile menu"
+                    aria-expanded="false"
+                >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>

@@ -3,6 +3,21 @@
  * Optimized version with reduced complexity and better maintainability
  */
 
+// Apply saved preferences immediately to prevent flash
+(function() {
+	const savedDarkMode = localStorage.getItem("darkMode") === "true";
+	const savedTextSize = localStorage.getItem("textSize") || "medium";
+	
+	if (savedDarkMode) {
+		document.documentElement.classList.add("dark-mode");
+	}
+	
+	// Remove all text size classes and apply saved one
+	const sizeClasses = ['text-size-small', 'text-size-medium', 'text-size-large', 'text-size-xlarge'];
+	document.documentElement.classList.remove(...sizeClasses);
+	document.documentElement.classList.add(`text-size-${savedTextSize}`);
+})();
+
 class AccessibilityManager {
 	constructor() {
 		this.button = document.getElementById("accessibility-btn");
@@ -30,32 +45,28 @@ class AccessibilityManager {
 			const isHidden = this.panel.classList.contains("hidden");
 			this.panel.classList.toggle("hidden", !isHidden);
 
-			// Optimized: set aria-expanded for both buttons in one operation
+			// Optimized: direct assignment with null checks instead of filtering
 			const expanded = isHidden.toString();
-			[this.button, this.mobileButton].filter(Boolean).forEach((btn) => {
-				btn.setAttribute("aria-expanded", expanded);
-			});
+			if (this.button) this.button.setAttribute("aria-expanded", expanded);
+			if (this.mobileButton) this.mobileButton.setAttribute("aria-expanded", expanded);
 		};
 
 		const closePanel = () => {
 			this.panel.classList.add("hidden");
-			// Optimized: set aria-expanded for both buttons in one operation
-			[this.button, this.mobileButton].filter(Boolean).forEach((btn) => {
-				btn.setAttribute("aria-expanded", "false");
-			});
+			// Optimized: direct assignment with null checks
+			if (this.button) this.button.setAttribute("aria-expanded", "false");
+			if (this.mobileButton) this.mobileButton.setAttribute("aria-expanded", "false");
 		};
 
-		// Event listeners - optimized delegation
-		[this.button, this.mobileButton].filter(Boolean).forEach((btn) => {
-			btn.addEventListener("click", togglePanel);
-		});
+		// Event listeners - optimized with null checks
+		if (this.button) this.button.addEventListener("click", togglePanel);
+		if (this.mobileButton) this.mobileButton.addEventListener("click", togglePanel);
 
 		// Optimized: single event listener for outside clicks and escape
 		document.addEventListener("click", (e) => {
 			const isInsidePanel = this.panel.contains(e.target);
-			const isButton = [this.button, this.mobileButton]
-				.filter(Boolean)
-				.some((btn) => btn.contains(e.target));
+			const isButton = (this.button && this.button.contains(e.target)) || 
+							 (this.mobileButton && this.mobileButton.contains(e.target));
 
 			if (!isInsidePanel && !isButton) {
 				closePanel();
@@ -92,19 +103,14 @@ class AccessibilityManager {
 		root.classList.remove(...sizeClasses);
 		root.classList.add(`text-size-${size}`);
 
-		// Optimized: batch DOM updates for button states
+		// Optimized: more efficient class management for button states
 		const buttons = document.querySelectorAll(".text-size-btn");
-		
 		buttons.forEach(btn => {
 			const isActive = btn.getAttribute("data-size") === size;
-			
-			// Optimized: use toggle with condition instead of conditional add/remove
-			btn.classList.toggle("active", isActive);
-			btn.classList.toggle("bg-blue-600", isActive);
-			btn.classList.toggle("text-white", isActive);
-			btn.classList.toggle("bg-slate-100", !isActive);
-			btn.classList.toggle("hover:bg-slate-200", !isActive);
-			btn.classList.toggle("text-slate-700", !isActive);
+			// Use className assignment for better performance with rounded corners
+			btn.className = isActive 
+				? "text-size-btn active bg-blue-600 text-white px-3 py-2 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500" 
+				: "text-size-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500";
 		});
 	}
 
@@ -157,10 +163,8 @@ class AccessibilityManager {
 			const icon = button.querySelector("i[data-lucide]");
 			if (icon) {
 				icon.setAttribute("data-lucide", enabled ? "sun" : "moon");
-				// Defer icon refresh to avoid blocking
-				requestAnimationFrame(() => {
-					if (typeof lucide !== "undefined") lucide.createIcons();
-				});
+				// Simplified icon refresh - remove unnecessary requestAnimationFrame
+				if (typeof lucide !== "undefined") lucide.createIcons();
 			}
 		}
 

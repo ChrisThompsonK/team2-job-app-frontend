@@ -22,8 +22,9 @@ describe("Accessibility Configuration", () => {
 			});
 
 			config.sizes.forEach((size) => {
-				const className = `text-size-${size}`;
-				expect(className).toMatch(/^text-size-(small|medium|large|xlarge)$/);
+				// Use actual validation instead of manual string construction
+				expect(config.sizes.includes(size)).toBe(true);
+				expect(size).toMatch(/^(small|medium|large|xlarge)$/);
 			});
 		});
 	});
@@ -74,13 +75,26 @@ describe("Accessibility Configuration", () => {
 				"keyboard-user",
 			];
 
-			Object.values(features).forEach((implemented) => {
+			// Validate all features are implemented
+			Object.entries(features).forEach(([feature, implemented]) => {
 				expect(implemented).toBe(true);
+				expect(typeof feature).toBe("string");
+				expect(feature.length).toBeGreaterThan(0);
 			});
 
-			[...storageKeys, ...cssClasses].forEach((item) => {
-				expect(typeof item).toBe("string");
-				expect(item.length).toBeGreaterThan(0);
+			// Validate storage keys are valid
+			storageKeys.forEach((key) => {
+				expect(typeof key).toBe("string");
+				expect(key.length).toBeGreaterThan(0);
+				expect(key).toMatch(/^[a-zA-Z]+$/); // Only letters, no special chars
+			});
+
+			// Validate CSS classes follow expected patterns
+			cssClasses.forEach((cssClass) => {
+				expect(typeof cssClass).toBe("string");
+				expect(cssClass.length).toBeGreaterThan(0);
+				// Check for valid CSS class naming conventions
+				expect(cssClass).toMatch(/^[a-zA-Z0-9\-:]+$/);
 			});
 		});
 	});
