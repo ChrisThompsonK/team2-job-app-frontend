@@ -3,7 +3,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<main class="pt-4">
+<main id="main-content" class="pt-4">
 <div class="container mx-auto px-4 py-8">
     <!-- Header -->
     <header class="text-center mb-12">
@@ -86,7 +86,9 @@
                 </svg>
             </a>
             
-            <button class="inline-flex items-center px-8 py-4 bg-white border-3 border-blue-600 text-blue-600 font-bold rounded-2xl shadow-lg hover:bg-blue-600 hover:text-white transform hover:-translate-y-1 transition-all duration-200 text-lg">
+            <button 
+                aria-label="Learn more about Kainos company and services"
+                class="inline-flex items-center px-8 py-4 bg-white border-3 border-blue-600 text-blue-600 font-bold rounded-2xl shadow-lg hover:bg-blue-600 hover:text-white transform hover:-translate-y-1 transition-all duration-200 text-lg">
                 Learn More About Kainos
             </button>
         </div>
