@@ -21,12 +21,55 @@
             
             <!-- Mobile Menu Button -->
             <div class="md:hidden">
-                <button class="text-slate-700 hover:text-blue-600 transition-colors duration-200">
+                <button id="mobileMenuBtn" class="text-slate-700 hover:text-blue-600 transition-colors duration-200 focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
             </div>
+        </div>
+        <!-- Mobile Dropdown Menu -->
+        <div id="mobileMenuDropdown" class="md:hidden fixed inset-0 bg-black bg-opacity-40 z-50 hidden">
+            <div class="absolute top-0 right-0 w-3/4 max-w-xs bg-white shadow-lg h-full flex flex-col py-8 px-6">
+                <button id="closeMobileMenu" class="self-end mb-8 text-slate-700 hover:text-blue-600 focus:outline-none">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <a href="/" class="block py-3 px-2 text-slate-700 hover:text-blue-600 font-medium text-lg transition-colors duration-200">Home</a>
+                <a href="/job-roles" class="block py-3 px-2 text-slate-700 hover:text-blue-600 font-medium text-lg transition-colors duration-200">Jobs</a>
+                <a href="#about" class="block py-3 px-2 text-slate-700 hover:text-blue-600 font-medium text-lg transition-colors duration-200">About</a>
+                <a href="#contact" class="block py-3 px-2 text-slate-700 hover:text-blue-600 font-medium text-lg transition-colors duration-200">Contact</a>
+            </div>
+        </div>
+</nav>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    const menuDropdown = document.getElementById('mobileMenuDropdown');
+    const closeBtn = document.getElementById('closeMobileMenu');
+    if (menuBtn && menuDropdown && closeBtn) {
+        menuBtn.addEventListener('click', function() {
+            menuDropdown.classList.remove('hidden');
+        });
+        closeBtn.addEventListener('click', function() {
+            menuDropdown.classList.add('hidden');
+        });
+        // Close menu when clicking outside the drawer
+        menuDropdown.addEventListener('click', function(e) {
+            if (e.target === menuDropdown) {
+                menuDropdown.classList.add('hidden');
+            }
+        });
+        // Close menu with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !menuDropdown.classList.contains('hidden')) {
+                menuDropdown.classList.add('hidden');
+            }
+        });
+    }
+});
+</script>
         </div>
     </div>
 </nav>

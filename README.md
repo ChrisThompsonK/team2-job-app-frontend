@@ -6,28 +6,10 @@ A modern Node.js TypeScript application with ES modules support.
 
 ## 🚀 Features
 
-- **TypeScript**: Full TypeScript support with strict type checking
-- **ES Modules**: Modern JavaScript module system
-- **tsx**: Fast TypeScript execution for development
-- **Modern Node.js**: Latest JavaScript features (ES2022)
-- **Express**: Fast, unopinionated web framework for Node.js
-- **Nunjucks**: Powerful templating engine for dynamic HTML generation
-- **Tailwind CSS 4**: Latest version of utility-first CSS framework
-- **daisyUI 5.1.26**: Beautiful UI component library built on Tailwind CSS
-- **Biome**: Ultra-fast formatter, linter, and code quality tools
-- **Vitest**: Next generation testing framework with coverage support
-- **Strict Configuration**: Comprehensive TypeScript compiler options
-- **Job Roles Management**: Comprehensive job listing with "View Details" and "Apply Now" buttons for seamless navigation and application process
-- **Kainos Brand Theme**: Custom blue, green, and white color scheme matching Kainos branding
-- **Premium UI Experience**: Enhanced home page and job roles with smooth animations and premium effects
-- **Advanced Animation System**: Shimmer effects, floating elements, staggered loading, and micro-interactions
-- **Glass Morphism Design**: Modern translucent effects with backdrop blur for contemporary aesthetics
-- **Unified Logo System**: Consistent transparent background Kainos logo across all components for clean, professional presentation
-- **Cross-Page Consistency**: Unified branding with official Kainos logo implementation across all templates
-- **Header-Footer Alignment**: Synchronized logo styling between navigation header and footer components
-- **Template Inheritance System**: Reusable layout components with header and footer separation
+**Footer Social Links**: Updated social media section with official X (formerly Twitter) SVG icon and Facebook link for consistent, modern branding
 - **API Integration**: Axios-based HTTP client with fallback to mock data
 - **Dependency Injection**: Clean architecture with service layer separation
+- **Admin Job Role Management**: UI interface for adding new job roles with comprehensive form validation (backend integration pending)
 
 ## 📦 Project Structure
 ```
@@ -204,24 +186,38 @@ The application includes a comprehensive job roles management system:
 - **View-Based Titles**: Page titles are defined directly in templates for better maintainability
 
 ### Features
-- Display job roles with role name, location, capability, band, and closing date
-- **Dual Action Buttons**: Each job role card features both "View Details" (secondary style) and "Apply Now" (primary gradient) buttons for complete user workflow
-- **Seamless Navigation**: "View Details" button links to individual job role information pages (`/job-roles/{id}`) with proper routing
-- **Kainos Brand Identity**: Professional theme with navy blue (#2E4374), green (#8BC34A), and white colors
-- **Official Logo Integration**: Consistent Kainos brand logo across homepage, job roles pages, header, and footer
-- **Advanced Animation System**: Smooth CSS animations with staggered loading, floating elements, and pulse effects
-- **Interactive UI Elements**: Enhanced hover effects with scale transforms, gradient backgrounds, and cubic-bezier transitions
-- **Premium Visual Effects**: Shimmer animations, glass morphism, glow effects, and 3D button interactions
-- **Micro-Interactions**: Icon rotations, badge ripple effects, card lift animations, and smooth color transitions
-- **Cross-Template Consistency**: Unified styling and branding between index.njk and job-role-list.njk
-- Responsive card-based layout with **Lucide SVG icons** and badges plus custom Kainos styling and rounded corners
-- **Enhanced Visual Design**: Custom animated icons with color-coded gradient backgrounds and premium branded buttons
-- **Staggered Animations**: Cards appear with sequential timing for smooth loading experience
-- **Button Visibility**: Fixed contrast issues ensuring all interactive elements are clearly visible
-- **JSON Data Source**: Comprehensive job roles data loaded from JSON file
-- Automatic fallback to mock data when API is unavailable
-- Error handling with user-friendly error pages styled to match Kainos branding
-- Beautiful UI combining daisyUI components with Lucide icons and custom advanced CSS animations and effects
+
+### Footer Social Media Icons
+
+The footer now features:
+- An official X (formerly Twitter) SVG icon for the Kainos account
+- Facebook and LinkedIn SVG icons, all styled for visual consistency
+- All icons are inline SVGs for crisp rendering and accessibility
+- Links:
+  - [X (formerly Twitter)](https://x.com/KainosSoftware)
+  - [Facebook](https://facebook.com/KainosSoftware)
+  - [LinkedIn](https://uk.linkedin.com/company/kainos)
+
+Display job roles with role name, location, capability, band, and closing date
+**Admin Add Job Role Interface**: Modal-based form for adding new job roles with essential fields (job role name, job spec summary, SharePoint link, responsibilities, number of open positions, location, closing date). Currently UI-only with backend integration pending.
+**Dual Action Buttons**: Each job role card features both "View Details" (secondary style) and "Apply Now" (primary gradient) buttons for complete user workflow
+**Seamless Navigation**: "View Details" button links to individual job role information pages (`/job-roles/{id}`) with proper routing
+**Kainos Brand Identity**: Professional theme with navy blue (#2E4374), green (#8BC34A), and white colors
+**Official Logo Integration**: Consistent Kainos brand logo across homepage, job roles pages, header, and footer
+**Advanced Animation System**: Smooth CSS animations with staggered loading, floating elements, and pulse effects
+**Interactive UI Elements**: Enhanced hover effects with scale transforms, gradient backgrounds, and cubic-bezier transitions
+**Premium Visual Effects**: Shimmer animations, glass morphism, glow effects, and 3D button interactions
+**Micro-Interactions**: Icon rotations, badge ripple effects, card lift animations, and smooth color transitions
+**Cross-Template Consistency**: Unified styling and branding between index.njk and job-role-list.njk
+Responsive card-based layout with **Lucide SVG icons** and badges plus custom Kainos styling and rounded corners
+**Enhanced Visual Design**: Custom animated icons with color-coded gradient backgrounds and premium branded buttons
+**Staggered Animations**: Cards appear with sequential timing for smooth loading experience
+**Button Visibility**: Fixed contrast issues ensuring all interactive elements are clearly visible
+**JSON Data Source**: Comprehensive job roles data loaded from JSON file
+**Admin Role Management**: Add new job roles through intuitive modal interface with form validation and responsive design
+Automatic fallback to mock data when API is unavailable
+Error handling with user-friendly error pages styled to match Kainos branding
+Beautiful UI combining daisyUI components with Lucide icons and custom advanced CSS animations and effects
 
 ### Data Management
 - **Primary Data**: JSON file (`src/data/job-roles.json`) with 12 diverse job roles
