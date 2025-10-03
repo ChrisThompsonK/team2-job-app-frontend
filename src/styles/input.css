@@ -1,15 +1,74 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-/* Accessibility Panel Mobile Positioning */
+/* Text Size Classes */
+:root {
+	--text-scale: 1;
+}
+
+.text-size-small {
+	--text-scale: 0.875;
+}
+
+.text-size-medium {
+	--text-scale: 1;
+}
+
+.text-size-large {
+	--text-scale: 1.125;
+}
+
+.text-size-xlarge {
+	--text-scale: 1.25;
+}
+
+/* Apply text scaling to content - using higher specificity instead of !important */
+html.text-size-small body,
+html.text-size-small p,
+html.text-size-small span,
+html.text-size-small div,
+html.text-size-small a,
+html.text-size-small li {
+	font-size: calc(1rem * 0.875);
+}
+
+html.text-size-large body,
+html.text-size-large p,
+html.text-size-large span,
+html.text-size-large div,
+html.text-size-large a,
+html.text-size-large li {
+	font-size: calc(1rem * 1.125);
+}
+
+html.text-size-xlarge body,
+html.text-size-xlarge p,
+html.text-size-xlarge span,
+html.text-size-xlarge div,
+html.text-size-xlarge a,
+html.text-size-xlarge li {
+	font-size: calc(1rem * 1.25);
+}
+
+/* Active button styling - using higher specificity */
+#accessibility-panel .text-size-btn.active {
+	background-color: #2563eb;
+	color: white;
+}
+
+#accessibility-panel .text-size-btn.active:hover {
+	background-color: #1d4ed8;
+}
+
+/* Accessibility Panel Mobile Positioning - using higher specificity */
 @media (max-width: 768px) {
-  #accessibility-panel {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translate(-50%, -50%) !important;
-    width: 90vw !important;
-    max-width: 320px !important;
-  }
+	body #accessibility-panel {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		right: auto;
+		transform: translate(-50%, -50%);
+		width: 90vw;
+		max-width: 320px;
+	}
 }
