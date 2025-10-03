@@ -67,7 +67,7 @@ This guide provides step-by-step instructions for manually testing all accessibi
 - **Expected**: Same accessibility panel opens
 - **Verify** all features work on mobile
 
-## � WCAG 2.1 AA Compliance Testing
+## 📝 WCAG 2.1 AA Compliance Testing
 
 ### **Quick Compliance Check**
 - ✅ **Bypass Blocks**: Skip links work
