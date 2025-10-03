@@ -13,6 +13,9 @@ function initAccessibilityButton() {
 	// Initialize text size controls
 	initTextSizeControls();
 
+	// Initialize high contrast controls
+	initHighContrastControls();
+
 	// Toggle panel on button click
 	function togglePanel(event) {
 		event.preventDefault();
@@ -122,6 +125,64 @@ function updateActiveButton(activeSize) {
 			);
 		}
 	});
+}
+
+function initHighContrastControls() {
+	const contrastButton = document.getElementById("high-contrast-toggle");
+	const contrastStatus = document.getElementById("contrast-status");
+
+	if (!contrastButton || !contrastStatus) return;
+
+	// Load saved high contrast preference
+	const savedContrast = localStorage.getItem("highContrast") === "true";
+	applyHighContrast(savedContrast);
+	updateContrastButton(savedContrast);
+
+	// Add click event listener
+	contrastButton.addEventListener("click", function (event) {
+		event.preventDefault();
+		const currentContrast = document.documentElement.classList.contains("high-contrast");
+		const newContrast = !currentContrast;
+		
+		applyHighContrast(newContrast);
+		updateContrastButton(newContrast);
+		
+		// Save preference
+		localStorage.setItem("highContrast", newContrast.toString());
+	});
+}
+
+function applyHighContrast(enabled) {
+	if (enabled) {
+		document.documentElement.classList.add("high-contrast");
+	} else {
+		document.documentElement.classList.remove("high-contrast");
+	}
+}
+
+function updateContrastButton(enabled) {
+	const contrastButton = document.getElementById("high-contrast-toggle");
+	const contrastStatus = document.getElementById("contrast-status");
+
+	if (!contrastButton || !contrastStatus) return;
+
+	contrastButton.setAttribute("aria-pressed", enabled.toString());
+	
+	if (enabled) {
+		// Active state
+		contrastButton.classList.remove("bg-slate-100", "hover:bg-slate-200", "text-slate-700");
+		contrastButton.classList.add("bg-yellow-400", "text-black", "font-bold");
+		contrastStatus.textContent = "On";
+		contrastStatus.classList.remove("text-slate-500");
+		contrastStatus.classList.add("text-black", "font-bold");
+	} else {
+		// Inactive state
+		contrastButton.classList.remove("bg-yellow-400", "text-black", "font-bold");
+		contrastButton.classList.add("bg-slate-100", "hover:bg-slate-200", "text-slate-700");
+		contrastStatus.textContent = "Off";
+		contrastStatus.classList.remove("text-black", "font-bold");
+		contrastStatus.classList.add("text-slate-500");
+	}
 }
 
 // Initialize when DOM is ready
