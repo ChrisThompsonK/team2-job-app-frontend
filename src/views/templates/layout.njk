@@ -13,5 +13,16 @@
     {% block content %}{% endblock %}
     
     {% include "templates/footer.njk" %}
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        // Initialize Lucide icons when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+        } else {
+            lucide.createIcons();
+        }
+    </script>
 </body>
 </html>
