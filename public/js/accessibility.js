@@ -142,7 +142,7 @@ function initHighContrastControls() {
 	updateContrastButton(savedContrast);
 
 	// Add click event listener
-	contrastButton.addEventListener("click", function (event) {
+	contrastButton.addEventListener("click", (event) => {
 		event.preventDefault();
 		const currentContrast = document.documentElement.classList.contains("high-contrast");
 		const newContrast = !currentContrast;
@@ -200,7 +200,7 @@ function initDarkModeControls() {
 	updateDarkModeButton(savedDarkMode);
 
 	// Add click event listener
-	darkModeButton.addEventListener("click", function (event) {
+	darkModeButton.addEventListener("click", (event) => {
 		event.preventDefault();
 		const currentDarkMode = document.documentElement.classList.contains("dark-mode");
 		const newDarkMode = !currentDarkMode;

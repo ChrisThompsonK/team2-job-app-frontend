@@ -20,7 +20,7 @@ function handleOnClickButtons() {
 	
 	onClickButtons.forEach(button => {
 		// Add keyboard event listener for Enter and Space keys
-		button.addEventListener('keydown', function(event) {
+		button.addEventListener('keydown', (event) => {
 			// Check if Enter (13) or Space (32) was pressed
 			if (event.key === 'Enter' || event.key === ' ') {
 				event.preventDefault();
@@ -42,7 +42,7 @@ function handleButtonRoles() {
 	
 	buttonRoles.forEach(element => {
 		// Add keyboard event listener
-		element.addEventListener('keydown', function(event) {
+		element.addEventListener('keydown', (event) => {
 			if (event.key === 'Enter' || event.key === ' ') {
 				event.preventDefault();
 				// Trigger a click event
@@ -70,7 +70,7 @@ function handleGeneralKeyboardEnhancements() {
 			card.setAttribute('role', 'link');
 			card.setAttribute('aria-label', link.getAttribute('aria-label') || link.textContent.trim());
 			
-			card.addEventListener('keydown', function(event) {
+			card.addEventListener('keydown', (event) => {
 				if (event.key === 'Enter') {
 					event.preventDefault();
 					link.click();
@@ -92,21 +92,21 @@ function handleGeneralKeyboardEnhancements() {
 // Add visual feedback for keyboard users
 function addKeyboardFeedback() {
 	// Add a subtle visual indicator for keyboard users
-	document.addEventListener('keydown', function(event) {
+	document.addEventListener('keydown', (event) => {
 		if (event.key === 'Tab') {
 			document.body.classList.add('keyboard-user');
 		}
 	});
 	
 	// Remove the indicator if mouse is used
-	document.addEventListener('mousedown', function() {
+	document.addEventListener('mousedown', () => {
 		document.body.classList.remove('keyboard-user');
 	});
 }
 
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
-	document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('DOMContentLoaded', () => {
 		initKeyboardAccessibility();
 		addKeyboardFeedback();
 	});
