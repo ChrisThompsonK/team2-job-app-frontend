@@ -96,13 +96,6 @@ class AccessibilityManager {
 	}
 
 	setupToggleControls() {
-		this.setupToggle("high-contrast", {
-			storageKey: "highContrast",
-			className: "high-contrast",
-			activeClasses: ["bg-yellow-400", "text-black", "font-bold"],
-			inactiveClasses: ["bg-slate-100", "hover:bg-slate-200", "text-slate-700"]
-		});
-
 		this.setupToggle("dark-mode", {
 			storageKey: "darkMode",
 			className: "dark-mode",
@@ -157,11 +150,7 @@ class AccessibilityManager {
 		}
 
 		// Update status styles
-		if (type === 'high-contrast') {
-			status.classList.toggle("text-black", enabled);
-			status.classList.toggle("font-bold", enabled);
-			status.classList.toggle("text-slate-500", !enabled);
-		} else if (type === 'dark-mode') {
+		if (type === 'dark-mode') {
 			status.classList.toggle("text-slate-300", enabled);
 			status.classList.toggle("font-medium", enabled);
 			status.classList.toggle("text-slate-500", !enabled);
@@ -232,13 +221,6 @@ class AccessibilityManager {
 			inactiveClasses: ["bg-slate-100", "hover:bg-slate-200", "text-slate-700"],
 			hasIcon: true
 		}, darkMode);
-
-		const highContrast = localStorage.getItem("highContrast") === "true";
-		this.applyToggle("high-contrast", {
-			className: "high-contrast",
-			activeClasses: ["bg-yellow-400", "text-black", "font-bold"],
-			inactiveClasses: ["bg-slate-100", "hover:bg-slate-200", "text-slate-700"]
-		}, highContrast);
 	}
 }
 
