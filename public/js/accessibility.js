@@ -1,271 +1,250 @@
 /**
- * Simple Accessibility Button Functionality
- * Handles basic show/hide panel functionality and text sizing
+ * Consolidated Accessibility Features
+ * Optimized version with reduced complexity and better maintainability
  */
 
-function initAccessibilityButton() {
-	const button = document.getElementById("accessibility-btn");
-	const panel = document.getElementById("accessibility-panel");
-	const mobileButton = document.getElementById("accessibility-btn-mobile");
-
-	if (!button || !panel) return;
-
-	// Initialize text size controls
-	initTextSizeControls();
-
-	// Initialize high contrast controls
-	initHighContrastControls();
-
-	// Initialize dark mode controls
-	initDarkModeControls();
-
-	// Toggle panel on button click
-	function togglePanel(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		const isHidden = panel.classList.contains("hidden");
-
-		if (isHidden) {
-			panel.classList.remove("hidden");
-			button.setAttribute("aria-expanded", "true");
-			if (mobileButton) mobileButton.setAttribute("aria-expanded", "true");
-		} else {
-			panel.classList.add("hidden");
-			button.setAttribute("aria-expanded", "false");
-			if (mobileButton) mobileButton.setAttribute("aria-expanded", "false");
-		}
+class AccessibilityManager {
+	constructor() {
+		this.button = document.getElementById("accessibility-btn");
+		this.panel = document.getElementById("accessibility-panel");
+		this.mobileButton = document.getElementById("accessibility-btn-mobile");
+		
+		this.init();
 	}
 
-	// Close panel when clicking outside
-	function closePanel() {
-		panel.classList.add("hidden");
-		button.setAttribute("aria-expanded", "false");
-		if (mobileButton) mobileButton.setAttribute("aria-expanded", "false");
+	init() {
+		if (!this.button || !this.panel) return;
+
+		this.setupPanelToggle();
+		this.setupTextSize();
+		this.setupToggleControls();
+		this.setupKeyboardEnhancements();
+		this.loadSavedPreferences();
 	}
 
-	// Event listeners
-	button.addEventListener("click", togglePanel);
-	if (mobileButton) mobileButton.addEventListener("click", togglePanel);
-
-	// Close when clicking outside
-	document.addEventListener("click", (event) => {
-		if (
-			!button.contains(event.target) &&
-			!panel.contains(event.target) &&
-			(!mobileButton || !mobileButton.contains(event.target))
-		) {
-			closePanel();
-		}
-	});
-
-	// Close on Escape key
-	document.addEventListener("keydown", (event) => {
-		if (event.key === "Escape" && !panel.classList.contains("hidden")) {
-			closePanel();
-			button.focus();
-		}
-	});
-}
-
-function initTextSizeControls() {
-	const textSizeButtons = document.querySelectorAll(".text-size-btn");
-
-	// Load saved text size preference
-	const savedSize = localStorage.getItem("textSize") || "medium";
-	applyTextSize(savedSize);
-	updateActiveButton(savedSize);
-
-	textSizeButtons.forEach((button) => {
-		button.addEventListener("click", function (event) {
+	setupPanelToggle() {
+		const togglePanel = (event) => {
 			event.preventDefault();
-			const size = this.getAttribute("data-size");
-			applyTextSize(size);
-			updateActiveButton(size);
+			event.stopPropagation();
+			
+			const isHidden = this.panel.classList.contains("hidden");
+			this.panel.classList.toggle("hidden", !isHidden);
+			
+			const expanded = isHidden.toString();
+			this.button.setAttribute("aria-expanded", expanded);
+			if (this.mobileButton) this.mobileButton.setAttribute("aria-expanded", expanded);
+		};
 
-			// Save preference
-			localStorage.setItem("textSize", size);
+		const closePanel = () => {
+			this.panel.classList.add("hidden");
+			this.button.setAttribute("aria-expanded", "false");
+			if (this.mobileButton) this.mobileButton.setAttribute("aria-expanded", "false");
+		};
+
+		// Event listeners
+		this.button.addEventListener("click", togglePanel);
+		if (this.mobileButton) this.mobileButton.addEventListener("click", togglePanel);
+
+		// Close on outside click or escape
+		document.addEventListener("click", (e) => {
+			if (!this.button.contains(e.target) && !this.panel.contains(e.target) && 
+				(!this.mobileButton || !this.mobileButton.contains(e.target))) {
+				closePanel();
+			}
 		});
-	});
-}
 
-function applyTextSize(size) {
-	// Remove all text size classes
-	document.documentElement.classList.remove(
-		"text-size-small",
-		"text-size-medium",
-		"text-size-large",
-		"text-size-xlarge"
-	);
+		document.addEventListener("keydown", (e) => {
+			if (e.key === "Escape" && !this.panel.classList.contains("hidden")) {
+				closePanel();
+				this.button.focus();
+			}
+		});
+	}
 
-	// Add the selected size class
-	document.documentElement.classList.add(`text-size-${size}`);
-}
+	setupTextSize() {
+		const buttons = document.querySelectorAll(".text-size-btn");
+		
+		buttons.forEach(button => {
+			button.addEventListener("click", (e) => {
+				e.preventDefault();
+				const size = button.getAttribute("data-size");
+				this.applyTextSize(size);
+				localStorage.setItem("textSize", size);
+			});
+		});
+	}
 
-function updateActiveButton(activeSize) {
-	const textSizeButtons = document.querySelectorAll(".text-size-btn");
+	applyTextSize(size) {
+		// Remove all text size classes efficiently
+		const sizeClasses = ['text-size-small', 'text-size-medium', 'text-size-large', 'text-size-xlarge'];
+		document.documentElement.classList.remove(...sizeClasses);
+		document.documentElement.classList.add(`text-size-${size}`);
 
-	textSizeButtons.forEach((button) => {
-		const buttonSize = button.getAttribute("data-size");
+		// Update active button
+		document.querySelectorAll(".text-size-btn").forEach(btn => {
+			const isActive = btn.getAttribute("data-size") === size;
+			btn.classList.toggle("active", isActive);
+			
+			if (isActive) {
+				btn.classList.remove("bg-slate-100", "hover:bg-slate-200", "text-slate-700");
+				btn.classList.add("bg-blue-600", "text-white");
+			} else {
+				btn.classList.remove("bg-blue-600", "text-white");
+				btn.classList.add("bg-slate-100", "hover:bg-slate-200", "text-slate-700");
+			}
+		});
+	}
 
-		if (buttonSize === activeSize) {
-			// Active button
-			button.classList.add("active");
-			button.classList.remove(
-				"bg-slate-100",
-				"hover:bg-slate-200",
-				"text-slate-700"
-			);
-			button.classList.add("bg-blue-600", "text-white");
+	setupToggleControls() {
+		this.setupToggle("high-contrast", {
+			storageKey: "highContrast",
+			className: "high-contrast",
+			activeClasses: ["bg-yellow-400", "text-black", "font-bold"],
+			inactiveClasses: ["bg-slate-100", "hover:bg-slate-200", "text-slate-700"]
+		});
+
+		this.setupToggle("dark-mode", {
+			storageKey: "darkMode",
+			className: "dark-mode",
+			activeClasses: ["bg-slate-800", "text-white", "font-medium"],
+			inactiveClasses: ["bg-slate-100", "hover:bg-slate-200", "text-slate-700"],
+			hasIcon: true
+		});
+	}
+
+	setupToggle(type, config) {
+		const button = document.getElementById(`${type}-toggle`);
+		const status = document.getElementById(`${type.replace('-', '-')}-status`);
+		
+		if (!button || !status) return;
+
+		button.addEventListener("click", (e) => {
+			e.preventDefault();
+			const isEnabled = document.documentElement.classList.contains(config.className);
+			const newState = !isEnabled;
+			
+			this.applyToggle(type, config, newState);
+			localStorage.setItem(config.storageKey, newState.toString());
+		});
+	}
+
+	applyToggle(type, config, enabled) {
+		const button = document.getElementById(`${type}-toggle`);
+		const status = document.getElementById(`${type.replace('-', '-')}-status`);
+		
+		// Apply/remove main class
+		document.documentElement.classList.toggle(config.className, enabled);
+		button.setAttribute("aria-pressed", enabled.toString());
+		
+		// Update button appearance
+		if (enabled) {
+			button.classList.remove(...config.inactiveClasses);
+			button.classList.add(...config.activeClasses);
+			status.textContent = "On";
 		} else {
-			// Inactive button
-			button.classList.remove("active");
-			button.classList.remove("bg-blue-600", "text-white");
-			button.classList.add(
-				"bg-slate-100",
-				"hover:bg-slate-200",
-				"text-slate-700"
-			);
+			button.classList.remove(...config.activeClasses);
+			button.classList.add(...config.inactiveClasses);
+			status.textContent = "Off";
 		}
-	});
-}
 
-function initHighContrastControls() {
-	const contrastButton = document.getElementById("high-contrast-toggle");
-	const contrastStatus = document.getElementById("contrast-status");
-
-	if (!contrastButton || !contrastStatus) return;
-
-	// Load saved high contrast preference
-	const savedContrast = localStorage.getItem("highContrast") === "true";
-	applyHighContrast(savedContrast);
-	updateContrastButton(savedContrast);
-
-	// Add click event listener
-	contrastButton.addEventListener("click", (event) => {
-		event.preventDefault();
-		const currentContrast = document.documentElement.classList.contains("high-contrast");
-		const newContrast = !currentContrast;
-		
-		applyHighContrast(newContrast);
-		updateContrastButton(newContrast);
-		
-		// Save preference
-		localStorage.setItem("highContrast", newContrast.toString());
-	});
-}
-
-function applyHighContrast(enabled) {
-	if (enabled) {
-		document.documentElement.classList.add("high-contrast");
-	} else {
-		document.documentElement.classList.remove("high-contrast");
-	}
-}
-
-function updateContrastButton(enabled) {
-	const contrastButton = document.getElementById("high-contrast-toggle");
-	const contrastStatus = document.getElementById("contrast-status");
-
-	if (!contrastButton || !contrastStatus) return;
-
-	contrastButton.setAttribute("aria-pressed", enabled.toString());
-	
-	if (enabled) {
-		// Active state
-		contrastButton.classList.remove("bg-slate-100", "hover:bg-slate-200", "text-slate-700");
-		contrastButton.classList.add("bg-yellow-400", "text-black", "font-bold");
-		contrastStatus.textContent = "On";
-		contrastStatus.classList.remove("text-slate-500");
-		contrastStatus.classList.add("text-black", "font-bold");
-	} else {
-		// Inactive state
-		contrastButton.classList.remove("bg-yellow-400", "text-black", "font-bold");
-		contrastButton.classList.add("bg-slate-100", "hover:bg-slate-200", "text-slate-700");
-		contrastStatus.textContent = "Off";
-		contrastStatus.classList.remove("text-black", "font-bold");
-		contrastStatus.classList.add("text-slate-500");
-	}
-}
-
-function initDarkModeControls() {
-	const darkModeButton = document.getElementById("dark-mode-toggle");
-	const darkModeStatus = document.getElementById("dark-mode-status");
-
-	if (!darkModeButton || !darkModeStatus) return;
-
-	// Load saved dark mode preference
-	const savedDarkMode = localStorage.getItem("darkMode") === "true";
-	applyDarkMode(savedDarkMode);
-	updateDarkModeButton(savedDarkMode);
-
-	// Add click event listener
-	darkModeButton.addEventListener("click", (event) => {
-		event.preventDefault();
-		const currentDarkMode = document.documentElement.classList.contains("dark-mode");
-		const newDarkMode = !currentDarkMode;
-		
-		applyDarkMode(newDarkMode);
-		updateDarkModeButton(newDarkMode);
-		
-		// Save preference
-		localStorage.setItem("darkMode", newDarkMode.toString());
-	});
-}
-
-function applyDarkMode(enabled) {
-	if (enabled) {
-		document.documentElement.classList.add("dark-mode");
-	} else {
-		document.documentElement.classList.remove("dark-mode");
-	}
-}
-
-function updateDarkModeButton(enabled) {
-	const darkModeButton = document.getElementById("dark-mode-toggle");
-	const darkModeStatus = document.getElementById("dark-mode-status");
-
-	if (!darkModeButton || !darkModeStatus) return;
-
-	darkModeButton.setAttribute("aria-pressed", enabled.toString());
-	
-	if (enabled) {
-		// Active state
-		darkModeButton.classList.remove("bg-slate-100", "hover:bg-slate-200", "text-slate-700");
-		darkModeButton.classList.add("bg-slate-800", "text-white", "font-medium");
-		darkModeStatus.textContent = "On";
-		darkModeStatus.classList.remove("text-slate-500");
-		darkModeStatus.classList.add("text-slate-300", "font-medium");
-		
-		// Update icon to sun when dark mode is on
-		const icon = darkModeButton.querySelector('i[data-lucide]');
-		if (icon) {
-			icon.setAttribute('data-lucide', 'sun');
+		// Handle icon changes for dark mode
+		if (config.hasIcon) {
+			const icon = button.querySelector('i[data-lucide]');
+			if (icon) {
+				icon.setAttribute('data-lucide', enabled ? 'sun' : 'moon');
+				if (typeof lucide !== 'undefined') lucide.createIcons();
+			}
 		}
-	} else {
-		// Inactive state
-		darkModeButton.classList.remove("bg-slate-800", "text-white", "font-medium");
-		darkModeButton.classList.add("bg-slate-100", "hover:bg-slate-200", "text-slate-700");
-		darkModeStatus.textContent = "Off";
-		darkModeStatus.classList.remove("text-slate-300", "font-medium");
-		darkModeStatus.classList.add("text-slate-500");
-		
-		// Update icon to moon when dark mode is off
-		const icon = darkModeButton.querySelector('i[data-lucide]');
-		if (icon) {
-			icon.setAttribute('data-lucide', 'moon');
+
+		// Update status styles
+		if (type === 'high-contrast') {
+			status.classList.toggle("text-black", enabled);
+			status.classList.toggle("font-bold", enabled);
+			status.classList.toggle("text-slate-500", !enabled);
+		} else if (type === 'dark-mode') {
+			status.classList.toggle("text-slate-300", enabled);
+			status.classList.toggle("font-medium", enabled);
+			status.classList.toggle("text-slate-500", !enabled);
 		}
 	}
-	
-	// Reinitialize lucide icons to show the new icon
-	if (typeof lucide !== 'undefined') {
-		lucide.createIcons();
+
+	setupKeyboardEnhancements() {
+		// Add keyboard support for onclick buttons and role="button" elements
+		const interactiveElements = document.querySelectorAll('button[onclick], [role="button"]:not(button)');
+		
+		interactiveElements.forEach(element => {
+			element.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					element.click();
+				}
+			});
+			
+			if (!element.hasAttribute('tabindex')) {
+				element.setAttribute('tabindex', '0');
+			}
+		});
+
+		// Keyboard user feedback
+		let isKeyboardUser = false;
+		
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Tab' && !isKeyboardUser) {
+				isKeyboardUser = true;
+				document.body.classList.add('keyboard-user');
+			}
+		});
+		
+		document.addEventListener('mousedown', () => {
+			if (isKeyboardUser) {
+				isKeyboardUser = false;
+				document.body.classList.remove('keyboard-user');
+			}
+		});
+
+		// Make interactive cards accessible
+		document.querySelectorAll('.hover\\:shadow-lg, .hover\\:shadow-xl').forEach(card => {
+			const link = card.querySelector('a[href]');
+			if (link) {
+				card.setAttribute('tabindex', '0');
+				card.setAttribute('role', 'link');
+				card.setAttribute('aria-label', link.getAttribute('aria-label') || link.textContent.trim());
+				
+				card.addEventListener('keydown', (e) => {
+					if (e.key === 'Enter') {
+						e.preventDefault();
+						link.click();
+					}
+				});
+			}
+		});
+	}
+
+	loadSavedPreferences() {
+		// Load and apply saved preferences
+		const textSize = localStorage.getItem("textSize") || "medium";
+		this.applyTextSize(textSize);
+
+		const darkMode = localStorage.getItem("darkMode") === "true";
+		this.applyToggle("dark-mode", {
+			className: "dark-mode",
+			activeClasses: ["bg-slate-800", "text-white", "font-medium"],
+			inactiveClasses: ["bg-slate-100", "hover:bg-slate-200", "text-slate-700"],
+			hasIcon: true
+		}, darkMode);
+
+		const highContrast = localStorage.getItem("highContrast") === "true";
+		this.applyToggle("high-contrast", {
+			className: "high-contrast",
+			activeClasses: ["bg-yellow-400", "text-black", "font-bold"],
+			inactiveClasses: ["bg-slate-100", "hover:bg-slate-200", "text-slate-700"]
+		}, highContrast);
 	}
 }
 
 // Initialize when DOM is ready
 if (document.readyState === "loading") {
-	document.addEventListener("DOMContentLoaded", initAccessibilityButton);
+	document.addEventListener("DOMContentLoaded", () => new AccessibilityManager());
 } else {
-	initAccessibilityButton();
+	new AccessibilityManager();
 }
