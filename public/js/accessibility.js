@@ -16,6 +16,9 @@ function initAccessibilityButton() {
 	// Initialize high contrast controls
 	initHighContrastControls();
 
+	// Initialize dark mode controls
+	initDarkModeControls();
+
 	// Toggle panel on button click
 	function togglePanel(event) {
 		event.preventDefault();
@@ -182,6 +185,81 @@ function updateContrastButton(enabled) {
 		contrastStatus.textContent = "Off";
 		contrastStatus.classList.remove("text-black", "font-bold");
 		contrastStatus.classList.add("text-slate-500");
+	}
+}
+
+function initDarkModeControls() {
+	const darkModeButton = document.getElementById("dark-mode-toggle");
+	const darkModeStatus = document.getElementById("dark-mode-status");
+
+	if (!darkModeButton || !darkModeStatus) return;
+
+	// Load saved dark mode preference
+	const savedDarkMode = localStorage.getItem("darkMode") === "true";
+	applyDarkMode(savedDarkMode);
+	updateDarkModeButton(savedDarkMode);
+
+	// Add click event listener
+	darkModeButton.addEventListener("click", function (event) {
+		event.preventDefault();
+		const currentDarkMode = document.documentElement.classList.contains("dark-mode");
+		const newDarkMode = !currentDarkMode;
+		
+		applyDarkMode(newDarkMode);
+		updateDarkModeButton(newDarkMode);
+		
+		// Save preference
+		localStorage.setItem("darkMode", newDarkMode.toString());
+	});
+}
+
+function applyDarkMode(enabled) {
+	if (enabled) {
+		document.documentElement.classList.add("dark-mode");
+	} else {
+		document.documentElement.classList.remove("dark-mode");
+	}
+}
+
+function updateDarkModeButton(enabled) {
+	const darkModeButton = document.getElementById("dark-mode-toggle");
+	const darkModeStatus = document.getElementById("dark-mode-status");
+
+	if (!darkModeButton || !darkModeStatus) return;
+
+	darkModeButton.setAttribute("aria-pressed", enabled.toString());
+	
+	if (enabled) {
+		// Active state
+		darkModeButton.classList.remove("bg-slate-100", "hover:bg-slate-200", "text-slate-700");
+		darkModeButton.classList.add("bg-slate-800", "text-white", "font-medium");
+		darkModeStatus.textContent = "On";
+		darkModeStatus.classList.remove("text-slate-500");
+		darkModeStatus.classList.add("text-slate-300", "font-medium");
+		
+		// Update icon to sun when dark mode is on
+		const icon = darkModeButton.querySelector('i[data-lucide]');
+		if (icon) {
+			icon.setAttribute('data-lucide', 'sun');
+		}
+	} else {
+		// Inactive state
+		darkModeButton.classList.remove("bg-slate-800", "text-white", "font-medium");
+		darkModeButton.classList.add("bg-slate-100", "hover:bg-slate-200", "text-slate-700");
+		darkModeStatus.textContent = "Off";
+		darkModeStatus.classList.remove("text-slate-300", "font-medium");
+		darkModeStatus.classList.add("text-slate-500");
+		
+		// Update icon to moon when dark mode is off
+		const icon = darkModeButton.querySelector('i[data-lucide]');
+		if (icon) {
+			icon.setAttribute('data-lucide', 'moon');
+		}
+	}
+	
+	// Reinitialize lucide icons to show the new icon
+	if (typeof lucide !== 'undefined') {
+		lucide.createIcons();
 	}
 }
 
