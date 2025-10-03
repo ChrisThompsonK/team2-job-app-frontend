@@ -1,53 +1,19 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-/* Text Size Classes */
-:root {
-	--text-scale: 1;
-}
+/* Optimized text scaling - use inherit pattern and CSS custom properties */
+html.text-size-small { --text-scale: 0.875; }
+html.text-size-medium { --text-scale: 1; }
+html.text-size-large { --text-scale: 1.125; }
+html.text-size-xlarge { --text-scale: 1.25; }
 
-.text-size-small {
-	--text-scale: 0.875;
-}
-
-.text-size-medium {
-	--text-scale: 1;
-}
-
-.text-size-large {
-	--text-scale: 1.125;
-}
-
-.text-size-xlarge {
-	--text-scale: 1.25;
-}
-
-/* Apply text scaling to content - using higher specificity instead of !important */
-html.text-size-small body,
-html.text-size-small p,
-html.text-size-small span,
-html.text-size-small div,
-html.text-size-small a,
-html.text-size-small li {
-	font-size: calc(1rem * 0.875);
-}
-
-html.text-size-large body,
-html.text-size-large p,
-html.text-size-large span,
-html.text-size-large div,
-html.text-size-large a,
-html.text-size-large li {
-	font-size: calc(1rem * 1.125);
-}
-
-html.text-size-xlarge body,
-html.text-size-xlarge p,
-html.text-size-xlarge span,
-html.text-size-xlarge div,
-html.text-size-xlarge a,
-html.text-size-xlarge li {
-	font-size: calc(1rem * 1.25);
+html[class*="text-size-"] body,
+html[class*="text-size-"] p,
+html[class*="text-size-"] span,
+html[class*="text-size-"] div,
+html[class*="text-size-"] a,
+html[class*="text-size-"] li {
+	font-size: calc(1rem * var(--text-scale, 1));
 }
 
 /* Active button styling - using higher specificity */
@@ -73,13 +39,10 @@ html.text-size-xlarge li {
 	}
 }
 
-/* Enhanced Focus Indicators for Accessibility */
-/* Remove default browser outline */
-*:focus {
-	outline: none;
-}
+/* Enhanced Focus Indicators - Optimized with grouped selectors */
+*:focus { outline: none; }
 
-/* Custom focus styles for better visibility */
+/* Unified focus styles for interactive elements */
 button:focus,
 a:focus,
 [role="button"]:focus,
@@ -89,52 +52,40 @@ textarea:focus {
 	outline: 3px solid #3b82f6;
 	outline-offset: 2px;
 	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-	transition:
-		outline 0.2s ease,
-		box-shadow 0.2s ease;
+	transition: outline 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Special focus style for buttons with background colors */
+/* Special focus for buttons with backgrounds */
 button:focus:not(.text-size-btn),
-[role="button"]:focus {
-	outline: 3px solid #ffffff;
-	outline-offset: 2px;
-	box-shadow:
-		0 0 0 3px rgba(59, 130, 246, 0.6),
-		0 0 0 6px rgba(59, 130, 246, 0.3);
-}
-
-/* Focus style for links */
-a:focus {
-	outline: 3px solid #3b82f6;
-	outline-offset: 2px;
-	border-radius: 4px;
-	background-color: rgba(59, 130, 246, 0.1);
-}
-
-/* Focus style for accessibility buttons */
+[role="button"]:focus,
 #accessibility-btn:focus,
 #accessibility-btn-mobile:focus,
 .text-size-btn:focus {
 	outline: 3px solid #ffffff;
 	outline-offset: 2px;
-	box-shadow:
+	box-shadow: 
 		0 0 0 3px rgba(255, 255, 255, 0.8),
 		0 0 0 6px rgba(59, 130, 246, 0.6);
 }
 
-/* Focus style for cards and interactive containers */
+/* Links get a background highlight */
+a:focus {
+	border-radius: 4px;
+	background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Interactive cards focus */
 .hover\:shadow-lg:focus,
 .hover\:shadow-xl:focus {
 	outline: 2px solid #3b82f6;
 	outline-offset: 3px;
-	box-shadow:
+	box-shadow: 
 		0 0 0 2px rgba(59, 130, 246, 0.3),
 		0 10px 25px -3px rgba(0, 0, 0, 0.1),
 		0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-/* Ensure focus is visible on touch devices too */
+/* Touch device compatibility and keyboard user enhancements */
 @media (hover: none) {
 	button:focus,
 	a:focus,
@@ -144,17 +95,10 @@ a:focus {
 	}
 }
 
-/* Keyboard User Enhancements */
+/* Enhanced focus for keyboard users */
 .keyboard-user *:focus {
-	/* Enhanced focus for keyboard users */
 	outline-width: 4px !important;
 	box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4) !important;
-}
-
-/* Improved interactive element indicators for keyboard users */
-.keyboard-user [role="link"],
-.keyboard-user [role="button"] {
-	cursor: pointer;
 }
 
 .keyboard-user [role="link"]:focus,
@@ -164,36 +108,28 @@ a:focus {
 	background-color: rgba(59, 130, 246, 0.1);
 }
 
-/* Dark Mode Styles */
+/* Dark Mode - Optimized with grouped selectors */
 .dark-mode {
-	/* Base dark theme colors */
 	background: #0f172a;
 	color: #f1f5f9;
 }
 
-/* Dark mode for main layout elements */
 .dark-mode body {
 	background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
 	color: #f1f5f9;
 }
 
-/* Dark mode for main sections */
 .dark-mode main,
 .dark-mode section {
 	background: transparent;
 	color: #f1f5f9;
 }
 
-/* Dark mode for cards and containers */
-.dark-mode .bg-white {
-	background: #1e293b !important;
-	color: #f1f5f9 !important;
-	border: 1px solid #475569 !important;
-}
-
+/* Consolidated background overrides */
+.dark-mode .bg-white,
 .dark-mode .bg-slate-50,
 .dark-mode .bg-slate-100 {
-	background: #334155 !important;
+	background: #1e293b !important;
 	color: #f1f5f9 !important;
 	border: 1px solid #475569 !important;
 }
@@ -203,40 +139,25 @@ a:focus {
 	color: #f1f5f9 !important;
 }
 
-/* Dark mode for gradients - convert to dark gradients */
+/* Consolidated gradient overrides */
 .dark-mode .bg-gradient-to-r,
-.dark-mode .bg-gradient-to-br {
-	background: linear-gradient(
-		135deg,
-		#1e293b 0%,
-		#334155 50%,
-		#475569 100%
-	) !important;
+.dark-mode .bg-gradient-to-br,
+.dark-mode .from-blue-600.to-green-600,
+.dark-mode .from-blue-600.via-blue-700.to-green-600 {
+	background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
 	color: #f1f5f9 !important;
 	border: 1px solid #475569 !important;
 }
 
-/* Dark mode for specific gradient combinations */
-.dark-mode .from-blue-600.to-green-600,
-.dark-mode .from-blue-600.via-blue-700.to-green-600 {
-	background: linear-gradient(135deg, #1e40af 0%, #059669 100%) !important;
-}
-
-/* Dark mode for navigation */
+/* Navigation and footer */
 .dark-mode nav {
 	background: rgba(15, 23, 42, 0.95) !important;
 	backdrop-filter: blur(8px);
 	border-bottom: 1px solid #334155 !important;
 }
 
-/* Dark mode for footer */
 .dark-mode footer {
-	background: linear-gradient(
-		135deg,
-		#0f172a 0%,
-		#1e293b 50%,
-		#334155 100%
-	) !important;
+	background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%) !important;
 	border-top: 1px solid #334155 !important;
 }
 
