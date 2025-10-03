@@ -268,3 +268,23 @@ a:focus {
 	border: 2px solid #ffffff !important;
 	font-weight: bold !important;
 }
+
+/* Keyboard User Enhancements */
+.keyboard-user *:focus {
+	/* Enhanced focus for keyboard users */
+	outline-width: 4px !important;
+	box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4) !important;
+}
+
+/* Improved interactive element indicators for keyboard users */
+.keyboard-user [role="link"],
+.keyboard-user [role="button"] {
+	cursor: pointer;
+}
+
+.keyboard-user [role="link"]:focus,
+.keyboard-user [role="button"]:focus {
+	outline: 3px solid #3b82f6;
+	outline-offset: 2px;
+	background-color: rgba(59, 130, 246, 0.1);
+}
