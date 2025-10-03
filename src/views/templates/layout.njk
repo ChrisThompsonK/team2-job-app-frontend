@@ -17,23 +17,6 @@
     
     {% include "templates/footer.njk" %}
     
-    <!-- Consolidated Scripts -->
-    <script>
-        // Initialize Lucide icons and accessibility when DOM is ready
-        function initializeApp() {
-            // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        }
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeApp);
-        } else {
-            initializeApp();
-        }
-    </script>
-    
     <!-- External Dependencies -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
