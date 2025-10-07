@@ -10,8 +10,19 @@ import express, {
 	type Response,
 } from "express";
 import nunjucks from "nunjucks";
+import { env, logEnvConfig, validateEnv } from "./config/env.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
-import { JsonJobRoleService } from "./services/job-role-service.js";
+import { ApiJobRoleService } from "./services/api-job-role-service.js";
+
+// Validate environment variables before starting the application
+try {
+	validateEnv();
+	logEnvConfig();
+} catch (error) {
+	console.error("❌ Environment validation failed:");
+	console.error(error);
+	process.exit(1);
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,7 +37,7 @@ interface AppConfig {
 class App {
 	private config: AppConfig;
 	private server: Application;
-	private jobRoleService: JsonJobRoleService;
+	private jobRoleService: ApiJobRoleService;
 	private jobRoleController: JobRoleController;
 
 	constructor(config: AppConfig) {
@@ -34,7 +45,7 @@ class App {
 		this.server = express();
 
 		// Initialize services with dependency injection
-		this.jobRoleService = new JsonJobRoleService();
+		this.jobRoleService = new ApiJobRoleService();
 		this.jobRoleController = new JobRoleController(this.jobRoleService);
 
 		this.initialize();
@@ -125,12 +136,12 @@ class App {
 	}
 }
 
-// Application configuration
+// Application configuration from environment variables
 const appConfig: AppConfig = {
-	name: "team2-job-app-frontend",
-	version: "1.0.0",
-	environment: process.env["NODE_ENV"] ?? "development",
-	port: parseInt(process.env["PORT"] ?? "3000", 10),
+	name: env.appName,
+	version: env.appVersion,
+	environment: env.nodeEnv,
+	port: env.port,
 };
 
 // Initialize and start the application

@@ -86,8 +86,80 @@ This application is **WCAG 2.1 AA compliant** with comprehensive accessibility s
 ├── tailwind.config.js    # Tailwind CSS configuration
 ├── vitest.config.ts      # Vitest testing configuration
 ├── biome.json           # Biome linter and formatter configuration
+├── .env                 # Environment variables (not in git)
+├── .env.example         # Environment variables template
 └── .gitignore           # Git ignore rules
 ```
+
+## 🔧 Environment Configuration
+
+The application uses environment variables for configuration. A `.env` file is required for local development.
+
+### Setup
+
+1. Copy the example environment file:
+```bash
+cp .env.example .env
+```
+
+2. Update the variables in `.env` according to your local setup:
+```env
+# Server Configuration
+PORT=3000
+HOST=localhost
+
+# API Configuration
+API_BASE_URL=http://localhost:8080  # Update to your backend API URL
+API_TIMEOUT=10000
+
+# Application Configuration
+APP_NAME=team2-job-app-frontend
+APP_VERSION=1.0.0
+
+# Session & Security
+SESSION_SECRET=your-secret-key-change-in-production
+
+# Logging
+LOG_LEVEL=info  # Options: error, warn, info, debug
+
+# Frontend URLs
+FRONTEND_URL=http://localhost:3000
+
+# Feature Flags
+ENABLE_DEBUG=false
+ENABLE_ANALYTICS=false
+```
+
+### Environment Variables
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `NODE_ENV` | Environment mode | `development` | No |
+| `PORT` | Server port | `3000` | No |
+| `HOST` | Server host | `localhost` | No |
+| `API_BASE_URL` | Backend API base URL | `http://localhost:8080` | Yes |
+| `API_TIMEOUT` | API request timeout (ms) | `10000` | No |
+| `APP_NAME` | Application name | `team2-job-app-frontend` | No |
+| `APP_VERSION` | Application version | `1.0.0` | No |
+| `SESSION_SECRET` | Session encryption secret | - | Yes (production) |
+| `LOG_LEVEL` | Logging level | `info` | No |
+| `FRONTEND_URL` | Frontend application URL | `http://localhost:3000` | No |
+| `ENABLE_DEBUG` | Enable debug mode | `false` | No |
+| `ENABLE_ANALYTICS` | Enable analytics | `false` | No |
+
+### Production Configuration
+
+For production deployment, create a `.env.production` file or set environment variables directly in your hosting environment:
+
+```bash
+NODE_ENV=production
+API_BASE_URL=https://api.yourdomain.com
+SESSION_SECRET=<generate-secure-random-string>
+LOG_LEVEL=warn
+ENABLE_ANALYTICS=true
+```
+
+**Security Note**: Never commit `.env` files to version control. The `.env` file is already listed in `.gitignore`.
 
 ## 🛠️ Available Scripts
 
