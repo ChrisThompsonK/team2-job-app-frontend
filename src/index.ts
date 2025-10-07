@@ -10,9 +10,9 @@ import express, {
 	type Response,
 } from "express";
 import nunjucks from "nunjucks";
+import { api } from "./config/api.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
 import { JsonJobRoleService } from "./services/job-role-service.js";
-import { api } from "./config/api.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
