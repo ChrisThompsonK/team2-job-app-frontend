@@ -46,7 +46,6 @@ export const env = {
 
 	// Feature Flags
 	enableDebug: process.env["ENABLE_DEBUG"] === "true",
-	enableAnalytics: process.env["ENABLE_ANALYTICS"] === "true",
 } as const;
 
 /**
@@ -100,6 +99,5 @@ export function logEnvConfig(): void {
 		console.log(`  LOG_LEVEL: ${env.logLevel}`);
 		console.log(`  FRONTEND_URL: ${env.frontendUrl}`);
 		console.log(`  ENABLE_DEBUG: ${env.enableDebug}`);
-		console.log(`  ENABLE_ANALYTICS: ${env.enableAnalytics}`);
 	}
 }

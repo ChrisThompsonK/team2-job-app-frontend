@@ -38,7 +38,7 @@ try {
 	console.error("   2. Verify all required environment variables are set");
 	console.error("   3. See .env.example for required variables");
 	console.error("   4. See ENVIRONMENT.md for detailed configuration guide");
-	console.error("\n" + "=".repeat(60) + "\n");
+	console.error(`\n${"=".repeat(60)}\n`);
 
 	process.exit(1);
 }
