@@ -22,5 +22,35 @@
     
     <!-- Application Scripts -->
     <script src="/js/accessibility.js"></script>
+    
+    <!-- Authentication Script -->
+    <script>
+        // Handle logout
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/api/auth/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        window.location.href = '/login';
+                    } else {
+                        console.error('Logout failed:', data.message);
+                        alert('Logout failed. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    alert('An error occurred during logout.');
+                }
+            });
+        }
+    </script>
 </body>
 </html>

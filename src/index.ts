@@ -9,8 +9,11 @@ import express, {
 	type Request,
 	type Response,
 } from "express";
+import session from "express-session";
 import nunjucks from "nunjucks";
+import { authController } from "./controllers/auth-controller.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
+import { addUserToLocals, requireAuth } from "./middleware/auth-middleware.js";
 import { AxiosJobRoleService } from "./services/axios-job-role-service.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -129,13 +132,47 @@ class App {
 		// Add URL-encoded parsing middleware
 		this.server.use(express.urlencoded({ extended: true }));
 
+		// Setup session management
+		this.server.use(
+			session({
+				secret: process.env["SESSION_SECRET"] || "your-secret-key-change-this",
+				resave: false,
+				saveUninitialized: false,
+				cookie: {
+					secure: process.env["NODE_ENV"] === "production", // Use secure cookies in production
+					httpOnly: true,
+					maxAge: 24 * 60 * 60 * 1000, // 24 hours
+				},
+			})
+		);
+
+		// Add user data to all template responses
+		this.server.use(addUserToLocals);
+
 		// Serve static files from public directory
 		const publicPath = path.join(__dirname, "..", "public");
 		this.server.use(express.static(publicPath));
 	}
 
 	private setupRoutes(): void {
-		// Hello World endpoint - now renders a Nunjucks view
+		// Authentication endpoints
+		this.server.post(
+			"/api/auth/login",
+			authController.login.bind(authController)
+		);
+		this.server.post(
+			"/api/auth/logout",
+			authController.logout.bind(authController)
+		);
+		this.server.get(
+			"/api/auth/me",
+			authController.getCurrentUser.bind(authController)
+		);
+
+		// Login page (accessible without authentication)
+		this.server.get("/login", this.jobRoleController.getLogin);
+
+		// Public home page (accessible without authentication)
 		this.server.get("/", (_req: Request, res: Response) => {
 			res.render("index.njk", {
 				message: "Hello World!",
@@ -146,12 +183,17 @@ class App {
 			});
 		});
 
-		// Job Roles endpoints
-		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
-		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
-
-		// Login endpoint
-		this.server.get("/login", this.jobRoleController.getLogin);
+		// Protected Job Roles endpoints (require authentication)
+		this.server.get(
+			"/job-roles",
+			requireAuth,
+			this.jobRoleController.getJobRoles
+		);
+		this.server.get(
+			"/job-roles/:id",
+			requireAuth,
+			this.jobRoleController.getJobRoleById
+		);
 	}
 
 	public start(): void {

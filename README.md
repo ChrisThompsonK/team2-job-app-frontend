@@ -28,7 +28,58 @@ A modern Node.js TypeScript application with ES modules support.
 - **Template Inheritance System**: Reusable layout components with header and footer separation
 - **API Integration**: Axios-based HTTP client with fallback to mock data
 - **Dependency Injection**: Clean architecture with service layer separation
+- **Authentication & Authorization**: Session-based auth with role-based access control (Admin/User)
 - **Accessibility Features**: WCAG 2.1 AA compliant with comprehensive accessibility support
+
+## 🔐 Authentication & Authorization
+
+This application includes a comprehensive authentication system with role-based access control:
+
+### **Features**
+- ✅ **Session-based Authentication**: Secure server-side sessions with express-session
+- ✅ **Role-based Access Control**: Admin and regular user roles
+- ✅ **Protected Routes**: Middleware for authentication and admin checks
+- ✅ **Persistent Sessions**: Login state maintained across browser sessions (24 hours)
+- ✅ **Dynamic UI**: Navigation and features adapt based on authentication state and user role
+
+### **User Roles**
+
+**Admin User**
+- Email: `admin@kainos.com`
+- Password: `admin123`
+- Capabilities: Full access to all features (future: add, edit, delete jobs)
+
+**Regular User**
+- Email: `user@kainos.com`
+- Password: `user123`
+- Capabilities: View job listings and details
+
+### **Access Control**
+- **Unauthenticated**: Only Accessibility menu and Login page visible
+- **Authenticated**: Full navigation including Home, Jobs, About, Contact
+- **Admin** (Future): Additional controls for job management
+
+### **Backend Requirements**
+For the authentication system to work, your backend must implement these endpoints:
+
+**POST /api/auth/login**
+- Request Body: `{ "email": "string", "password": "string" }`
+- Response: `{ "id": number, "email": "string", "is_admin": boolean }`
+- Status Codes: 200 (success), 401 (invalid credentials)
+
+**POST /api/auth/logout**
+- Request: No body required
+- Response: `{ "success": true }`
+- Status Codes: 200 (success)
+
+**GET /api/auth/me**
+- Response: `{ "id": number, "email": "string", "is_admin": boolean }`
+- Status Codes: 200 (authenticated), 401 (not authenticated)
+
+**Database Schema Requirements**:
+- Users table with fields: `id`, `email`, `password` (hashed), `is_admin` (boolean)
+- Two test users with credentials listed above
+- Secure password hashing (bcrypt recommended)
 
 ## ♿ Accessibility Features
 
