@@ -19,13 +19,24 @@
             <div class="relative z-10">
                 <!-- Kainos Logo -->
                 <div class="flex items-center justify-center mb-8">
-                    <img src="/KainosLogoNoBackground.png" alt="Kainos Logo" class="h-16 w-auto">
+                    <img src="/kainos-dark-bg.png" alt="Kainos Logo" class="h-16 w-auto">
                 </div>
                 
                 <h1 class="text-4xl md:text-6xl font-light mb-6">Career Opportunities</h1>
                 
-                <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6 inline-block">
-                    <p class="text-xl">🚀 {{ jobRoles.length }} Premium Positions Available</p>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-4">
+                    <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6">
+                        <p class="text-xl">🚀 {{ jobRoles.length }} Premium Positions Available</p>
+                    </div>
+                    
+                    <!-- Admin Add Job Role Button -->
+                    <!-- TODO: Add admin role check here when backend auth is implemented -->
+                    <button id="addJobRoleBtn" class="bg-white/20 backdrop-blur-sm border-2 border-white/40 text-white font-semibold py-3 px-6 rounded-2xl hover:bg-white/30 hover:border-white/60 transition-all duration-200 flex items-center gap-2 shadow-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Add New Job Role
+                    </button>
                 </div>
             </div>
         </div>
@@ -128,5 +139,203 @@
         </section>
     {% endif %}
 </div>
+
+<!-- Add Job Role Modal -->
+<div id="addJobRoleModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <!-- Modal Header -->
+        <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-green-600 text-white p-6 rounded-t-3xl">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold">Add New Job Role</h2>
+                <button id="closeModalBtn" class="text-white hover:text-gray-200 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6">
+            <style>
+            /* Style the calendar icon for date input for better visibility */
+            input[type="date"]::-webkit-calendar-picker-indicator {
+                filter: invert(34%) sepia(99%) saturate(747%) hue-rotate(176deg) brightness(95%) contrast(92%);
+                /* This will make it blue-ish, adjust as needed */
+                cursor: pointer;
+            }
+            input[type="date"]::-moz-calendar-picker-indicator {
+                filter: invert(34%) sepia(99%) saturate(747%) hue-rotate(176deg) brightness(95%) contrast(92%);
+                cursor: pointer;
+            }
+            input[type="date"]::-ms-input-placeholder {
+                color: #2563eb;
+            }
+            </style>
+            <form id="addJobRoleForm" class="space-y-6">
+
+                <!-- Row 1: Job Role Name, Location, Open Positions -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div class="flex flex-col">
+                        <label for="jobRoleName" class="block text-xs font-semibold text-gray-700 mb-1">Role Name *</label>
+                        <input type="text" id="jobRoleName" name="jobRoleName" required 
+                               class="w-full px-2 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-500 min-w-0">
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="location" class="block text-xs font-semibold text-gray-700 mb-1">Location *</label>
+                        <select id="location" name="location" required 
+                                class="w-full px-2 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white min-w-0">
+                            <option value="">Select</option>
+                            <option value="Belfast">Belfast</option>
+                            <option value="Birmingham">Birmingham</option>
+                            <option value="Derry~Londonderry">Derry~Londonderry</option>
+                            <option value="Dublin">Dublin</option>
+                            <option value="London">London</option>
+                            <option value="Gdansk">Gdansk</option>
+                            <option value="Helsinki">Helsinki</option>
+                            <option value="Paris">Paris</option>
+                            <option value="Wommelgem">Wommelgem</option>
+                            <option value="Buenos Aires">Buenos Aires</option>
+                            <option value="Indianapolis">Indianapolis</option>
+                            <option value="Nova Scotia">Nova Scotia</option>
+                            <option value="Toronto">Toronto</option>
+                            <option value="Remote">Remote</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="openPositions" class="block text-xs font-semibold text-gray-700 mb-1">Openings *</label>
+                        <input type="number" id="openPositions" name="openPositions" min="1" value="1" required 
+                               class="w-full px-2 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-500 min-w-0">
+                    </div>
+                </div>
+
+                <!-- Row 2: Closing Date and SharePoint Link -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="closingDate" class="block text-sm font-semibold text-gray-700 mb-2">Closing Date *</label>
+                        <input type="date" id="closingDate" name="closingDate" required 
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-500">
+                    </div>
+                    <div>
+                        <label for="sharePointLink" class="block text-sm font-semibold text-gray-700 mb-2">SharePoint Link *</label>
+                        <input type="url" id="sharePointLink" name="sharePointLink" required 
+                               placeholder="https://sharepoint.com/job-spec"
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-500">
+                    </div>
+                </div>
+
+                <!-- Job Spec Summary -->
+                <div>
+                    <label for="jobSpecSummary" class="block text-sm font-semibold text-gray-700 mb-2">Job Spec Summary *</label>
+                    <textarea id="jobSpecSummary" name="jobSpecSummary" rows="4" required 
+                              placeholder="Provide a brief summary of the job specification..."
+                              class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-vertical text-gray-900 bg-white placeholder-gray-500"></textarea>
+                </div>
+
+                <!-- Responsibilities -->
+                <div>
+                    <label for="responsibilities" class="block text-sm font-semibold text-gray-700 mb-2">Responsibilities *</label>
+                    <textarea id="responsibilities" name="responsibilities" rows="4" required 
+                              placeholder="List the key responsibilities and duties..."
+                              class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-vertical text-gray-900 bg-white placeholder-gray-500"></textarea>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex gap-4 pt-6 border-t border-gray-200">
+                    <button type="button" id="cancelBtn" 
+                            class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-green-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-green-700 transition-colors">
+                        Save Job Role
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Modal Functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addJobRoleBtn = document.getElementById('addJobRoleBtn');
+    const modal = document.getElementById('addJobRoleModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const form = document.getElementById('addJobRoleForm');
+
+    // Function to open modal
+    function openModal() {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        // Focus on first input for accessibility
+        document.getElementById('jobRoleName').focus();
+    }
+
+    // Function to close modal
+    function closeModal() {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto'; // Restore background scrolling
+        // Reset form
+        form.reset();
+    }
+
+    // Event listeners
+    addJobRoleBtn.addEventListener('click', openModal);
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    // Close modal when clicking backdrop
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+
+    // Form submission handler (placeholder - no backend integration yet)
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Basic form validation
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('border-red-500');
+                isValid = false;
+            } else {
+                field.classList.remove('border-red-500');
+            }
+        });
+
+        if (isValid) {
+            // TODO: Integrate with backend API when available
+            alert('Job role form submitted successfully! (Backend integration pending)');
+            closeModal();
+        } else {
+            alert('Please fill in all required fields.');
+        }
+    });
+
+    // Remove red border when user starts typing in invalid fields
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.classList.contains('border-red-500')) {
+                this.classList.remove('border-red-500');
+            }
+        });
+    });
+});
+</script>
 </main>
 {% endblock %}
