@@ -1,10 +1,9 @@
+import { describe, expect, it } from "vitest";
 import { api } from "../config/api";
 
-api
-	.get("/test-endpoint")
-	.then((response) => {
-		console.log("API Response:", response.data);
-	})
-	.catch((error) => {
-		console.error("API Error:", error);
+describe("Axios API Configuration", () => {
+	it("should have api instance configured", () => {
+		expect(api).toBeDefined();
+		expect(api.defaults.baseURL).toBeDefined();
 	});
+});
