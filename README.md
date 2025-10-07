@@ -26,9 +26,44 @@ A modern Node.js TypeScript application with ES modules support.
 - **Cross-Page Consistency**: Unified branding with official Kainos logo implementation across all templates
 - **Header-Footer Alignment**: Synchronized logo styling between navigation header and footer components
 - **Template Inheritance System**: Reusable layout components with header and footer separation
+- **Dark Mode**: Full dark mode support with dual toggle buttons (header and accessibility panel)
+- **Dynamic Logo Switching**: Automatic logo toggling between light and dark versions based on theme
+- **Theme Persistence**: Dark mode preference saved to localStorage and restored on page reload
 - **API Integration**: Axios-based HTTP client with fallback to mock data
 - **Dependency Injection**: Clean architecture with service layer separation
 - **Accessibility Features**: WCAG 2.1 AA compliant with comprehensive accessibility support
+
+## 🌙 Dark Mode
+
+This application features a comprehensive dark mode implementation with multiple access points and persistent preferences:
+
+### **Features**
+- **Dual Toggle Buttons**: 
+  - Quick access moon/sun icon in header navigation
+  - Full control in accessibility settings panel
+- **Dynamic Logo Switching**: 
+  - Navigation logo automatically switches between light (`KainosLogoNoBackground.png`) and dark (`kainos-dark-bg.png`) versions
+  - Hero section logos use premium dark background version
+- **Complete Theme Coverage**:
+  - Custom dark mode styles for all components (`.dark-mode` class)
+  - Proper contrast ratios for WCAG AA compliance
+  - Smooth transitions between light and dark themes
+- **Persistent Preferences**: 
+  - User selection saved to localStorage
+  - Theme restored automatically on page load
+  - Default to light mode for first-time visitors
+
+### **Technical Implementation**
+- **CSS Architecture**: Custom `.dark-mode` class with comprehensive style overrides
+- **JavaScript Control**: Centralized dark mode management in `accessibility.js`
+- **Tailwind Integration**: Configured to use custom `.dark-mode` selector
+- **Logo Management**: Automatic image source switching via `switchLogos()` function
+
+### **Usage**
+1. Click the moon icon in the header to enable dark mode
+2. Icon changes to sun icon when dark mode is active
+3. Click again to return to light mode
+4. Preference is automatically saved and persists across sessions
 
 ## ♿ Accessibility Features
 
@@ -37,7 +72,9 @@ This application is **WCAG 2.1 AA compliant** with comprehensive accessibility s
 ### **Implemented Features**
 - ✅ **Skip Links**: Jump to main content for keyboard users
 - ✅ **Text Size Controls**: 4 size options (Small, Medium, Large, X-Large) with localStorage persistence  
-- ✅ **Dark Mode**: Complete dark theme with proper contrast ratios
+- ✅ **Dark Mode**: Complete dark theme with dual toggle buttons (header icon + accessibility panel)
+- ✅ **Dynamic Logo Switching**: Kainos logo automatically switches between light/dark versions with theme
+- ✅ **Theme Persistence**: Dark mode preference saved and restored across sessions
 - ✅ **Keyboard Navigation**: Full keyboard support with Enter/Space/Escape keys
 - ✅ **Enhanced Focus Indicators**: High-visibility focus states for all interactive elements
 - ✅ **ARIA Implementation**: Proper labels, roles, and semantic markup
@@ -290,6 +327,7 @@ The project uses modern TypeScript configuration with:
 ### Tailwind CSS + daisyUI Configuration
 - **Tailwind CSS 4**: Latest version with modern CSS features
 - **daisyUI Integration**: Uses `@plugin "daisyui"` directive in CSS
+- **Dark Mode**: Custom `.dark-mode` class selector configured in `tailwind.config.js`
 - **Content Sources**: Configured to scan `src/**/*.{html,js,ts,njk}` files
 - **Component Classes**: Full access to daisyUI's semantic component library
 - **Build Process**: Automated CSS generation with component tree-shaking
