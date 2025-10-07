@@ -1,7 +1,7 @@
 /**
  * Environment Configuration Module
  * Centralizes all environment variable access with type safety and validation
- * 
+ *
  * Following best practices from app-configuration.md:
  * - Load dotenv at the top of the main entry point (index.ts)
  * - Validate REQUIRED variables and throw errors if missing
@@ -45,7 +45,10 @@ interface Config {
  * Parse boolean environment variables
  * Environment variables are always strings, so we need to convert them
  */
-function parseBoolean(value: string | undefined, defaultValue = false): boolean {
+function parseBoolean(
+	value: string | undefined,
+	defaultValue = false
+): boolean {
 	if (!value) return defaultValue;
 	return value.toLowerCase() === "true" || value === "1";
 }
@@ -70,7 +73,7 @@ function getEnv(key: string, defaultValue = ""): string {
 /**
  * Validate REQUIRED environment variables
  * Following the presentation pattern: throw errors for truly required values
- * 
+ *
  * Note: For this frontend application, most variables have sensible defaults.
  * In a real production app with database connections or API keys, you would add:
  * - DATABASE_URL (required in production)
@@ -80,7 +83,7 @@ function getEnv(key: string, defaultValue = ""): string {
 function validateRequiredVariables(): void {
 	// For this frontend app, we don't have any truly REQUIRED variables
 	// Everything has sensible defaults for development
-	
+
 	// Example of what you would do for required variables:
 	// const required = ['DATABASE_URL', 'API_KEY'] as const;
 	// for (const key of required) {
@@ -88,14 +91,14 @@ function validateRequiredVariables(): void {
 	//     throw new Error(`Missing required environment variable: ${key}`);
 	//   }
 	// }
-	
+
 	// Instead, we just warn about missing recommended variables
 	const recommended = ["NODE_ENV", "PORT"] as const;
 	const missing = recommended.filter((key) => !process.env[key]);
-	
+
 	if (missing.length > 0) {
 		console.warn(
-			`⚠️  Missing recommended environment variables: ${missing.join(", ")}. Using defaults.`,
+			`⚠️  Missing recommended environment variables: ${missing.join(", ")}. Using defaults.`
 		);
 	}
 }
@@ -120,17 +123,14 @@ export const config: Config = {
 	// Application Information
 	appName: getEnv("APP_NAME", "Kainos Job Application Portal"),
 	appVersion: getEnv("APP_VERSION", "1.0.0"),
-	appDescription: getEnv(
-		"APP_DESCRIPTION",
-		"Modern Job Application Frontend",
-	),
+	appDescription: getEnv("APP_DESCRIPTION", "Modern Job Application Frontend"),
 
 	// Feature Flags
 	enableMockData: parseBoolean(getEnv("ENABLE_MOCK_DATA"), true),
 	enableDarkMode: parseBoolean(getEnv("ENABLE_DARK_MODE"), true),
 	enableAccessibilityFeatures: parseBoolean(
 		getEnv("ENABLE_ACCESSIBILITY_FEATURES"),
-		true,
+		true
 	),
 
 	// Logging
@@ -176,12 +176,14 @@ export function logConfig(): void {
 	console.log(`   App Name: ${config.appName}`);
 	console.log(`   App Version: ${config.appVersion}`);
 	console.log(`   API Base URL: ${config.apiBaseUrl}`);
-	console.log(`   Mock Data: ${config.enableMockData ? "Enabled" : "Disabled"}`);
 	console.log(
-		`   Dark Mode: ${config.enableDarkMode ? "Enabled" : "Disabled"}`,
+		`   Mock Data: ${config.enableMockData ? "Enabled" : "Disabled"}`
 	);
 	console.log(
-		`   Accessibility: ${config.enableAccessibilityFeatures ? "Enabled" : "Disabled"}`,
+		`   Dark Mode: ${config.enableDarkMode ? "Enabled" : "Disabled"}`
+	);
+	console.log(
+		`   Accessibility: ${config.enableAccessibilityFeatures ? "Enabled" : "Disabled"}`
 	);
 	console.log(`   Log Level: ${config.logLevel}`);
 }
