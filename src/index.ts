@@ -19,8 +19,27 @@ try {
 	validateEnv();
 	logEnvConfig();
 } catch (error) {
-	console.error("❌ Environment validation failed:");
-	console.error(error);
+	console.error("\n=".repeat(60));
+	console.error("❌ ENVIRONMENT VALIDATION FAILED");
+	console.error("=".repeat(60));
+	console.error("\n🔍 Error Details:");
+
+	if (error instanceof Error) {
+		console.error(`   Message: ${error.message}`);
+		if (error.stack) {
+			console.error(`\n📍 Stack Trace:\n${error.stack}`);
+		}
+	} else {
+		console.error(`   ${String(error)}`);
+	}
+
+	console.error("\n💡 Troubleshooting Steps:");
+	console.error("   1. Check that .env file exists in the project root");
+	console.error("   2. Verify all required environment variables are set");
+	console.error("   3. See .env.example for required variables");
+	console.error("   4. See ENVIRONMENT.md for detailed configuration guide");
+	console.error("\n" + "=".repeat(60) + "\n");
+
 	process.exit(1);
 }
 
