@@ -97,6 +97,60 @@ This application is **WCAG 2.1 AA compliant** with comprehensive accessibility s
 - **`npm run check`**: Run both linting and formatting checks
 - **`npm run check:fix`**: Fix both linting and formatting issues automatically
 
+## 🌍 Environment Variables
+
+The application uses environment variables for configuration following Node.js best practices.
+
+### Quick Start
+
+1. **Copy the example file:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Start developing** (all variables have sensible defaults):
+   ```bash
+   npm run dev
+   ```
+
+That's it! The application will work with defaults. Edit `.env` only if you need custom values.
+
+### Key Principles
+
+- ✅ **All variables are optional** - sensible defaults provided
+- ✅ **Type-safe configuration** - centralized `config` module
+- ✅ **Validated at startup** - warns about missing recommended variables
+- ✅ **Never commit `.env`** - already in .gitignore
+- ✅ **Use `.env.example`** - documents all available variables
+- ✅ **Production uses platform tools** - not .env files
+
+### Quick Reference
+
+| Category | Variables | Description |
+|----------|-----------|-------------|
+| **Server** | `NODE_ENV`, `PORT`, `HOST` | Server configuration |
+| **API** | `API_BASE_URL`, `API_TIMEOUT` | Backend API settings |
+| **Features** | `ENABLE_MOCK_DATA`, `ENABLE_DARK_MODE` | Feature flags |
+| **Logging** | `LOG_LEVEL`, `ENABLE_DEBUG_LOGS` | Logging configuration |
+
+### Using Configuration in Code
+
+```typescript
+import config from './config/environment.js';
+
+// Type-safe access to all configuration
+console.log(config.port);              // 3000 (number)
+console.log(config.enableDarkMode);    // true (boolean)
+console.log(config.apiBaseUrl);        // "http://localhost:8080"
+```
+
+### Documentation
+
+For complete documentation, see:
+- **📘 [Environment Setup Guide](docs/ENVIRONMENT_SETUP.md)** - Complete guide with examples
+- **📖 [Configuration Best Practices](docs/app-configuration.md)** - Node.js configuration patterns
+- **📄 `.env.example`** - All available variables with descriptions
+
 ## 🔧 Development
 
 1. **Development Mode**: Use `npm run dev` for fast development with tsx

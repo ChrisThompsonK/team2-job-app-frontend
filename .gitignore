@@ -144,3 +144,9 @@ Icon?
 
 # Backup files
 *.bak
+
+# Environment variables
+.env.local
+.env.*.local
+.env
+
