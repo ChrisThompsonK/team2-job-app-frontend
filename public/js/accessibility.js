@@ -9,7 +9,7 @@
 	const savedTextSize = localStorage.getItem("textSize") || "medium";
 
 	if (savedDarkMode) {
-		document.documentElement.classList.add("dark");
+		document.documentElement.classList.add("dark-mode");
 	}
 
 	// Remove all text size classes and apply saved one
@@ -45,7 +45,7 @@ class AccessibilityManager {
 		console.log("AccessibilityManager initialized:", {
 			button: this.button,
 			panel: this.panel,
-			mobileButton: this.mobileButton
+			mobileButton: this.mobileButton,
 		});
 
 		this.init();
@@ -57,7 +57,9 @@ class AccessibilityManager {
 		this.loadSavedPreferences();
 
 		if (!this.button || !this.panel) {
-			console.warn("Accessibility button or panel not found, but dark mode will still work");
+			console.warn(
+				"Accessibility button or panel not found, but dark mode will still work"
+			);
 			return;
 		}
 
@@ -155,7 +157,7 @@ class AccessibilityManager {
 	setupToggleControls() {
 		this.setupToggle("dark", {
 			storageKey: "darkMode",
-			className: "dark",
+			className: "dark-mode",
 			activeClasses: ["bg-slate-800", "text-white", "font-medium"],
 			inactiveClasses: ["bg-slate-100", "hover:bg-slate-200", "text-slate-700"],
 			hasIcon: true,
@@ -173,52 +175,56 @@ class AccessibilityManager {
 
 		simpleToggle.addEventListener("click", (e) => {
 			e.preventDefault();
-			const isDark = document.documentElement.classList.contains("dark");
+			const isDark = document.documentElement.classList.contains("dark-mode");
 			const newState = !isDark;
-			
+
 			console.log(`Simple dark toggle: ${isDark} -> ${newState}`);
-			
-			// Toggle dark class
-			document.documentElement.classList.toggle("dark", newState);
-			
+
+			// Toggle dark-mode class
+			document.documentElement.classList.toggle("dark-mode", newState);
+
 			// Save to localStorage
 			localStorage.setItem("darkMode", newState.toString());
-			
+
 			// Handle logo switching
 			this.switchLogos(newState);
-			
+
 			// Update button icon and styling
 			const icon = simpleToggle.querySelector("i[data-lucide]");
 			if (icon) {
 				icon.setAttribute("data-lucide", newState ? "sun" : "moon");
 				if (typeof lucide !== "undefined") lucide.createIcons();
 			}
-			
+
 			// Update button styling
 			if (newState) {
-				simpleToggle.className = "bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm ml-4";
+				simpleToggle.className =
+					"bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm ml-4";
 			} else {
-				simpleToggle.className = "bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm ml-4";
+				simpleToggle.className =
+					"bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm ml-4";
 			}
 		});
 	}
 
 	switchLogos(isDark) {
 		// Only switch the header navigation logo, not logos in hero sections or footer
-		const headerLogo = document.querySelector('nav img[alt="Kainos Logo"], nav img[alt="Kainos Logo (dark)"]');
+		const headerLogo = document.querySelector(
+			'nav img[alt="Kainos Logo"], nav img[alt="Kainos Logo (dark)"]'
+		);
 		if (!headerLogo) return;
-		
+
 		if (isDark) {
 			// Switch to dark logo
-			if (headerLogo.src.includes('KainosLogoNoBackground.png')) {
-				headerLogo.src = '/kainos-dark-bg.png';
-				headerLogo.alt = 'Kainos Logo (dark)';
+			if (headerLogo.src.includes("KainosLogoNoBackground.png")) {
+				headerLogo.src = "/kainos-dark-bg.png";
+				headerLogo.alt = "Kainos Logo (dark)";
 			}
 		} else {
 			// Switch to light logo
-			if (headerLogo.src.includes('kainos-dark-bg.png')) {
-				headerLogo.src = '/KainosLogoNoBackground.png';
-				headerLogo.alt = 'Kainos Logo';
+			if (headerLogo.src.includes("kainos-dark-bg.png")) {
+				headerLogo.src = "/KainosLogoNoBackground.png";
+				headerLogo.alt = "Kainos Logo";
 			}
 		}
 	}
@@ -231,7 +237,7 @@ class AccessibilityManager {
 			button: button,
 			status: status,
 			buttonId: `${type}-toggle`,
-			statusId: `${type}-status`
+			statusId: `${type}-status`,
 		});
 
 		if (!button || !status) {
@@ -260,19 +266,21 @@ class AccessibilityManager {
 
 		// Handle logo switching for dark mode
 		if (config.className === "dark") {
-			const headerLogo = document.querySelector('nav img[alt="Kainos Logo"], nav img[alt="Kainos Logo (dark)"]');
+			const headerLogo = document.querySelector(
+				'nav img[alt="Kainos Logo"], nav img[alt="Kainos Logo (dark)"]'
+			);
 			if (headerLogo) {
 				if (enabled) {
 					// Switch to dark logo
-					if (headerLogo.src.includes('KainosLogoNoBackground.png')) {
-						headerLogo.src = '/kainos-dark-bg.png';
-						headerLogo.alt = 'Kainos Logo (dark)';
+					if (headerLogo.src.includes("KainosLogoNoBackground.png")) {
+						headerLogo.src = "/kainos-dark-bg.png";
+						headerLogo.alt = "Kainos Logo (dark)";
 					}
 				} else {
 					// Switch to light logo
-					if (headerLogo.src.includes('kainos-dark-bg.png')) {
-						headerLogo.src = '/KainosLogoNoBackground.png';
-						headerLogo.alt = 'Kainos Logo';
+					if (headerLogo.src.includes("kainos-dark-bg.png")) {
+						headerLogo.src = "/KainosLogoNoBackground.png";
+						headerLogo.alt = "Kainos Logo";
 					}
 				}
 			}
