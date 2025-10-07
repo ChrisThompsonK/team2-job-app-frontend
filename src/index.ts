@@ -100,6 +100,9 @@ class App {
 		// Job Roles endpoints
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
 		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
+
+		// Login endpoint
+		this.server.get("/login", this.jobRoleController.getLogin);
 	}
 
 	public start(): void {
