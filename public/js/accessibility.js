@@ -265,25 +265,8 @@ class AccessibilityManager {
 		button.setAttribute("aria-pressed", enabled.toString());
 
 		// Handle logo switching for dark mode
-		if (config.className === "dark") {
-			const headerLogo = document.querySelector(
-				'nav img[alt="Kainos Logo"], nav img[alt="Kainos Logo (dark)"]'
-			);
-			if (headerLogo) {
-				if (enabled) {
-					// Switch to dark logo
-					if (headerLogo.src.includes("KainosLogoNoBackground.png")) {
-						headerLogo.src = "/kainos-dark-bg.png";
-						headerLogo.alt = "Kainos Logo (dark)";
-					}
-				} else {
-					// Switch to light logo
-					if (headerLogo.src.includes("kainos-dark-bg.png")) {
-						headerLogo.src = "/KainosLogoNoBackground.png";
-						headerLogo.alt = "Kainos Logo";
-					}
-				}
-			}
+		if (config.className === "dark-mode") {
+			this.switchLogos(enabled);
 		}
 
 		// Optimized: batch class updates
