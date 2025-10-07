@@ -76,4 +76,12 @@ export class JobRoleController {
 			});
 		}
 	};
+
+	/**
+	 * GET /login
+	 * Renders the login page
+	 */
+	public getLogin = (_req: Request, res: Response): void => {
+		res.render("login.njk");
+	};
 }
