@@ -12,6 +12,7 @@ import express, {
 import nunjucks from "nunjucks";
 import { JobRoleController } from "./controllers/job-role-controller.js";
 import { JsonJobRoleService } from "./services/job-role-service.js";
+import { api } from "./config/api.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -103,6 +104,16 @@ class App {
 
 		// Login endpoint
 		this.server.get("/login", this.jobRoleController.getLogin);
+
+		// Test backend connection
+		this.server.get("/test-backend", async (_req: Request, res: Response) => {
+			try {
+				const response = await api.get("/");
+				res.json({ status: "connected", data: response.data });
+			} catch (error) {
+				res.status(500).json({ status: "error", message: String(error) });
+			}
+		});
 	}
 
 	public start(): void {
