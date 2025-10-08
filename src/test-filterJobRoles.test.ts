@@ -4,7 +4,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	filterJobRoles,
-	filterJobRolesDebounced,
 	initializeFiltering,
 	resetCache,
 } from "./filterJobRoles";
@@ -123,8 +122,24 @@ describe("Scalable Job Role Filtering", () => {
 		});
 
 		it("should filter by location", () => {
+			initializeFiltering();
 			mockLocationFilter.value = "London";
+
+			console.log(
+				"Mock job cards:",
+				mockJobCards.map((c) => ({
+					role: c.getAttribute("data-job-role"),
+					location: c.getAttribute("data-location"),
+					band: c.getAttribute("data-band"),
+				}))
+			);
+
 			filterJobRoles();
+
+			console.log(
+				"After filtering - displays:",
+				mockJobCards.map((c) => c.style.display)
+			);
 
 			expect(mockJobCards[0].style.display).toBe("none");
 			expect(mockJobCards[1].style.display).toBe("");
@@ -132,9 +147,9 @@ describe("Scalable Job Role Filtering", () => {
 		});
 
 		it("should filter by band", () => {
+			initializeFiltering();
 			mockBandFilter.value = "Senior";
 			filterJobRoles();
-
 			expect(mockJobCards[0].style.display).toBe("none");
 			expect(mockJobCards[1].style.display).toBe("");
 			expect(mockJobCards[2].style.display).toBe("none");

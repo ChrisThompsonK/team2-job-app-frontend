@@ -53,16 +53,22 @@ export function filterJobRoles(): void {
 		initializeFiltering();
 	}
 
-	const query = cachedElements!.searchBar.value.toLowerCase();
-	const locationFilter = cachedElements!.locationFilter.value;
-	const bandFilter = cachedElements!.bandFilter.value;
+	const query = cachedElements?.searchBar.value.toLowerCase() || "";
+	const locationFilter = cachedElements?.locationFilter.value || "";
+	const bandFilter = cachedElements?.bandFilter.value || "";
 
-	cachedJobCards!.forEach(({ element, roleName, location, band }) => {
+	console.log("Filter values:", { query, locationFilter, bandFilter });
+
+	cachedJobCards?.forEach(({ element, roleName, location, band }) => {
 		const matchesQuery = !query || roleName.includes(query);
 		const matchesLocation = !locationFilter || location === locationFilter;
 		const matchesBand = !bandFilter || band === bandFilter;
 
 		const shouldShow = matchesQuery && matchesLocation && matchesBand;
+
+		console.log(
+			`Card: ${roleName} / ${location} / ${band} - Matches: Q=${matchesQuery}, L=${matchesLocation}, B=${matchesBand}, Show=${shouldShow}`
+		);
 
 		if (shouldShow) {
 			element.classList.remove("hidden");
