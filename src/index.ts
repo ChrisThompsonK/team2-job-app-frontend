@@ -88,12 +88,20 @@ class App {
 	private setupRoutes(): void {
 		// Hello World endpoint - now renders a Nunjucks view
 		this.server.get("/", (_req: Request, res: Response) => {
+			const now = new Date();
+			const readableTime = now.toLocaleString("en-GB", {
+				day: "numeric",
+				month: "numeric",
+				year: "numeric",
+				hour: "2-digit",
+				minute: "2-digit"
+			});
 			res.render("index.njk", {
 				message: "Hello World!",
 				app: this.config.name,
 				version: this.config.version,
 				environment: this.config.environment,
-				timestamp: new Date().toISOString(),
+				timestamp: readableTime,
 			});
 		});
 

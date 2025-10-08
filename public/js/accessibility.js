@@ -41,13 +41,6 @@ class AccessibilityManager {
 		this.button = document.getElementById("accessibility-btn");
 		this.panel = document.getElementById("accessibility-panel");
 		this.mobileButton = document.getElementById("accessibility-btn-mobile");
-
-		console.log("AccessibilityManager initialized:", {
-			button: this.button,
-			panel: this.panel,
-			mobileButton: this.mobileButton,
-		});
-
 		this.init();
 	}
 
@@ -232,13 +225,6 @@ class AccessibilityManager {
 	setupToggle(type, config) {
 		const button = document.getElementById(`${type}-toggle`);
 		const status = document.getElementById(`${type}-status`);
-
-		console.log(`Setting up ${type} toggle:`, {
-			button: button,
-			status: status,
-			buttonId: `${type}-toggle`,
-			statusId: `${type}-status`,
-		});
 
 		if (!button || !status) {
 			console.warn(`${type} toggle elements not found`);
