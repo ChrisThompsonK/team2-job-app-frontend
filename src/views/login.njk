@@ -3,19 +3,26 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<main id="main-content" class="p-8 min-h-screen bg-white dark:bg-gray-900">
-    <div class="max-w-md mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+<main id="main-content" class="p-8 min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:bg-gradient-to-br dark:from-slate-900 dark:via-gray-900 dark:to-slate-800">
+    <div class="max-w-md mx-auto bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-lg shadow-lg border border-slate-200/60 dark:border-gray-700">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Login</h1>
         
+        <!-- Info message about authentication being removed -->
+        <div class="mb-6 p-4 bg-blue-100 dark:bg-blue-900 border border-blue-400 dark:border-blue-700 text-blue-700 dark:text-blue-200 rounded" role="alert">
+            <p class="font-semibold mb-2">Authentication Coming Soon</p>
+            <p class="text-sm">Authentication will be implemented in the next sprint using better-auth. For now, all pages are publicly accessible.</p>
+        </div>
+
         <form class="mb-8">
             <div class="mb-4">
-                <label for="username" class="block text-gray-700 dark:text-gray-300 font-bold mb-2">Username</label>
+                <label for="email" class="block text-gray-700 dark:text-gray-300 font-bold mb-2">Email</label>
                 <input 
-                    type="text" 
-                    id="username" 
-                    name="username" 
-                    required 
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    disabled
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded cursor-not-allowed"
+                    placeholder="Authentication not yet implemented"
                 >
             </div>
 
@@ -26,8 +33,9 @@
                         type="password" 
                         id="password" 
                         name="password" 
-                        required 
-                        class="w-full px-3 py-2 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        disabled
+                        class="w-full px-3 py-2 pr-12 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded cursor-not-allowed"
+                        placeholder="Authentication not yet implemented"
                     >
                     <button 
                         type="button" 
@@ -42,25 +50,31 @@
             </div>
 
             <button 
-                type="submit" 
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="button" 
+                disabled
+                class="w-full bg-gray-400 text-white font-bold py-2 px-4 rounded cursor-not-allowed opacity-60"
             >
-                Login
+                Login (Disabled)
             </button>
         </form>
 
-        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded border">
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Demo Credentials</h3>
-            <div class="mb-4">
-                <p class="text-gray-900 dark:text-white font-bold">Admin User</p>
-                <p class="text-gray-700 dark:text-gray-300">Email: admin@kainos.com</p>
-                <p class="text-gray-700 dark:text-gray-300">Password: admin123</p>
-            </div>
-            <div>
-                <p class="text-gray-900 dark:text-white font-bold">Regular User</p>
-                <p class="text-gray-700 dark:text-gray-300">Email: user@kainos.com</p>
-                <p class="text-gray-700 dark:text-gray-300">Password: user123</p>
-            </div>
+        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded border border-gray-200 dark:border-gray-600">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-3">Future Implementation</h3>
+            <p class="text-gray-700 dark:text-gray-300 text-sm mb-3">
+                This page will support secure authentication using <strong>better-auth</strong> with features including:
+            </p>
+            <ul class="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 text-sm">
+                <li>Email/password authentication</li>
+                <li>OAuth integration</li>
+                <li>Role-based access control</li>
+                <li>Secure session management</li>
+            </ul>
+        </div>
+
+        <div class="mt-6 text-center">
+            <a href="/" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
+                ← Return to Home
+            </a>
         </div>
     </div>
 </main>

@@ -11,7 +11,7 @@ import express, {
 } from "express";
 import nunjucks from "nunjucks";
 import { JobRoleController } from "./controllers/job-role-controller.js";
-import { JsonJobRoleService } from "./services/job-role-service.js";
+import { AxiosJobRoleService } from "./services/axios-job-role-service.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,7 +26,7 @@ interface AppConfig {
 class App {
 	private config: AppConfig;
 	private server: Application;
-	private jobRoleService: JsonJobRoleService;
+	private jobRoleService: AxiosJobRoleService;
 	private jobRoleController: JobRoleController;
 
 	constructor(config: AppConfig) {
@@ -34,7 +34,7 @@ class App {
 		this.server = express();
 
 		// Initialize services with dependency injection
-		this.jobRoleService = new JsonJobRoleService();
+		this.jobRoleService = new AxiosJobRoleService();
 		this.jobRoleController = new JobRoleController(this.jobRoleService);
 
 		this.initialize();
@@ -70,6 +70,55 @@ class App {
 			}
 		);
 
+		// Add date formatting filter for dd/mm/yyyy format (dates only)
+		env.addFilter("formatDate", (dateString: string) => {
+			if (!dateString) return "";
+
+			try {
+				const date = new Date(dateString);
+
+				// Check if date is valid
+				if (Number.isNaN(date.getTime())) return dateString;
+
+				const day = String(date.getDate()).padStart(2, "0");
+				const month = String(date.getMonth() + 1).padStart(2, "0");
+				const year = date.getFullYear();
+
+				return `${day}/${month}/${year}`;
+			} catch {
+				return dateString;
+			}
+		});
+
+		// Add date/time formatting filter for dd/mm/yyyy HH:MM:SS format
+		env.addFilter("formatDateTime", (dateString: string) => {
+			if (!dateString) return "";
+
+			try {
+				const date = new Date(dateString);
+
+				// Check if date is valid
+				if (Number.isNaN(date.getTime())) return dateString;
+
+				const day = String(date.getDate()).padStart(2, "0");
+				const month = String(date.getMonth() + 1).padStart(2, "0");
+				const year = date.getFullYear();
+				const hours = String(date.getHours()).padStart(2, "0");
+				const minutes = String(date.getMinutes()).padStart(2, "0");
+				const seconds = String(date.getSeconds()).padStart(2, "0");
+
+				return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+			} catch {
+				return dateString;
+			}
+		});
+
+		// Add band level formatting filter (adds "Level" suffix)
+		env.addFilter("formatBand", (band: string) => {
+			if (!band) return "";
+			return `${band} Level`;
+		});
+
 		console.log("Nunjucks filters configured successfully");
 	}
 
@@ -86,7 +135,10 @@ class App {
 	}
 
 	private setupRoutes(): void {
-		// Hello World endpoint - now renders a Nunjucks view
+		// Login page (kept for future better-auth implementation)
+		this.server.get("/login", this.jobRoleController.getLogin);
+
+		// Home page
 		this.server.get("/", (_req: Request, res: Response) => {
 			res.render("index.njk", {
 				message: "Hello World!",
@@ -97,12 +149,9 @@ class App {
 			});
 		});
 
-		// Job Roles endpoints
+		// Job Roles endpoints (now public, no auth required)
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
 		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
-
-		// Login endpoint
-		this.server.get("/login", this.jobRoleController.getLogin);
 	}
 
 	public start(): void {

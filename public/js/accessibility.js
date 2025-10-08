@@ -4,7 +4,7 @@
  */
 
 // Apply saved preferences immediately to prevent flash
-(function () {
+(() => {
 	const savedDarkMode = localStorage.getItem("darkMode") === "true";
 	const savedTextSize = localStorage.getItem("textSize") || "medium";
 

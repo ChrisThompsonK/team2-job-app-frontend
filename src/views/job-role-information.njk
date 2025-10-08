@@ -65,7 +65,7 @@
                     <span class="icon text-purple-600 text-2xl">💼</span>
                     <div>
                         <p class="text-sm text-gray-600 font-medium">Band Level</p>
-                        <span class="inline-block bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">{{ jobRole.band }}</span>
+                        <span class="inline-block bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">{{ jobRole.band | formatBand }}</span>
                     </div>
                 </div>
                 
@@ -84,7 +84,7 @@
                 
                 <div class="flex items-center gap-2">
                     <span class="icon text-gray-500 text-xl">📅</span>
-                    <span class="text-gray-700 font-medium">Closes: {{ jobRole.closingDate }}</span>
+                    <span class="text-gray-700 font-medium">Closes: {{ jobRole.closingDate | formatDate }}</span>
                 </div>
             </div>
         </div>
