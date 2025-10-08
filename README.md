@@ -1,147 +1,59 @@
-[![Code Quality](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/code-quality.yml/badge.svg)](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/code-quality.yml) [![Formatted with Biome](https://img.shields.io/badge/Formatted_with-Biome-60a5fa?style=flat&logo=biome)](https://biomejs.dev/) 
 
 # Team 2 Job App Frontend
 
-A modern Node.js TypeScript application with ES modules support.
+[![Code Quality](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/code-quality.yml/badge.svg)](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/code-quality.yml) [![Formatted with Biome](https://img.shields.io/badge/Formatted_with-Biome-60a5fa?style=flat&logo=biome)](https://biomejs.dev/)
+
+A modern, accessible job application portal built with Node.js, TypeScript, Express, Nunjucks, Tailwind CSS, and DaisyUI.
 
 ## 🚀 Features
-
-- **TypeScript**: Full TypeScript support with strict type checking
-- **ES Modules**: Modern JavaScript module system
-- **tsx**: Fast TypeScript execution for development
-- **Modern Node.js**: Latest JavaScript features (ES2022)
-- **Express**: Fast, unopinionated web framework for Node.js
-- **Nunjucks**: Powerful templating engine for dynamic HTML generation
-- **Tailwind CSS 4**: Latest version of utility-first CSS framework
-- **daisyUI 5.1.26**: Beautiful UI component library built on Tailwind CSS
-- **Biome**: Ultra-fast formatter, linter, and code quality tools
-- **Vitest**: Next generation testing framework with coverage support
-- **Strict Configuration**: Comprehensive TypeScript compiler options
-- **Job Roles Management**: Comprehensive job listing with "View Details" and "Apply Now" buttons for seamless navigation and application process
-- **Kainos Brand Theme**: Custom blue, green, and white color scheme matching Kainos branding
-- **Premium UI Experience**: Enhanced home page and job roles with smooth animations and premium effects
-- **Advanced Animation System**: Shimmer effects, floating elements, staggered loading, and micro-interactions
-- **Glass Morphism Design**: Modern translucent effects with backdrop blur for contemporary aesthetics
-- **Unified Logo System**: Consistent transparent background Kainos logo across all components for clean, professional presentation
-- **Cross-Page Consistency**: Unified branding with official Kainos logo implementation across all templates
-- **Header-Footer Alignment**: Synchronized logo styling between navigation header and footer components
-- **Template Inheritance System**: Reusable layout components with header and footer separation
-- **API Integration**: Axios-based HTTP client with fallback to mock data
-- **Dependency Injection**: Clean architecture with service layer separation
-- **Accessibility Features**: WCAG 2.1 AA compliant with comprehensive accessibility support
-
-## ♿ Accessibility Features
-
-This application is **WCAG 2.1 AA compliant** with comprehensive accessibility support:
-
-### **Implemented Features**
-- ✅ **Skip Links**: Jump to main content for keyboard users
-- ✅ **Text Size Controls**: 4 size options (Small, Medium, Large, X-Large) with localStorage persistence  
-- ✅ **Dark Mode**: Complete dark theme with proper contrast ratios
-- ✅ **Keyboard Navigation**: Full keyboard support with Enter/Space/Escape keys
-- ✅ **Enhanced Focus Indicators**: High-visibility focus states for all interactive elements
-- ✅ **ARIA Implementation**: Proper labels, roles, and semantic markup
-- ✅ **Screen Reader Support**: Optimized for VoiceOver, NVDA, and JAWS
-
-### **Quick Testing**
-1. Press **Tab** on page load to see skip links
-2. Click **Accessibility** button in navigation
-3. Test text sizing, dark mode, and keyboard navigation
-4. All settings persist across page refreshes
-
-### **Documentation**
-- **Full Guide**: See `ACCESSIBILITY_REPORT.md` for comprehensive details
-- **Manual Testing**: See `test-accessibility-manual.md` for testing procedures  
-- **Test Coverage**: 100% passing accessibility integration tests
+- TypeScript, ES Modules, Express, Nunjucks templating
+- Tailwind CSS 4, DaisyUI, Biome, Vitest
+- Modern homepage UI, animated backgrounds, stat cards
+- Readable time display (HH:MM, weekday, date)
+- Job roles listing, details, and application workflow
+- Kainos brand theme, unified logo system
+- Dark mode (dual toggle, persistent)
+- Accessibility: skip links, text size, ARIA, keyboard navigation
 
 ## 📦 Project Structure
 ```
 ├── src/
-│   ├── index.ts          # Main application entry point
-│   ├── testing.ts        # Utility functions
+│   ├── index.ts
 │   ├── controllers/
-│   │   └── job-role-controller.ts  # Job roles route handler
 │   ├── services/
-│   │   └── job-role-service.ts     # Job roles API service with axios
 │   ├── models/
-│   │   └── job-role-response.ts    # Job role data models
 │   ├── data/
-│   │   └── job-roles.json          # JSON data source with job roles
 │   ├── styles/
-│   │   └── input.css     # Tailwind CSS + daisyUI imports
 │   └── views/
-│       ├── templates/
-│       │   ├── layout.njk    # Base template with common structure
-│       │   ├── header.njk    # Reusable navigation header component
-│       │   └── footer.njk    # Reusable footer component
-│       ├── index.njk         # Home page template extending base layout
-│       ├── job-role-list.njk # Job roles listing template
-│       └── error.njk         # Error page template
 ├── public/
-│   └── css/
-│       └── styles.css    # Generated Tailwind + daisyUI styles
-├── dist/                 # Compiled JavaScript output
-├── package.json          # Project configuration
-├── tsconfig.json         # TypeScript configuration
-├── tailwind.config.js    # Tailwind CSS configuration
-├── vitest.config.ts      # Vitest testing configuration
-├── biome.json           # Biome linter and formatter configuration
-└── .gitignore           # Git ignore rules
+│   ├── css/
+│   ├── js/
+│   └── KainosLogoNoBackground.png
+├── dist/
+├── package.json
+├── tsconfig.json
+├── tailwind.config.js
+├── vitest.config.ts
+├── biome.json
+└── .gitignore
 ```
 
-## 🛠️ Available Scripts
 
-### Development & Build
-- **`npm run dev`**: Run the application in development mode with tsx
-- **`npm run build`**: Build CSS and compile TypeScript to JavaScript
-- **`npm run build:css`**: Generate Tailwind CSS with daisyUI components
-- **`npm run build:css:watch`**: Watch mode for CSS generation during development
-- **`npm run build:css:prod`**: Generate minified CSS for production
-- **`npm start`**: Run the compiled JavaScript application
-- **`npm run type-check`**: Type check without emitting files
+## 🛠️ Scripts
+- `npm run dev` — Start development server
+- `npm run build` — Build CSS and TypeScript
+- `npm run build:css` — Generate CSS
+- `npm run test` — Run tests (Vitest)
+- `npm run lint` — Lint code (Biome)
+- `npm run format` — Format code (Biome)
 
-### Testing (Vitest)
-- **`npm test`**: Run tests in watch mode
-- **`npm run test:run`**: Run all tests once
-- **`npm run test:watch`**: Run tests in watch mode
-- **`npm run test:ui`**: Open Vitest UI for interactive testing
-- **`npm run test:coverage`**: Run tests with coverage report
+## 🔧 Quickstart
+1. Install dependencies: `npm install`
+2. Start dev server: `npm run dev`
+3. Build CSS: `npm run build:css`
+4. Run tests: `npm test`
 
-### Code Quality (Biome)
-- **`npm run lint`**: Check for linting issues
-- **`npm run lint:fix`**: Fix linting issues automatically
-- **`npm run format`**: Check code formatting
-- **`npm run format:fix`**: Fix formatting issues automatically
-- **`npm run check`**: Run both linting and formatting checks
-- **`npm run check:fix`**: Fix both linting and formatting issues automatically
-
-## 🔧 Development
-
-1. **Development Mode**: Use `npm run dev` for fast development with tsx
-2. **Testing**: Run `npm test` for watch mode or `npm run test:run` for single run
-3. **Type Checking**: Run `npm run type-check` to validate TypeScript without compilation
-4. **Code Quality**: Use `npm run check:fix` to automatically fix linting and formatting issues
-5. **Production Build**: Use `npm run build` to compile for production
-
-### Code Quality Workflow
-```bash
-# Check and fix all code quality issues
-npm run check:fix
-
-# Or run individually
-npm run lint:fix    # Fix linting issues
-npm run format:fix  # Fix formatting issues
-```
-
-### UI Development Workflow
-```bash
-# Start development with CSS watching
-npm run build:css:watch  # In one terminal (watches CSS changes)
-npm run dev              # In another terminal (runs the app)
-
-# Or build CSS manually after changes
-npm run build:css        # Generate CSS with daisyUI components
-```
+---
 
 ## 🏗️ Tech Stack
 
@@ -290,6 +202,7 @@ The project uses modern TypeScript configuration with:
 ### Tailwind CSS + daisyUI Configuration
 - **Tailwind CSS 4**: Latest version with modern CSS features
 - **daisyUI Integration**: Uses `@plugin "daisyui"` directive in CSS
+- **Dark Mode**: Custom `.dark-mode` class selector configured in `tailwind.config.js`
 - **Content Sources**: Configured to scan `src/**/*.{html,js,ts,njk}` files
 - **Component Classes**: Full access to daisyUI's semantic component library
 - **Build Process**: Automated CSS generation with component tree-shaking
