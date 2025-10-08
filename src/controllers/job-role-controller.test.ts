@@ -7,11 +7,17 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { JobRoleController } from "../controllers/job-role-controller";
 import type { JobRoleResponse } from "../models/job-role-response";
 import type { JobRoleService } from "../services/job-role-service";
+import { JobRoleValidator } from "../utils/job-role-validator";
 
 // Mock JobRoleService
 const mockJobRoleService: JobRoleService = {
 	getJobRoles: vi.fn(),
+	getJobRoleById: vi.fn(),
+	createJobRole: vi.fn(),
 };
+
+// Mock JobRoleValidator
+const mockJobRoleValidator = new JobRoleValidator();
 
 // Mock Express Response
 const mockResponse = () => {
@@ -30,7 +36,10 @@ describe("JobRoleController", () => {
 	let res: Response;
 
 	beforeEach(() => {
-		controller = new JobRoleController(mockJobRoleService);
+		controller = new JobRoleController(
+			mockJobRoleService,
+			mockJobRoleValidator
+		);
 		req = mockRequest();
 		res = mockResponse();
 		vi.clearAllMocks();
@@ -152,9 +161,14 @@ describe("JobRoleController", () => {
 	});
 
 	describe("constructor", () => {
-		it("should create controller with provided service", () => {
-			const testService = { getJobRoles: vi.fn() } as JobRoleService;
-			const testController = new JobRoleController(testService);
+		it("should create controller with provided service and validator", () => {
+			const testService = {
+				getJobRoles: vi.fn(),
+				getJobRoleById: vi.fn(),
+				createJobRole: vi.fn(),
+			} as JobRoleService;
+			const testValidator = new JobRoleValidator();
+			const testController = new JobRoleController(testService, testValidator);
 
 			expect(testController).toBeInstanceOf(JobRoleController);
 		});

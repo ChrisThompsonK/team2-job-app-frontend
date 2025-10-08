@@ -12,6 +12,7 @@ import express, {
 import nunjucks from "nunjucks";
 import { JobRoleController } from "./controllers/job-role-controller.js";
 import { AxiosJobRoleService } from "./services/axios-job-role-service.js";
+import { JobRoleValidator } from "./utils/job-role-validator.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,7 +36,11 @@ class App {
 
 		// Initialize services with dependency injection
 		this.jobRoleService = new AxiosJobRoleService();
-		this.jobRoleController = new JobRoleController(this.jobRoleService);
+		const jobRoleValidator = new JobRoleValidator();
+		this.jobRoleController = new JobRoleController(
+			this.jobRoleService,
+			jobRoleValidator
+		);
 
 		this.initialize();
 	}
