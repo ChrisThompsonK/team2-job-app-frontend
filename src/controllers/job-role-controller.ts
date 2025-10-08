@@ -4,8 +4,8 @@
 
 import type { Request, Response } from "express";
 import type { JobRoleService } from "../services/job-role-service.js";
+import type { JobRoleValidator } from "../utils/job-role-validator.js";
 import { validateJobRoleId } from "../utils/validation.js";
-import { JobRoleValidator } from "../utils/job-role-validator.js";
 
 export class JobRoleController {
 	private jobRoleService: JobRoleService;
