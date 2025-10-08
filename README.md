@@ -1,4 +1,3 @@
-
 # Team 2 Job App Frontend
 
 [![Code Quality](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/code-quality.yml/badge.svg)](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/code-quality.yml) [![Formatted with Biome](https://img.shields.io/badge/Formatted_with-Biome-60a5fa?style=flat&logo=biome)](https://biomejs.dev/)
@@ -11,6 +10,8 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - Modern homepage UI, animated backgrounds, stat cards
 - Readable time display (HH:MM, weekday, date)
 - Job roles listing, details, and application workflow
+- **Admin job role creation** - Full CRUD functionality to create and save job roles to database
+- Backend API integration via Axios for data persistence
 - Kainos brand theme, unified logo system
 - Dark mode (dual toggle, persistent)
 - Accessibility: skip links, text size, ARIA, keyboard navigation
@@ -131,6 +132,8 @@ The application includes a comprehensive job roles management system:
 ### Routes
 - **`/`**: Enhanced home page with premium animations, hero section, and interactive stat cards
 - **`/job-roles`**: Premium job listings with smooth card animations and enhanced visual effects
+- **`/job-roles/new`**: Admin form for creating new job roles with comprehensive validation
+- **`POST /job-roles`**: Backend endpoint for saving new job roles to the database
 - **`/job-roles/{id}`**: Individual job role details accessible via "View Details" button with comprehensive role information
 
 ### Architecture
@@ -212,3 +215,9 @@ The project uses modern TypeScript configuration with:
 - **Formatting**: Tab indentation (2 spaces), 80-character line width
 - **Code Style**: Double quotes, trailing commas (ES5), semicolons
 - **File Coverage**: All files in `src/` directory
+
+#### ⚠️ Biome Lint Warnings for CSS Specificity
+
+This project intentionally uses `!important` in several CSS rules for accessibility and dark mode overrides (see `src/styles/input.css`). These are required to ensure proper focus indicators and color contrast, especially when overriding Tailwind and DaisyUI defaults.
+
+The `noImportantStyles` rule has been disabled in `biome.json` to allow these necessary overrides. However, you may see minor specificity warnings which are expected and safe to ignore.

@@ -159,6 +159,8 @@ class App {
 
 		// Job Roles endpoints (now public, no auth required)
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
+		this.server.get("/job-roles/new", this.jobRoleController.getCreateJobRole);
+		this.server.post("/job-roles", this.jobRoleController.createJobRole);
 		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
 	}
 

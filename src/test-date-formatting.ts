@@ -3,7 +3,7 @@
  */
 
 // Function to test
-function formatDate(dateString: string): string {
+export function formatDate(dateString: string): string {
 	if (!dateString) return "";
 
 	try {

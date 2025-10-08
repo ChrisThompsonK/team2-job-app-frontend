@@ -8,7 +8,7 @@ import { AxiosJobRoleService } from "./services/axios-job-role-service.js";
 async function testBackendConnection() {
 	console.log("🔍 Testing backend connection...\n");
 
-	// Test with default backend URL (http://localhost:8080)
+	// Test with default backend URL (http://localhost:8000)
 	const service = new AxiosJobRoleService();
 
 	try {
@@ -44,7 +44,7 @@ async function testBackendConnection() {
 	} catch (error) {
 		console.log("❌ FAILED! Backend is not connected or not responding.");
 		console.log(
-			"   Make sure your backend is running on http://localhost:8080\n"
+			"   Make sure your backend is running on http://localhost:8000\n"
 		);
 		if (error instanceof Error) {
 			console.log(`   Error: ${error.message}`);

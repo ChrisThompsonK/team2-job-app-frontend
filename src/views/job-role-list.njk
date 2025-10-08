@@ -24,8 +24,19 @@
                 
                 <h1 class="text-4xl md:text-6xl font-light mb-6">Career Opportunities</h1>
                 
-                <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6 inline-block">
-                    <p class="text-xl">🚀 {{ jobRoles.length }} Premium Positions Available</p>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-4">
+                    <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6">
+                        <p class="text-xl">🚀 {{ jobRoles.length }} Premium Positions Available</p>
+                    </div>
+                    
+                    <!-- Admin Add Job Role Button -->
+                    <!-- TODO: Add admin role check here when backend auth is implemented -->
+                    <a href="/job-roles/new" class="bg-green-600 text-white font-semibold py-3 px-6 rounded-2xl hover:bg-green-700 transition-all duration-200 flex items-center gap-2 shadow-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Add New Job Role
+                    </a>
                 </div>
             </div>
         </div>

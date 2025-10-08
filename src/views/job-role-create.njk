@@ -1,0 +1,424 @@
+{% extends "templates/layout.njk" %}
+
+{% block applicationTitle %}Add New Job Role - Kainos Job Application{% endblock %}
+
+{% block content %}
+<main id="main-content" class="pt-4">
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+    <!-- Header Section -->
+    <header class="mb-8">
+        <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-green-600 rounded-3xl shadow-2xl p-8 text-white relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-bold mb-2">Add New Job Role</h1>
+                        <p class="text-blue-100">Create a new career opportunity at Kainos</p>
+                    </div>
+                    <a href="/job-roles" class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Back to Job Roles
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Form Section -->
+    <div class="bg-white rounded-3xl shadow-xl p-8">
+        <style>
+        /* Style the calendar icon for date input for better visibility */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(34%) sepia(99%) saturate(747%) hue-rotate(176deg) brightness(95%) contrast(92%);
+            cursor: pointer;
+        }
+        input[type="date"]::-moz-calendar-picker-indicator {
+            filter: invert(34%) sepia(99%) saturate(747%) hue-rotate(176deg) brightness(95%) contrast(92%);
+            cursor: pointer;
+        }
+        </style>
+
+        <form id="addJobRoleForm" action="/job-roles" method="POST" class="space-y-8">
+            <!-- Role Name and Location -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="roleName" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Role Name <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="roleName" name="roleName" required 
+                           placeholder="e.g., Senior Software Engineer"
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-500">
+                </div>
+
+                <div>
+                    <label for="location" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Location <span class="text-red-500">*</span>
+                    </label>
+                    <select id="location" name="location" required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                        <option value="">Select Location</option>
+                        <option value="Belfast, Northern Ireland">Belfast, Northern Ireland</option>
+                        <option value="Birmingham, England">Birmingham, England</option>
+                        <option value="Derry~Londonderry, Northern Ireland">Derry~Londonderry, Northern Ireland</option>
+                        <option value="Dublin, Ireland">Dublin, Ireland</option>
+                        <option value="London, England">London, England</option>
+                        <option value="Gdansk, Poland">Gdansk, Poland</option>
+                        <option value="Helsinki, Finland">Helsinki, Finland</option>
+                        <option value="Paris, France">Paris, France</option>
+                        <option value="Antwerp, Belgium">Antwerp, Belgium</option>
+                        <option value="Buenos Aires, Argentina">Buenos Aires, Argentina</option>
+                        <option value="Indianapolis, United States">Indianapolis, United States</option>
+                        <option value="Nova Scotia, Canada">Nova Scotia, Canada</option>
+                        <option value="Toronto, Canada">Toronto, Canada</option>
+                        <option value="Remote">Remote</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Capability and Band -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="capability" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Capability <span class="text-red-500">*</span>
+                    </label>
+                    <select id="capability" name="capability" required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                        <option value="">Select Capability</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Analytics">Analytics</option>
+                        <option value="Product">Product</option>
+                        <option value="Design">Design</option>
+                        <option value="Quality Assurance">Quality Assurance</option>
+                        <option value="Documentation">Documentation</option>
+                        <option value="Testing">Testing</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="band" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Band Level <span class="text-red-500">*</span>
+                    </label>
+                    <select id="band" name="band" required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                        <option value="">Select Band</option>
+                        <option value="Junior">Junior</option>
+                        <option value="Mid">Mid</option>
+                        <option value="Senior">Senior</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Closing Date and Number of Open Positions -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="closingDate" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Closing Date <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" id="closingDate" name="closingDate" required 
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                </div>
+
+                <div>
+                    <label for="numberOfOpenPositions" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Number of Open Positions <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="numberOfOpenPositions" name="numberOfOpenPositions" min="1" value="1" required 
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                </div>
+            </div>
+
+            <!-- Status and Job Spec Link -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Status <span class="text-red-500">*</span>
+                    </label>
+                    <select id="status" name="status" required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                        <option value="Open">Open</option>
+                        <option value="Closed">Closed</option>
+                        <option value="On Hold">On Hold</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="jobSpecLink" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Job Spec Link (SharePoint) <span class="text-red-500">*</span>
+                    </label>
+                    <input type="url" id="jobSpecLink" name="jobSpecLink" required 
+                           placeholder="https://sharepoint.com/job-spec"
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-500">
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Job Description <span class="text-red-500">*</span>
+                </label>
+                <textarea id="description" name="description" rows="5" required 
+                          placeholder="Provide a comprehensive description of the role, including key information about the position..."
+                          class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-vertical text-gray-900 bg-white placeholder-gray-500"></textarea>
+            </div>
+
+            <!-- Responsibilities -->
+            <div>
+                <label for="responsibilities" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Key Responsibilities <span class="text-red-500">*</span>
+                </label>
+                <textarea id="responsibilities" name="responsibilities" rows="5" required 
+                          placeholder="List the main responsibilities and duties for this role..."
+                          class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-vertical text-gray-900 bg-white placeholder-gray-500"></textarea>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex gap-4 pt-6 border-t border-gray-200">
+                <a href="/job-roles" 
+                   class="flex-1 text-center px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-green-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-green-700 transition-colors flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Create Job Role
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Success/Error Messages -->
+{% if error %}
+<div id="errorMessage" class="fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 z-50">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+    <span>{{ error }}</span>
+</div>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('addJobRoleForm');
+
+    // Define valid options for each dropdown
+    const validOptions = {
+        location: [
+            'Belfast, Northern Ireland', 'Birmingham, England', 'Derry~Londonderry, Northern Ireland', 'Dublin, Ireland', 'London, England',
+            'Gdansk, Poland', 'Helsinki, Finland', 'Paris, France', 'Antwerp, Belgium', 'Buenos Aires, Argentina',
+            'Indianapolis, United States', 'Nova Scotia, Canada', 'Toronto, Canada', 'Remote'
+        ],
+        capability: [
+            'Engineering', 'Analytics', 'Product', 'Design', 'Quality Assurance',
+            'Documentation', 'Testing'
+        ],
+        band: ['Junior', 'Mid', 'Senior'],
+        status: ['Open', 'Closed', 'On Hold']
+    };
+
+    // Validate dropdown selection against allowed values
+    function validateDropdown(selectElement, allowedValues) {
+        const value = selectElement.value.trim();
+        if (!value) {
+            return { valid: false, message: 'Please select an option' };
+        }
+        if (!allowedValues.includes(value)) {
+            return { valid: false, message: 'Invalid selection. Please choose from the dropdown options.' };
+        }
+        return { valid: true };
+    }
+
+    // Validate URL format
+    function validateURL(urlString) {
+        try {
+            const url = new URL(urlString);
+            return url.protocol === 'http:' || url.protocol === 'https:';
+        } catch {
+            return false;
+        }
+    }
+
+    // Validate date is not in the past
+    function validateDate(dateString) {
+        const selectedDate = new Date(dateString);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset time to start of day
+        return selectedDate >= today;
+    }
+
+    // Client-side validation
+    form.addEventListener('submit', function(e) {
+        let isValid = true;
+        let errorMessages = [];
+
+        // Validate role name
+        const roleName = document.getElementById('roleName');
+        if (!roleName.value.trim()) {
+            roleName.classList.add('border-red-500');
+            errorMessages.push('Role Name is required');
+            isValid = false;
+        } else {
+            roleName.classList.remove('border-red-500');
+        }
+
+        // Validate location dropdown
+        const location = document.getElementById('location');
+        const locationValidation = validateDropdown(location, validOptions.location);
+        if (!locationValidation.valid) {
+            location.classList.add('border-red-500');
+            errorMessages.push('Location: ' + locationValidation.message);
+            isValid = false;
+        } else {
+            location.classList.remove('border-red-500');
+        }
+
+        // Validate capability dropdown
+        const capability = document.getElementById('capability');
+        const capabilityValidation = validateDropdown(capability, validOptions.capability);
+        if (!capabilityValidation.valid) {
+            capability.classList.add('border-red-500');
+            errorMessages.push('Capability: ' + capabilityValidation.message);
+            isValid = false;
+        } else {
+            capability.classList.remove('border-red-500');
+        }
+
+        // Validate band dropdown
+        const band = document.getElementById('band');
+        const bandValidation = validateDropdown(band, validOptions.band);
+        if (!bandValidation.valid) {
+            band.classList.add('border-red-500');
+            errorMessages.push('Band Level: ' + bandValidation.message);
+            isValid = false;
+        } else {
+            band.classList.remove('border-red-500');
+        }
+
+        // Validate closing date
+        const closingDate = document.getElementById('closingDate');
+        if (!closingDate.value) {
+            closingDate.classList.add('border-red-500');
+            errorMessages.push('Closing Date is required');
+            isValid = false;
+        } else if (!validateDate(closingDate.value)) {
+            closingDate.classList.add('border-red-500');
+            errorMessages.push('Closing Date cannot be in the past');
+            isValid = false;
+        } else {
+            closingDate.classList.remove('border-red-500');
+        }
+
+        // Validate number of open positions
+        const openPositions = document.getElementById('numberOfOpenPositions');
+        const positions = parseInt(openPositions.value, 10);
+        if (isNaN(positions) || positions < 1) {
+            openPositions.classList.add('border-red-500');
+            errorMessages.push('Number of Open Positions must be at least 1');
+            isValid = false;
+        } else {
+            openPositions.classList.remove('border-red-500');
+        }
+
+        // Validate status dropdown
+        const status = document.getElementById('status');
+        const statusValidation = validateDropdown(status, validOptions.status);
+        if (!statusValidation.valid) {
+            status.classList.add('border-red-500');
+            errorMessages.push('Status: ' + statusValidation.message);
+            isValid = false;
+        } else {
+            status.classList.remove('border-red-500');
+        }
+
+        // Validate job spec link
+        const jobSpecLink = document.getElementById('jobSpecLink');
+        if (!jobSpecLink.value.trim()) {
+            jobSpecLink.classList.add('border-red-500');
+            errorMessages.push('Job Spec Link is required');
+            isValid = false;
+        } else if (!validateURL(jobSpecLink.value.trim())) {
+            jobSpecLink.classList.add('border-red-500');
+            errorMessages.push('Job Spec Link must be a valid URL (starting with http:// or https://)');
+            isValid = false;
+        } else {
+            jobSpecLink.classList.remove('border-red-500');
+        }
+
+        // Validate description
+        const description = document.getElementById('description');
+        if (!description.value.trim()) {
+            description.classList.add('border-red-500');
+            errorMessages.push('Job Description is required');
+            isValid = false;
+        } else {
+            description.classList.remove('border-red-500');
+        }
+
+        // Validate responsibilities
+        const responsibilities = document.getElementById('responsibilities');
+        if (!responsibilities.value.trim()) {
+            responsibilities.classList.add('border-red-500');
+            errorMessages.push('Key Responsibilities is required');
+            isValid = false;
+        } else {
+            responsibilities.classList.remove('border-red-500');
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+            alert('Please fix the following errors:\n\n' + errorMessages.join('\n'));
+        }
+    });
+
+    // Prevent manual input in dropdowns (enforce selection only)
+    const dropdowns = ['location', 'capability', 'band', 'status'];
+    dropdowns.forEach(dropdownId => {
+        const dropdown = document.getElementById(dropdownId);
+        
+        // Disable keyboard typing in dropdown
+        dropdown.addEventListener('keypress', function(e) {
+            // Allow only Tab and Enter keys for navigation
+            if (e.key !== 'Tab' && e.key !== 'Enter') {
+                e.preventDefault();
+            }
+        });
+
+        // Validate on change to ensure value is from the list
+        dropdown.addEventListener('change', function() {
+            const validList = validOptions[dropdownId];
+            if (this.value && !validList.includes(this.value)) {
+                this.value = ''; // Reset if invalid value detected
+                this.classList.add('border-red-500');
+                alert(`Invalid ${dropdownId} selected. Please choose from the dropdown options.`);
+            } else {
+                this.classList.remove('border-red-500');
+            }
+        });
+    });
+
+    // Remove red border when user starts typing/selecting
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.classList.contains('border-red-500')) {
+                this.classList.remove('border-red-500');
+            }
+        });
+    });
+
+    // Auto-hide error message after 5 seconds
+    const errorMessage = document.getElementById('errorMessage');
+    if (errorMessage) {
+        setTimeout(() => {
+            errorMessage.style.opacity = '0';
+            errorMessage.style.transition = 'opacity 0.5s';
+            setTimeout(() => errorMessage.remove(), 500);
+        }, 5000);
+    }
+});
+</script>
+</main>
+{% endblock %}
