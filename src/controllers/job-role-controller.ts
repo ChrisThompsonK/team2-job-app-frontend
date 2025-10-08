@@ -17,9 +17,12 @@ export class JobRoleController {
 	 * GET /job-roles
 	 * Renders the job roles list view with data from the API
 	 */
-	public getJobRoles = async (_req: Request, res: Response): Promise<void> => {
+	public getJobRoles = async (req: Request, res: Response): Promise<void> => {
 		try {
-			const jobRoles = await this.jobRoleService.getJobRoles();
+			const sortBy = req.query["sortBy"] as string | undefined;
+			const order = (req.query["order"] as string) || "none";
+
+			const jobRoles = await this.jobRoleService.getJobRoles(sortBy, order);
 
 			res.render("job-role-list.njk", {
 				jobRoles,
@@ -27,8 +30,11 @@ export class JobRoleController {
 			});
 		} catch (error) {
 			console.error("Error in JobRoleController.getJobRoles:", error);
-			res.status(500).render("error.njk", {
-				message:
+			// Render with empty array to show the page with search bar
+			res.render("job-role-list.njk", {
+				jobRoles: [],
+				totalRoles: 0,
+				error:
 					"Sorry, we couldn't load the job roles at this time. Please try again later.",
 			});
 		}

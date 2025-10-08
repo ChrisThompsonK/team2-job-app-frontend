@@ -23,4 +23,12 @@ export interface JobRoleService {
 	 * @returns Promise<JobRoleDetailedResponse | null> The job role details or null if not found
 	 */
 	getJobRoleById(id: number): Promise<JobRoleDetailedResponse | null>;
+
+	/**
+	 * Fetches all job roles with optional sorting
+	 * @param sortBy The column to sort by (e.g., 'location', 'band')
+	 * @param order The sort order ('asc', 'desc', or 'none')
+	 * @returns Promise<JobRoleResponse[]> List of job roles sorted as requested
+	 */
+	getJobRoles(sortBy?: string, order?: string): Promise<JobRoleResponse[]>;
 }
