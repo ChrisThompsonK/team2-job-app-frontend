@@ -120,7 +120,7 @@ a:focus {
 	background-color: rgba(59, 130, 246, 0.1);
 }
 
-/* Dark Mode - Optimized with grouped selectors */
+/* Dark Mode - Enhanced compatibility with grouped selectors */
 .dark-mode {
 	background: #0f172a;
 	color: #f1f5f9;
@@ -135,6 +135,25 @@ a:focus {
 .dark-mode section {
 	background: transparent;
 	color: #f1f5f9;
+}
+
+/* Enhanced dark mode for cards and containers */
+.dark-mode .card,
+.dark-mode .rounded-2xl,
+.dark-mode .rounded-3xl {
+	background: rgba(30, 41, 59, 0.8) !important;
+	border: 1px solid #475569 !important;
+	backdrop-filter: blur(10px);
+}
+
+/* Dark mode for headers and text elements */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6 {
+	color: #f8fafc !important;
 }
 
 /* Consolidated background overrides */
@@ -221,23 +240,49 @@ a:focus {
 	font-weight: bold !important;
 }
 
-/* Dark mode for buttons */
-.dark-mode button:not(.text-size-btn):not(#dark-mode-toggle) {
+/* Dark mode for buttons - Enhanced compatibility */
+.dark-mode
+button:not(.text-size-btn):not(#dark-mode-toggle):not(#simple-dark-toggle) {
 	background: #374151 !important;
 	color: #f1f5f9 !important;
 	border: 1px solid #6b7280 !important;
 }
 
-.dark-mode button:hover:not(.text-size-btn):not(#dark-mode-toggle) {
+.dark-mode
+	button:hover:not(.text-size-btn):not(#dark-mode-toggle):not(
+		#simple-dark-toggle
+	) {
 	background: #4b5563 !important;
 	border: 1px solid #9ca3af !important;
 }
 
-/* Dark mode for gradient buttons */
-.dark-mode .bg-gradient-to-r.from-blue-600.to-green-600 {
-	background: linear-gradient(135deg, #2563eb 0%, #059669 100%) !important;
+/* Dark mode for gradient buttons and special cases */
+.dark-mode .bg-gradient-to-r.from-blue-600.to-green-600,
+.dark-mode .bg-gradient-to-r.from-blue-600.via-blue-700.to-green-600 {
+	background: linear-gradient(
+		135deg,
+		#2563eb 0%,
+		#1d4ed8 50%,
+		#059669 100%
+	) !important;
 	color: white !important;
 	border: none !important;
+}
+
+/* Dark mode for file input buttons */
+.dark-mode input[type="file"] {
+	background: #374151 !important;
+	color: #f1f5f9 !important;
+	border: 1px solid #6b7280 !important;
+}
+
+.dark-mode input[type="file"]::-webkit-file-upload-button {
+	background: #2563eb !important;
+	color: white !important;
+	border: none !important;
+	border-radius: 0.5rem;
+	padding: 0.5rem 1rem;
+	margin-right: 1rem;
 }
 
 /* Dark mode for links */
@@ -270,29 +315,41 @@ a:focus {
 	border: 1px solid #6b7280 !important;
 }
 
-/* Dark mode for status indicators */
+/* Dark mode for status indicators and colored backgrounds */
 .dark-mode .bg-green-50 {
-	background: #065f46 !important;
+	background: rgba(6, 95, 70, 0.3) !important;
 	color: #34d399 !important;
 	border: 1px solid #059669 !important;
 }
 
 .dark-mode .bg-blue-50 {
-	background: #1e3a8a !important;
+	background: rgba(30, 58, 138, 0.3) !important;
 	color: #60a5fa !important;
 	border: 1px solid #2563eb !important;
 }
 
 .dark-mode .bg-blue-100 {
-	background: #1e40af !important;
+	background: rgba(30, 64, 175, 0.4) !important;
 	color: #93c5fd !important;
 	border: 1px solid #3b82f6 !important;
 }
 
 .dark-mode .bg-purple-50 {
-	background: #581c87 !important;
+	background: rgba(88, 28, 135, 0.3) !important;
 	color: #c084fc !important;
 	border: 1px solid #7c3aed !important;
+}
+
+.dark-mode .bg-orange-50 {
+	background: rgba(154, 52, 18, 0.3) !important;
+	color: #fb923c !important;
+	border: 1px solid #ea580c !important;
+}
+
+.dark-mode .bg-gray-50 {
+	background: rgba(55, 65, 81, 0.5) !important;
+	color: #e5e7eb !important;
+	border: 1px solid #6b7280 !important;
 }
 
 /* Dark mode for badges */
@@ -317,11 +374,39 @@ a:focus {
 	color: #f87171 !important;
 }
 
-/* Dark mode focus indicators */
+/* Dark mode focus indicators - Enhanced for better visibility */
 .dark-mode *:focus {
 	outline: 3px solid #60a5fa !important;
 	outline-offset: 2px !important;
-	box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3) !important;
+	box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.4) !important;
+}
+
+.dark-mode button:focus:not(.text-size-btn),
+.dark-mode [role="button"]:focus {
+	outline: 3px solid #93c5fd !important;
+	outline-offset: 2px !important;
+	box-shadow:
+		0 0 0 3px rgba(147, 197, 253, 0.6),
+		0 0 0 6px rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Dark mode mobile menu and navigation */
+.dark-mode #mobileMenuDropdown .bg-white {
+	background: #1e293b !important;
+	color: #f1f5f9 !important;
+}
+
+.dark-mode .bg-black {
+	background: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Dark mode for mobile navigation */
+.dark-mode nav a {
+	color: #e2e8f0 !important;
+}
+
+.dark-mode nav a:hover {
+	color: #60a5fa !important;
 }
 
 /* Date input calendar icon styling */
@@ -330,4 +415,62 @@ input[type="date"]::-moz-calendar-picker-indicator {
 	filter: invert(34%) sepia(99%) saturate(747%) hue-rotate(176deg)
 		brightness(95%) contrast(92%);
 	cursor: pointer;
+}
+
+/* Dark mode date input calendar icon */
+.dark-mode input[type="date"]::-webkit-calendar-picker-indicator,
+.dark-mode input[type="date"]::-moz-calendar-picker-indicator {
+	filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%)
+		contrast(100%);
+}
+
+/* Dark mode improvements for specific application elements */
+.dark-mode .shadow-lg {
+	box-shadow:
+		0 10px 15px -3px rgba(0, 0, 0, 0.5),
+		0 4px 6px -2px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark-mode .shadow-xl {
+	box-shadow:
+		0 20px 25px -5px rgba(0, 0, 0, 0.5),
+		0 10px 10px -5px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark-mode .shadow-2xl {
+	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Dark mode for border utilities */
+.dark-mode .border-slate-200 {
+	border-color: #475569 !important;
+}
+
+.dark-mode .border-gray-300 {
+	border-color: #6b7280 !important;
+}
+
+.dark-mode .border-l-4 {
+	border-left-color: inherit !important;
+}
+
+/* Dark mode for backdrop blur elements */
+.dark-mode .backdrop-blur-sm {
+	backdrop-filter: blur(4px) !important;
+	background: rgba(30, 41, 59, 0.8) !important;
+}
+
+/* Improved dark mode for animated elements */
+.dark-mode .animate-pulse {
+	animation: dark-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes dark-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.7;
+	}
 }
