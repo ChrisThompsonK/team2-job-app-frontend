@@ -160,6 +160,7 @@ class App {
 		// Job Roles endpoints (now public, no auth required)
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
 		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
+		this.server.delete("/job-roles/:id", this.jobRoleController.deleteJobRole);
 	}
 
 	public start(): void {

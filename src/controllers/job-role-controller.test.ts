@@ -11,6 +11,8 @@ import type { JobRoleService } from "../services/job-role-service";
 // Mock JobRoleService
 const mockJobRoleService: JobRoleService = {
 	getJobRoles: vi.fn(),
+	getJobRoleById: vi.fn(),
+	deleteJobRole: vi.fn(),
 };
 
 // Mock Express Response
@@ -153,10 +155,129 @@ describe("JobRoleController", () => {
 
 	describe("constructor", () => {
 		it("should create controller with provided service", () => {
-			const testService = { getJobRoles: vi.fn() } as JobRoleService;
+			const testService = {
+				getJobRoles: vi.fn(),
+				getJobRoleById: vi.fn(),
+				deleteJobRole: vi.fn(),
+			} as JobRoleService;
 			const testController = new JobRoleController(testService);
 
 			expect(testController).toBeInstanceOf(JobRoleController);
+		});
+	});
+
+	describe("deleteJobRole", () => {
+		beforeEach(() => {
+			res.json = vi.fn().mockReturnValue(res);
+		});
+
+		it("should delete job role successfully with valid ID", async () => {
+			const mockReq = {
+				params: { id: "123" },
+			} as unknown as Request;
+
+			vi.mocked(mockJobRoleService.deleteJobRole).mockResolvedValue(true);
+
+			await controller.deleteJobRole(mockReq, res);
+
+			expect(mockJobRoleService.deleteJobRole).toHaveBeenCalledWith(123);
+			expect(res.status).toHaveBeenCalledWith(200);
+			expect(res.json).toHaveBeenCalledWith({
+				success: true,
+				message: "Job role deleted successfully.",
+			});
+		});
+
+		it("should return 400 error for invalid job role ID", async () => {
+			const mockReq = {
+				params: { id: "invalid" },
+			} as unknown as Request;
+
+			await controller.deleteJobRole(mockReq, res);
+
+			expect(mockJobRoleService.deleteJobRole).not.toHaveBeenCalled();
+			expect(res.status).toHaveBeenCalledWith(400);
+			expect(res.json).toHaveBeenCalledWith({
+				success: false,
+				message:
+					"Invalid job role ID provided. Please provide a valid numeric ID.",
+			});
+		});
+
+		it("should return 400 error for negative job role ID", async () => {
+			const mockReq = {
+				params: { id: "-1" },
+			} as unknown as Request;
+
+			await controller.deleteJobRole(mockReq, res);
+
+			expect(mockJobRoleService.deleteJobRole).not.toHaveBeenCalled();
+			expect(res.status).toHaveBeenCalledWith(400);
+			expect(res.json).toHaveBeenCalledWith({
+				success: false,
+				message:
+					"Invalid job role ID provided. Please provide a valid numeric ID.",
+			});
+		});
+
+		it("should return 404 error when job role not found", async () => {
+			const mockReq = {
+				params: { id: "999" },
+			} as unknown as Request;
+
+			vi.mocked(mockJobRoleService.deleteJobRole).mockResolvedValue(false);
+
+			await controller.deleteJobRole(mockReq, res);
+
+			expect(mockJobRoleService.deleteJobRole).toHaveBeenCalledWith(999);
+			expect(res.status).toHaveBeenCalledWith(404);
+			expect(res.json).toHaveBeenCalledWith({
+				success: false,
+				message: "Job role not found or could not be deleted.",
+			});
+		});
+
+		it("should handle service errors gracefully", async () => {
+			const mockReq = {
+				params: { id: "123" },
+			} as unknown as Request;
+
+			const mockError = new Error("Database connection failed");
+			vi.mocked(mockJobRoleService.deleteJobRole).mockRejectedValue(mockError);
+
+			const consoleSpy = vi
+				.spyOn(console, "error")
+				.mockImplementation(() => {});
+
+			await controller.deleteJobRole(mockReq, res);
+
+			expect(consoleSpy).toHaveBeenCalledWith(
+				"Error in JobRoleController.deleteJobRole:",
+				mockError
+			);
+			expect(res.status).toHaveBeenCalledWith(500);
+			expect(res.json).toHaveBeenCalledWith({
+				success: false,
+				message:
+					"Sorry, we couldn't delete the job role at this time. Please try again later.",
+			});
+
+			consoleSpy.mockRestore();
+		});
+
+		it("should handle missing params object", async () => {
+			const mockReq = {
+				params: {},
+			} as unknown as Request;
+
+			await controller.deleteJobRole(mockReq, res);
+
+			expect(res.status).toHaveBeenCalledWith(400);
+			expect(res.json).toHaveBeenCalledWith({
+				success: false,
+				message:
+					"Invalid job role ID provided. Please provide a valid numeric ID.",
+			});
 		});
 	});
 });

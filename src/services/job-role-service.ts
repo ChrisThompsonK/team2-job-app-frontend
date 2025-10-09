@@ -23,4 +23,11 @@ export interface JobRoleService {
 	 * @returns Promise<JobRoleDetailedResponse | null> The job role details or null if not found
 	 */
 	getJobRoleById(id: number): Promise<JobRoleDetailedResponse | null>;
+
+	/**
+	 * Deletes a job role by ID
+	 * @param id The job role ID to delete
+	 * @returns Promise<boolean> True if deletion was successful, false otherwise
+	 */
+	deleteJobRole(id: number): Promise<boolean>;
 }
