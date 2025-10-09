@@ -204,7 +204,8 @@ The application includes a comprehensive job roles management system with separa
 - **Input Validation**: Both client-side and server-side validation for all fields
 - **Whitespace Handling**: Automatic trimming of all string inputs before validation and storage
 - **Error Messages**: Clear, user-friendly error messages for validation failures
-- **Form Data Persistence**: Form data preserved on validation errors for better UX
+- **Form Data Persistence**: All form fields retain their values when validation fails - users never lose their work
+- **Smart Field Retention**: Text inputs, textareas, dropdowns, and date fields all preserve user input on validation errors
 - **Date Validation**: Closing date must be in the future with YYYY-MM-DD format
 - **URL Validation**: Job spec link must be a valid HTTP/HTTPS URL (http:// or https://)
 - **Security**: Nunjucks auto-escaping enabled to prevent XSS attacks
