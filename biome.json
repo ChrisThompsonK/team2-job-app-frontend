@@ -10,7 +10,14 @@
 			"recommended": true,
 			"complexity": {
 				"useLiteralKeys": "off",
+				"noImportantStyles": "off",
 				"noImportantStyles": "off"
+			},
+			"correctness": {
+				"noUnusedVariables": "warn"
+			},
+			"style": {
+				"noDescendingSpecificity": "off"
 			},
 			"suspicious": {
 				"noUnknownAtRules": "off"
