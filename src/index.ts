@@ -9,8 +9,11 @@ import express, {
 	type Request,
 	type Response,
 } from "express";
+import multer from "multer";
 import nunjucks from "nunjucks";
+import { ApplicationController } from "./controllers/application-controller.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
+import { AxiosApplicationService } from "./services/axios-application-service.js";
 import { AxiosJobRoleService } from "./services/axios-job-role-service.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -28,6 +31,9 @@ class App {
 	private server: Application;
 	private jobRoleService: AxiosJobRoleService;
 	private jobRoleController: JobRoleController;
+	private applicationService: AxiosApplicationService;
+	private applicationController: ApplicationController;
+	private upload: multer.Multer;
 
 	constructor(config: AppConfig) {
 		this.config = config;
@@ -36,6 +42,36 @@ class App {
 		// Initialize services with dependency injection
 		this.jobRoleService = new AxiosJobRoleService();
 		this.jobRoleController = new JobRoleController(this.jobRoleService);
+		this.applicationService = new AxiosApplicationService();
+		this.applicationController = new ApplicationController(
+			this.applicationService,
+			this.jobRoleService
+		);
+
+		// Configure multer for file uploads
+		this.upload = multer({
+			storage: multer.memoryStorage(),
+			limits: {
+				fileSize: 5 * 1024 * 1024, // 5MB limit
+			},
+			fileFilter: (_req, file, cb) => {
+				// Accept only PDF, DOC, and DOCX files
+				const allowedMimes = [
+					"application/pdf",
+					"application/msword",
+					"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+				];
+				if (allowedMimes.includes(file.mimetype)) {
+					cb(null, true);
+				} else {
+					cb(
+						new Error(
+							"Invalid file type. Only PDF, DOC, and DOCX files are allowed."
+						)
+					);
+				}
+			},
+		});
 
 		this.initialize();
 	}
@@ -160,6 +196,17 @@ class App {
 		// Job Roles endpoints (now public, no auth required)
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
 		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
+
+		// Application endpoints
+		this.server.get(
+			"/job-roles/:id/apply",
+			this.applicationController.getApplicationForm
+		);
+		this.server.post(
+			"/job-roles/:id/apply",
+			this.upload.single("cv"),
+			this.applicationController.submitApplication
+		);
 	}
 
 	public start(): void {
