@@ -174,4 +174,24 @@ export class AxiosJobRoleService implements JobRoleService {
 			throw new Error("Failed to create job role");
 		}
 	}
+
+	/**
+	 * Deletes a job role by ID from /api/job-roles/:id endpoint
+	 * @param id The job role ID to delete
+	 * @returns Promise<boolean> True if deletion was successful, false otherwise
+	 */
+	async deleteJobRole(id: number): Promise<boolean> {
+		// Validate input
+		if (!Number.isInteger(id) || id <= 0) {
+			return false;
+		}
+
+		try {
+			await this.axiosInstance.delete(`/api/job-roles/${id}`);
+			return true;
+		} catch (error) {
+			console.error(`Error deleting job role ${id}:`, error);
+			return false;
+		}
+	}
 }

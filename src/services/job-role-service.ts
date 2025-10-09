@@ -31,4 +31,11 @@ export interface JobRoleService {
 	 * @returns Promise<JobRoleDetailedResponse> The created job role with auto-generated ID
 	 */
 	createJobRole(jobRole: JobRoleCreate): Promise<JobRoleDetailedResponse>;
+
+	/**
+	 * Deletes a job role by ID
+	 * @param id The job role ID to delete
+	 * @returns Promise<boolean> True if deletion was successful, false otherwise
+	 */
+	deleteJobRole(id: number): Promise<boolean>;
 }

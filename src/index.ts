@@ -208,6 +208,13 @@ class App {
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
 		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
 
+		// Delete endpoints (both AJAX and form submission)
+		this.server.delete("/job-roles/:id", this.jobRoleController.deleteJobRole);
+		this.server.post(
+			"/job-roles/:id/delete",
+			this.jobRoleController.deleteJobRoleForm
+		);
+
 		// Admin endpoints (job role creation)
 		this.server.get(
 			"/admin/job-roles/new",
