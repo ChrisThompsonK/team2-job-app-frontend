@@ -1,0 +1,247 @@
+{% extends "templates/layout.njk" %}
+
+{% block applicationTitle %}Add New Job Role - Kainos Job Application{% endblock %}
+
+{% block content %}
+<main id="main-content" class="pt-4">
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+    <!-- Header Section -->
+    <header class="mb-8">
+        <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-green-600 rounded-3xl shadow-2xl p-8 text-white relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-bold mb-2">Add New Job Role</h1>
+                        <p class="text-blue-100">Create a new career opportunity at Kainos</p>
+                    </div>
+                    <a href="/job-roles" class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Back to Job Roles
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Form Section -->
+    <div class="bg-white rounded-3xl shadow-xl p-8">
+        <form id="addJobRoleForm" action="/admin/job-roles" method="POST" class="space-y-8">
+            <!-- Role Name and Location -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="roleName" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Role Name <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="roleName" name="roleName" required 
+                           placeholder="e.g., Senior Software Engineer"
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-500">
+                </div>
+
+                <div>
+                    <label for="location" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Location <span class="text-red-500">*</span>
+                    </label>
+                    <select id="location" name="location" required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                        <option value="">Select Location</option>
+                        <option value="Belfast, Northern Ireland">Belfast, Northern Ireland</option>
+                        <option value="Birmingham, England">Birmingham, England</option>
+                        <option value="Derry~Londonderry, Northern Ireland">Derry~Londonderry, Northern Ireland</option>
+                        <option value="Dublin, Ireland">Dublin, Ireland</option>
+                        <option value="London, England">London, England</option>
+                        <option value="Gdansk, Poland">Gdansk, Poland</option>
+                        <option value="Helsinki, Finland">Helsinki, Finland</option>
+                        <option value="Paris, France">Paris, France</option>
+                        <option value="Antwerp, Belgium">Antwerp, Belgium</option>
+                        <option value="Buenos Aires, Argentina">Buenos Aires, Argentina</option>
+                        <option value="Indianapolis, United States">Indianapolis, United States</option>
+                        <option value="Nova Scotia, Canada">Nova Scotia, Canada</option>
+                        <option value="Toronto, Canada">Toronto, Canada</option>
+                        <option value="Remote">Remote</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Capability and Band -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="capability" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Capability <span class="text-red-500">*</span>
+                    </label>
+                    <select id="capability" name="capability" required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                        <option value="">Select Capability</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Analytics">Analytics</option>
+                        <option value="Product">Product</option>
+                        <option value="Design">Design</option>
+                        <option value="Quality Assurance">Quality Assurance</option>
+                        <option value="Documentation">Documentation</option>
+                        <option value="Testing">Testing</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="band" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Band Level <span class="text-red-500">*</span>
+                    </label>
+                    <select id="band" name="band" required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                        <option value="">Select Band</option>
+                        <option value="Junior">Junior</option>
+                        <option value="Mid">Mid</option>
+                        <option value="Senior">Senior</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Closing Date and Number of Open Positions -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="closingDate" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Closing Date <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" id="closingDate" name="closingDate" required 
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                </div>
+
+                <div>
+                    <label for="numberOfOpenPositions" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Number of Open Positions <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="numberOfOpenPositions" name="numberOfOpenPositions" min="1" value="1" required 
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                </div>
+            </div>
+
+            <!-- Job Spec Link (Status is automatically set to "Open") -->
+            <div>
+                <label for="jobSpecLink" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Job Spec Link (SharePoint) <span class="text-red-500">*</span>
+                </label>
+                <input type="url" id="jobSpecLink" name="jobSpecLink" required 
+                       placeholder="https://sharepoint.com/job-spec"
+                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-500">
+                <p class="mt-2 text-sm text-gray-600">
+                    <svg class="w-4 h-4 inline mr-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Status will be automatically set to "Open" when creating a new role
+                </p>
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Job Description <span class="text-red-500">*</span>
+                </label>
+                <textarea id="description" name="description" rows="5" required 
+                          placeholder="Provide a comprehensive description of the role, including key information about the position..."
+                          class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-vertical text-gray-900 bg-white placeholder-gray-500"></textarea>
+            </div>
+
+            <!-- Responsibilities -->
+            <div>
+                <label for="responsibilities" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Key Responsibilities <span class="text-red-500">*</span>
+                </label>
+                <textarea id="responsibilities" name="responsibilities" rows="5" required 
+                          placeholder="List the main responsibilities and duties for this role..."
+                          class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-vertical text-gray-900 bg-white placeholder-gray-500"></textarea>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex gap-4 pt-6 border-t border-gray-200">
+                <a href="/job-roles" 
+                   class="flex-1 text-center px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-green-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-green-700 transition-colors flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Create Job Role
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Success/Error Messages -->
+{% if error %}
+<div id="errorMessage" class="fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 z-50">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+    <span>{{ error }}</span>
+</div>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('addJobRoleForm');
+    
+    // Validation helpers
+    const validateURL = (str) => {
+        try { 
+            const url = new URL(str); 
+            return url.protocol === 'http:' || url.protocol === 'https:'; 
+        } catch { 
+            return false; 
+        }
+    };
+    
+    const validateDate = (dateStr) => {
+        const selected = new Date(dateStr);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return selected >= today;
+    };
+    
+    const validateField = (field, check, message) => {
+        const isValid = check();
+        field.classList.toggle('border-red-500', !isValid);
+        return isValid ? null : message;
+    };
+
+    // Form validation
+    form.addEventListener('submit', function(e) {
+        const errors = [
+            validateField(form.roleName, () => form.roleName.value.trim(), 'Role Name is required'),
+            validateField(form.location, () => form.location.value, 'Location is required'),
+            validateField(form.capability, () => form.capability.value, 'Capability is required'),
+            validateField(form.band, () => form.band.value, 'Band Level is required'),
+            validateField(form.closingDate, () => form.closingDate.value && validateDate(form.closingDate.value), 'Closing Date must be in the future'),
+            validateField(form.numberOfOpenPositions, () => parseInt(form.numberOfOpenPositions.value, 10) >= 1, 'Number of Positions must be at least 1'),
+            validateField(form.jobSpecLink, () => form.jobSpecLink.value.trim() && validateURL(form.jobSpecLink.value.trim()), 'Job Spec Link must be a valid URL'),
+            validateField(form.description, () => form.description.value.trim(), 'Job Description is required'),
+            validateField(form.responsibilities, () => form.responsibilities.value.trim(), 'Key Responsibilities is required'),
+        ].filter(Boolean);
+
+        if (errors.length) {
+            e.preventDefault();
+            alert('Please fix the following errors:\n\n' + errors.join('\n'));
+        }
+    });
+
+    // Clear error styling on input
+    form.querySelectorAll('input, select, textarea').forEach(input => {
+        input.addEventListener('input', () => input.classList.remove('border-red-500'));
+    });
+
+    // Auto-hide error message
+    const errorMessage = document.getElementById('errorMessage');
+    if (errorMessage) {
+        setTimeout(() => {
+            errorMessage.style.opacity = '0';
+            errorMessage.style.transition = 'opacity 0.5s';
+            setTimeout(() => errorMessage.remove(), 500);
+        }, 5000);
+    }
+});
+</script>
+</main>
+{% endblock %}
