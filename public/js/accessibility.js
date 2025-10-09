@@ -93,8 +93,8 @@ class AccessibilityManager {
 		document.addEventListener("click", (e) => {
 			const isInsidePanel = this.panel.contains(e.target);
 			const isButton =
-				(this.button && this.button.contains(e.target)) ||
-				(this.mobileButton && this.mobileButton.contains(e.target));
+				this.button?.contains(e.target) ||
+				this.mobileButton?.contains(e.target);
 
 			if (!isInsidePanel && !isButton) {
 				closePanel();

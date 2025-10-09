@@ -2,6 +2,7 @@
  * Main entry point for the Express application
  */
 
+import "dotenv/config";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import express, {
@@ -9,9 +10,12 @@ import express, {
 	type Request,
 	type Response,
 } from "express";
+import multer from "multer";
 import nunjucks from "nunjucks";
 import { AdminController } from "./controllers/admin-controller.js";
+import { ApplicationController } from "./controllers/application-controller.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
+import { AxiosApplicationService } from "./services/axios-application-service.js";
 import { AxiosJobRoleService } from "./services/axios-job-role-service.js";
 import { JobRoleValidator } from "./utils/job-role-validator.js";
 
@@ -31,6 +35,9 @@ class App {
 	private jobRoleService: AxiosJobRoleService;
 	private jobRoleController: JobRoleController;
 	private adminController: AdminController;
+	private applicationService: AxiosApplicationService;
+	private applicationController: ApplicationController;
+	private upload: multer.Multer;
 
 	constructor(config: AppConfig) {
 		this.config = config;
@@ -46,6 +53,36 @@ class App {
 			this.jobRoleService,
 			jobRoleValidator
 		);
+		this.applicationService = new AxiosApplicationService();
+		this.applicationController = new ApplicationController(
+			this.applicationService,
+			this.jobRoleService
+		);
+
+		// Configure multer for file uploads
+		this.upload = multer({
+			storage: multer.memoryStorage(),
+			limits: {
+				fileSize: 5 * 1024 * 1024, // 5MB limit
+			},
+			fileFilter: (_req, file, cb) => {
+				// Accept only PDF, DOC, and DOCX files
+				const allowedMimes = [
+					"application/pdf",
+					"application/msword",
+					"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+				];
+				if (allowedMimes.includes(file.mimetype)) {
+					cb(null, true);
+				} else {
+					cb(
+						new Error(
+							"Invalid file type. Only PDF, DOC, and DOCX files are allowed."
+						)
+					);
+				}
+			},
+		});
 
 		this.initialize();
 	}
@@ -178,12 +215,23 @@ class App {
 			this.jobRoleController.deleteJobRoleForm
 		);
 
-		// Admin endpoints for job role creation
+		// Admin endpoints (job role creation)
 		this.server.get(
 			"/admin/job-roles/new",
 			this.adminController.getCreateJobRole
 		);
 		this.server.post("/admin/job-roles", this.adminController.createJobRole);
+
+		// Application endpoints
+		this.server.get(
+			"/job-roles/:id/apply",
+			this.applicationController.getApplicationForm
+		);
+		this.server.post(
+			"/job-roles/:id/apply",
+			this.upload.single("cv"),
+			this.applicationController.submitApplication
+		);
 	}
 
 	public start(): void {
@@ -211,7 +259,7 @@ const appConfig: AppConfig = {
 	name: "team2-job-app-frontend",
 	version: "1.0.0",
 	environment: process.env["NODE_ENV"] ?? "development",
-	port: parseInt(process.env["PORT"] ?? "3000", 10),
+	port: Number.parseInt(process.env["PORT"] ?? "3000", 10),
 };
 
 // Initialize and start the application
