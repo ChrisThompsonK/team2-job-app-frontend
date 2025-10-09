@@ -323,3 +323,11 @@ a:focus {
 	outline-offset: 2px !important;
 	box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3) !important;
 }
+
+/* Date input calendar icon styling */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-moz-calendar-picker-indicator {
+	filter: invert(34%) sepia(99%) saturate(747%) hue-rotate(176deg)
+		brightness(95%) contrast(92%);
+	cursor: pointer;
+}

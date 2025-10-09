@@ -1,8 +1,9 @@
 /**
- * Axios-based Job Role Service for fetching data from backend API
+ * Axios-based Job Role Service for fetching and managing data from backend API
  */
 
 import axios, { type AxiosInstance } from "axios";
+import type { JobRoleCreate } from "../models/job-role-create.js";
 import type { JobRoleDetailedResponse } from "../models/job-role-detailed-response.js";
 import type { JobRoleResponse } from "../models/job-role-response.js";
 import type { JobRoleService } from "./job-role-service.js";
@@ -39,7 +40,7 @@ interface BackendJobRole {
 export class AxiosJobRoleService implements JobRoleService {
 	private axiosInstance: AxiosInstance;
 
-	constructor(baseURL = "http://localhost:8080") {
+	constructor(baseURL = "http://localhost:8000") {
 		this.axiosInstance = axios.create({
 			baseURL,
 			timeout: 5000,
@@ -114,6 +115,61 @@ export class AxiosJobRoleService implements JobRoleService {
 			}
 			console.error(`Error fetching job role ${id}:`, error);
 			return null;
+		}
+	}
+
+	/**
+	 * Creates a new job role via POST /api/job-roles endpoint
+	 * @param jobRole The job role data to create
+	 * @returns Promise<JobRoleDetailedResponse> The created job role with auto-generated ID
+	 * @throws Error if creation fails
+	 */
+	async createJobRole(
+		jobRole: JobRoleCreate
+	): Promise<JobRoleDetailedResponse> {
+		try {
+			// Map frontend format to backend format
+			const backendPayload = {
+				jobRoleName: jobRole.roleName,
+				description: jobRole.description,
+				responsibilities: jobRole.responsibilities,
+				jobSpecLink: jobRole.jobSpecLink,
+				location: jobRole.location,
+				capability: jobRole.capability,
+				band: jobRole.band,
+				closingDate: jobRole.closingDate,
+				status: jobRole.status,
+				numberOfOpenPositions: jobRole.numberOfOpenPositions,
+			};
+
+			const response = await this.axiosInstance.post<
+				BackendResponse<BackendJobRole>
+			>("/api/job-roles", backendPayload);
+
+			const role = response.data.data;
+
+			// Map backend format back to frontend format
+			return {
+				jobRoleId: role.id,
+				roleName: role.jobRoleName,
+				description: role.description,
+				responsibilities: role.responsibilities,
+				jobSpecLink: role.jobSpecLink,
+				location: role.location,
+				capability: role.capability,
+				band: role.band,
+				closingDate: role.closingDate,
+				status: role.status,
+				numberOfOpenPositions: role.numberOfOpenPositions,
+			};
+		} catch (error) {
+			console.error("Error creating job role:", error);
+			if (axios.isAxiosError(error)) {
+				const message =
+					error.response?.data?.message || "Failed to create job role";
+				throw new Error(message);
+			}
+			throw new Error("Failed to create job role");
 		}
 	}
 }
