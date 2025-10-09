@@ -40,10 +40,12 @@ interface BackendJobRole {
 export class AxiosJobRoleService implements JobRoleService {
 	private axiosInstance: AxiosInstance;
 
-	constructor(baseURL = "http://localhost:8000") {
+	constructor(
+		baseURL = process.env["API_BASE_URL"] || "http://localhost:8080"
+	) {
 		this.axiosInstance = axios.create({
 			baseURL,
-			timeout: 5000,
+			timeout: Number.parseInt(process.env["API_TIMEOUT"] || "10000", 10),
 			headers: {
 				"Content-Type": "application/json",
 			},

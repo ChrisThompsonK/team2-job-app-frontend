@@ -2,6 +2,7 @@
  * Main entry point for the Express application
  */
 
+import "dotenv/config";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import express, {
@@ -11,6 +12,7 @@ import express, {
 } from "express";
 import multer from "multer";
 import nunjucks from "nunjucks";
+import { AdminController } from "./controllers/admin-controller.js";
 import { ApplicationController } from "./controllers/application-controller.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
 import { AxiosApplicationService } from "./services/axios-application-service.js";
@@ -32,6 +34,7 @@ class App {
 	private server: Application;
 	private jobRoleService: AxiosJobRoleService;
 	private jobRoleController: JobRoleController;
+	private adminController: AdminController;
 	private applicationService: AxiosApplicationService;
 	private applicationController: ApplicationController;
 	private upload: multer.Multer;
@@ -46,6 +49,10 @@ class App {
 
 		// Initialize controllers
 		this.jobRoleController = new JobRoleController(this.jobRoleService);
+		this.adminController = new AdminController(
+			this.jobRoleService,
+			jobRoleValidator
+		);
 		this.applicationService = new AxiosApplicationService();
 		this.applicationController = new ApplicationController(
 			this.applicationService,
@@ -201,6 +208,13 @@ class App {
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
 		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
 
+		// Admin endpoints (job role creation)
+		this.server.get(
+			"/admin/job-roles/new",
+			this.adminController.getCreateJobRole
+		);
+		this.server.post("/admin/job-roles", this.adminController.createJobRole);
+
 		// Application endpoints
 		this.server.get(
 			"/job-roles/:id/apply",
@@ -238,7 +252,7 @@ const appConfig: AppConfig = {
 	name: "team2-job-app-frontend",
 	version: "1.0.0",
 	environment: process.env["NODE_ENV"] ?? "development",
-	port: parseInt(process.env["PORT"] ?? "3000", 10),
+	port: Number.parseInt(process.env["PORT"] ?? "3000", 10),
 };
 
 // Initialize and start the application

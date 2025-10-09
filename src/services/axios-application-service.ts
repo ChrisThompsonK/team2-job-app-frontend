@@ -32,10 +32,12 @@ interface BackendApplicationResponse {
 export class AxiosApplicationService implements ApplicationService {
 	private axiosInstance: AxiosInstance;
 
-	constructor(baseURL = "http://localhost:8080") {
+	constructor(
+		baseURL = process.env["API_BASE_URL"] || "http://localhost:8080"
+	) {
 		this.axiosInstance = axios.create({
 			baseURL,
-			timeout: 10000, // 10 seconds for file uploads
+			timeout: Number.parseInt(process.env["API_TIMEOUT"] || "10000", 10),
 		});
 	}
 
