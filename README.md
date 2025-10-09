@@ -19,18 +19,37 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 ## 📦 Project Structure
 ```
 ├── src/
-│   ├── index.ts
+│   ├── index.ts                          # Application entry point & routing
 │   ├── controllers/
+│   │   ├── job-role-controller.ts        # Public job role operations (read-only)
+│   │   ├── admin-controller.ts           # Admin operations (create, update, delete)
+│   │   └── *.test.ts                     # Controller unit tests
 │   ├── services/
+│   │   ├── job-role-service.ts           # JobRoleService interface
+│   │   ├── axios-job-role-service.ts     # API implementation with Axios
+│   │   └── interfaces.ts                 # Service interfaces
 │   ├── models/
+│   │   ├── job-role-response.ts          # TypeScript data models
+│   │   ├── job-role-create.ts            # Create request model
+│   │   └── job-role-detailed-response.ts # Detailed response model
+│   ├── utils/
+│   │   ├── job-role-validator.ts         # Comprehensive validation logic
+│   │   ├── job-role-validation-constants.ts  # Valid options for dropdowns
+│   │   └── validation.ts                 # General validation helpers
 │   ├── data/
+│   │   └── job-roles.json                # Sample data (fallback)
 │   ├── styles/
+│   │   └── input.css                     # Tailwind CSS source
 │   └── views/
+│       ├── *.njk                         # Nunjucks templates
+│       └── templates/                    # Layout & partials
 ├── public/
 │   ├── css/
+│   │   └── styles.css                    # Compiled CSS output
 │   ├── js/
-│   └── KainosLogoNoBackground.png
-├── dist/
+│   │   └── accessibility.js              # Client-side scripts
+│   └── *.png                             # Static assets
+├── dist/                                  # Compiled TypeScript output
 ├── package.json
 ├── tsconfig.json
 ├── tailwind.config.js
@@ -41,12 +60,25 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 
 
 ## 🛠️ Scripts
-- `npm run dev` — Start development server
-- `npm run build` — Build CSS and TypeScript
-- `npm run build:css` — Generate CSS
-- `npm run test` — Run tests (Vitest)
-- `npm run lint` — Lint code (Biome)
-- `npm run format` — Format code (Biome)
+
+### Development
+- `npm run dev` — Start development server with hot reload (runs CSS watch + tsx server in parallel)
+- `npm run css:watch` — Watch and rebuild CSS on file changes
+
+### Building
+- `npm run build` — Full production build (CSS + TypeScript compilation)
+- `npm run build:css` — Generate CSS from Tailwind
+- `npm run start` — Start production server from compiled code
+- `npm run serve` — Build and start production server
+
+### Testing & Quality
+- `npm run test` — Run tests in watch mode (Vitest)
+- `npm run test:run` — Run tests once (CI mode)
+- `npm run test:coverage` — Generate test coverage report
+- `npm run type-check` — TypeScript type validation (no compilation)
+- `npm run check` — Biome format + lint with auto-fix (run before commits)
+- `npm run lint` — Biome lint only
+- `npm run format` — Biome format only
 
 ## 🔧 Quickstart
 1. Install dependencies: `npm install`
@@ -167,15 +199,23 @@ The application includes a comprehensive job roles management system with separa
 
 ### Admin Features
 - **Job Role Creation**: Full form with validation for creating new job roles
-- **Dropdown Selection**: Band and capability dropdowns populated from validation constants
-- **Automatic Status**: New job roles automatically set to "Open" status
+- **Dropdown Selection**: Band and capability dropdowns populated from validation constants (`job-role-validation-constants.ts`)
+- **Automatic Status**: New job roles automatically set to "Open" status (configurable via constant)
 - **Input Validation**: Both client-side and server-side validation for all fields
-- **Whitespace Handling**: Automatic trimming of all string inputs
+- **Whitespace Handling**: Automatic trimming of all string inputs before validation and storage
 - **Error Messages**: Clear, user-friendly error messages for validation failures
 - **Form Data Persistence**: Form data preserved on validation errors for better UX
 - **Date Validation**: Closing date must be in the future with YYYY-MM-DD format
-- **URL Validation**: Job spec link must be a valid HTTP/HTTPS URL
-- **Comprehensive Testing**: 17 test cases covering all validation scenarios
+- **URL Validation**: Job spec link must be a valid HTTP/HTTPS URL (http:// or https://)
+- **Security**: Nunjucks auto-escaping enabled to prevent XSS attacks
+- **Comprehensive Testing**: 17 test cases covering all validation scenarios with 100% pass rate
+
+### Known Limitations & Future Work
+- **Authentication/Authorization**: Admin routes (`/admin/*`) currently have no authentication. This is intentional for MVP and will be addressed in a future PR. See `FUTURE_AUTH_IMPLEMENTATION.md` for planned approach.
+- **Rate Limiting**: No rate limiting on admin endpoints yet. Consider adding `express-rate-limit` middleware in production.
+- **Audit Logging**: Admin actions are not currently logged. Future implementation should track who created/modified job roles.
+- **Dynamic Dropdowns**: Bands and capabilities are currently loaded from constants. Future version will fetch from backend API.
+- **Integration Tests**: Currently only unit tests exist. E2E tests with Playwright/Cypress planned for future.
 
 ### Data Management
 - **Primary Data**: JSON file (`src/data/job-roles.json`) with 12 diverse job roles
@@ -185,13 +225,16 @@ The application includes a comprehensive job roles management system with separa
 
 
 ### Recent Quality Improvements
+- **Admin Controller Separation**: Separated admin operations from public JobRoleController for better security and maintainability
+- **Validation Constants**: Centralized all dropdown options in `job-role-validation-constants.ts` for single source of truth
+- **Comprehensive Testing**: 75 tests passing including 17 new tests for AdminController (100% pass rate)
+- **Template Optimization**: Reduced job-role-create.njk from 402 to 247 lines (38.6% smaller) through code refactoring
 - **Consistent Logo Implementation**: Unified transparent background Kainos logo with responsive sizing (h-8 for header/footer, h-16 for hero sections)
 - **File Structure Cleanup**: Fixed HTML structural issues and removed duplicate content
 - **CSS Class Corrections**: Resolved Tailwind class naming issues (h-10 vs h10)
 - **Button Visibility**: Enhanced contrast for better accessibility and user experience
 - **Cross-Page Branding**: Consistent Kainos visual identity throughout the application
-- **Code Quality**: All files pass Biome formatting and linting checks
-- **Test Coverage**: Comprehensive test suite with 25/25 tests passing consistently
+- **Code Quality**: All files pass Biome formatting and linting checks with TypeScript strict mode enabled
 
 
 ### Template Architecture
@@ -235,3 +278,37 @@ The project uses modern TypeScript configuration with:
 This project intentionally uses `!important` in several CSS rules for accessibility and dark mode overrides (see `src/styles/input.css`). These are required to ensure proper focus indicators and color contrast, especially when overriding Tailwind and DaisyUI defaults.
 
 The `noImportantStyles` rule has been disabled in `biome.json` to allow these necessary overrides. However, you may see minor specificity warnings which are expected and safe to ignore.
+
+## 🔒 Code Quality Standards
+
+All code must pass the following checks before committing:
+
+### Pre-Commit Checklist
+- [ ] `npm run type-check` — No TypeScript errors
+- [ ] `npm run check` — Biome format & lint passes
+- [ ] `npm run test:run` — All tests pass (currently 75/75)
+- [ ] Manual testing of changed functionality
+- [ ] Documentation updated (README, comments, etc.)
+
+### Architecture Guidelines
+- **MVC Pattern**: Controllers handle HTTP, Services contain business logic, Models define types
+- **Dependency Injection**: Use constructor injection for testability
+- **ES Modules**: Always use `.js` extensions in TypeScript imports
+- **Type Safety**: No `any` types, enable all strict checks
+- **Named Exports**: Prefer named exports over default exports
+- **Error Handling**: Always wrap async controller methods in try/catch
+- **Testing**: Aim for 80%+ code coverage on new code
+
+### File Naming Conventions
+- Controllers: `*-controller.ts` with corresponding `*-controller.test.ts`
+- Services: `*-service.ts` 
+- Models: `*-response.ts`, `*-create.ts`, etc.
+- Views: `*.njk` (Nunjucks templates)
+- Tests: `*.test.ts` co-located with source files
+
+## 📚 Additional Documentation
+
+- `FUTURE_AUTH_IMPLEMENTATION.md` - Planned authentication/authorization approach
+- `BACKEND_CONNECTION_GUIDE.md` - API integration documentation
+- `SWITCHING_TO_BACKEND.md` - Guide for connecting to backend API
+- Project-specific instructions in `.github/instructions/` directory
