@@ -15,6 +15,7 @@ import { ApplicationController } from "./controllers/application-controller.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
 import { AxiosApplicationService } from "./services/axios-application-service.js";
 import { AxiosJobRoleService } from "./services/axios-job-role-service.js";
+import { JobRoleValidator } from "./utils/job-role-validator.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,6 +42,9 @@ class App {
 
 		// Initialize services with dependency injection
 		this.jobRoleService = new AxiosJobRoleService();
+		const jobRoleValidator = new JobRoleValidator();
+
+		// Initialize controllers
 		this.jobRoleController = new JobRoleController(this.jobRoleService);
 		this.applicationService = new AxiosApplicationService();
 		this.applicationController = new ApplicationController(
@@ -193,7 +197,7 @@ class App {
 			});
 		});
 
-		// Job Roles endpoints (now public, no auth required)
+		// Job Roles endpoints (public, read-only)
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
 		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
 
