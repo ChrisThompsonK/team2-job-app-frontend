@@ -127,4 +127,34 @@ export class JobRoleController {
 			});
 		}
 	};
+
+	/**
+	 * Handle delete job role via POST (for form submissions without JavaScript)
+	 * Redirects back to job roles list with success/error message
+	 */
+	public deleteJobRoleForm = async (
+		req: Request,
+		res: Response
+	): Promise<void> => {
+		try {
+			const jobRoleId = validateJobRoleId(req.params["id"]);
+
+			if (!jobRoleId) {
+				res.redirect("/job-roles?error=invalid-id");
+				return;
+			}
+
+			const deleted = await this.jobRoleService.deleteJobRole(jobRoleId);
+
+			if (!deleted) {
+				res.redirect("/job-roles?error=not-found");
+				return;
+			}
+
+			res.redirect("/job-roles?success=deleted");
+		} catch (error) {
+			console.error("Error in JobRoleController.deleteJobRoleForm:", error);
+			res.redirect("/job-roles?error=server-error");
+		}
+	};
 }

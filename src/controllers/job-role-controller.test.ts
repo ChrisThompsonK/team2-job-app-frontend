@@ -290,4 +290,71 @@ describe("JobRoleController", () => {
 			});
 		});
 	});
+
+	describe("deleteJobRoleForm", () => {
+		beforeEach(() => {
+			res.redirect = vi.fn().mockReturnValue(res);
+		});
+
+		it("should redirect to job roles with success message after deletion", async () => {
+			const mockReq = {
+				params: { id: "123" },
+			} as unknown as Request;
+
+			vi.mocked(mockJobRoleService.deleteJobRole).mockResolvedValue(true);
+
+			await controller.deleteJobRoleForm(mockReq, res);
+
+			expect(mockJobRoleService.deleteJobRole).toHaveBeenCalledWith(123);
+			expect(res.redirect).toHaveBeenCalledWith("/job-roles?success=deleted");
+		});
+
+		it("should redirect with error for invalid ID", async () => {
+			const mockReq = {
+				params: { id: "invalid" },
+			} as unknown as Request;
+
+			await controller.deleteJobRoleForm(mockReq, res);
+
+			expect(mockJobRoleService.deleteJobRole).not.toHaveBeenCalled();
+			expect(res.redirect).toHaveBeenCalledWith("/job-roles?error=invalid-id");
+		});
+
+		it("should redirect with not-found error when job role doesn't exist", async () => {
+			const mockReq = {
+				params: { id: "999" },
+			} as unknown as Request;
+
+			vi.mocked(mockJobRoleService.deleteJobRole).mockResolvedValue(false);
+
+			await controller.deleteJobRoleForm(mockReq, res);
+
+			expect(res.redirect).toHaveBeenCalledWith("/job-roles?error=not-found");
+		});
+
+		it("should redirect with server-error on exception", async () => {
+			const mockReq = {
+				params: { id: "123" },
+			} as unknown as Request;
+
+			const mockError = new Error("Database error");
+			vi.mocked(mockJobRoleService.deleteJobRole).mockRejectedValue(mockError);
+
+			const consoleSpy = vi
+				.spyOn(console, "error")
+				.mockImplementation(() => {});
+
+			await controller.deleteJobRoleForm(mockReq, res);
+
+			expect(consoleSpy).toHaveBeenCalledWith(
+				"Error in JobRoleController.deleteJobRoleForm:",
+				mockError
+			);
+			expect(res.redirect).toHaveBeenCalledWith(
+				"/job-roles?error=server-error"
+			);
+
+			consoleSpy.mockRestore();
+		});
+	});
 });

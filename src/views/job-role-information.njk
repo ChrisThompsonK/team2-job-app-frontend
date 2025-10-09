@@ -86,22 +86,26 @@
                     </div>
                 </div>
                 
+                <!-- Delete Form (works without JavaScript) -->
                 <div id="deleteButtonContainer" class="flex items-center">
-                    <button id="deleteJobRoleBtn" data-job-role-id="{{ jobRole.jobRoleId }}" class="inline-flex items-center px-4 py-2 font-medium rounded-lg transition-all duration-200 shadow-lg border" style="background-color: #dc2626; color: white; border-color: #b91c1c;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="white" viewBox="0 0 24 24" style="color: white;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                        Delete Job
-                    </button>
-                    <div id="confirmButtons" class="hidden items-center gap-3">
-                        <span class="text-gray-700 dark:text-gray-300 font-semibold text-lg">Delete?</span>
-                        <button id="confirmYes" class="px-5 py-2 font-bold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5" style="background-color: #dc2626; color: white;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
-                            Yes
+                    <form id="deleteForm" method="POST" action="/job-roles/{{ jobRole.jobRoleId }}/delete" class="inline">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="button" id="deleteJobRoleBtn" class="inline-flex items-center px-4 py-2 font-medium rounded-lg transition-all duration-200 shadow-lg border" style="background-color: #dc2626; color: white; border-color: #b91c1c;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="white" viewBox="0 0 24 24" style="color: white;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Delete Job
                         </button>
-                        <button id="confirmNo" class="px-5 py-2 font-bold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5" style="background-color: #6b7280; color: white;" onmouseover="this.style.backgroundColor='#4b5563'" onmouseout="this.style.backgroundColor='#6b7280'">
-                            No
-                        </button>
-                    </div>
+                        <div id="confirmButtons" class="hidden items-center gap-3">
+                            <span class="text-gray-700 dark:text-gray-300 font-semibold text-lg">Delete?</span>
+                            <button type="submit" id="confirmYes" class="px-5 py-2 font-bold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5" style="background-color: #dc2626; color: white;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
+                                Yes
+                            </button>
+                            <button type="button" id="confirmNo" class="px-5 py-2 font-bold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5" style="background-color: #6b7280; color: white;" onmouseover="this.style.backgroundColor='#4b5563'" onmouseout="this.style.backgroundColor='#6b7280'">
+                                No
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -179,21 +183,21 @@
 </main>
 
 <script>
-// Delete Job Role Functionality
+// Progressive Enhancement: Delete Job Role with AJAX when JavaScript is enabled
+// Fallback: Form submission works without JavaScript
 (function() {
     const deleteBtn = document.getElementById('deleteJobRoleBtn');
+    const deleteForm = document.getElementById('deleteForm');
     const confirmButtons = document.getElementById('confirmButtons');
     const confirmYes = document.getElementById('confirmYes');
     const confirmNo = document.getElementById('confirmNo');
     const toast = document.getElementById('messageToast');
     const toastIcon = document.getElementById('toastIcon');
     const toastMessage = document.getElementById('toastMessage');
-    
-    let jobRoleId = null;
 
     // Show confirmation buttons when delete is clicked
-    deleteBtn?.addEventListener('click', function() {
-        jobRoleId = this.getAttribute('data-job-role-id');
+    deleteBtn?.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent form submission
         // Hide delete button
         deleteBtn.style.display = 'none';
         // Show confirmation buttons
@@ -206,11 +210,15 @@
         confirmButtons.style.display = 'none';
         // Show delete button
         deleteBtn.style.display = 'inline-flex';
-        jobRoleId = null;
     });
 
-    // Handle "Yes" - confirm deletion
-    confirmYes?.addEventListener('click', async function() {
+    // Handle form submission with AJAX (progressive enhancement)
+    deleteForm?.addEventListener('submit', async function(e) {
+        e.preventDefault(); // Prevent default form submission
+
+        const formAction = this.action;
+        const jobRoleId = formAction.match(/job-roles\/(\d+)/)?.[1];
+        
         if (!jobRoleId) return;
 
         // Disable buttons during request
@@ -247,12 +255,8 @@
             }
         } catch (error) {
             console.error('Error deleting job role:', error);
-            showToast('❌', 'An error occurred. Please try again.', 'text-red-600');
-            confirmButtons.style.display = 'none';
-            deleteBtn.style.display = 'inline-flex';
-            confirmYes.disabled = false;
-            confirmNo.disabled = false;
-            confirmYes.textContent = 'Yes';
+            // If AJAX fails, fall back to traditional form submission
+            this.submit();
         }
     });
 
