@@ -89,8 +89,8 @@ export class AdminController {
 				numberOfOpenPositions: positions,
 			});
 
-			// Redirect to the newly created job role's detail page
-			res.redirect(`/job-roles/${newJobRole.jobRoleId}`);
+			// Redirect to the newly created job role's detail page with success indicator
+			res.redirect(`/job-roles/${newJobRole.jobRoleId}?created=true`);
 		} catch (error) {
 			console.error("Error in AdminController.createJobRole:", error);
 			res.status(500).render("job-role-create.njk", {

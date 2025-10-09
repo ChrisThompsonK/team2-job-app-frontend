@@ -65,8 +65,12 @@ export class JobRoleController {
 				return;
 			}
 
+			// Check if this was just created (query parameter from redirect)
+			const wasJustCreated = req.query["created"] === "true";
+
 			res.render("job-role-information.njk", {
 				jobRole,
+				created: wasJustCreated,
 			});
 		} catch (error) {
 			console.error("Error in JobRoleController.getJobRoleById:", error);

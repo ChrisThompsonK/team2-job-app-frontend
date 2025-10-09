@@ -119,7 +119,9 @@ describe("AdminController", () => {
 				numberOfOpenPositions: 5,
 			});
 
-			expect(mockRes.redirect).toHaveBeenCalledWith("/job-roles/1");
+			expect(mockRes.redirect).toHaveBeenCalledWith(
+				"/job-roles/1?created=true"
+			);
 		});
 
 		it("should render error for missing required fields", async () => {
