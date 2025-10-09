@@ -11,6 +11,55 @@
                     <div class="badge {{ badgeClass }} badge-lg">{{ status }}</div>
     {% endmacro %}
     
+    <!-- Success Message (shown after creating a job role) -->
+    {% if created %}
+    <div id="successMessage" class="mb-8 bg-green-50 border-2 border-green-500 rounded-2xl shadow-lg p-6 animate-fade-in">
+        <div class="flex items-start gap-4">
+            <div class="flex-shrink-0">
+                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div class="flex-1">
+                <h3 class="text-xl font-bold text-green-900 mb-2">Job Role Created Successfully! 🎉</h3>
+                <p class="text-green-800 mb-4">Your new job role "<strong>{{ jobRole.roleName }}</strong>" has been created and is now live. Candidates can now view and apply for this position.</p>
+                <a href="/job-roles" class="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-md hover:shadow-lg">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    View All Open Positions
+                </a>
+            </div>
+            <button id="closeSuccess" class="flex-shrink-0 text-green-600 hover:text-green-800 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    <script>
+        // Auto-hide success message after 10 seconds
+        setTimeout(() => {
+            const msg = document.getElementById('successMessage');
+            if (msg) {
+                msg.style.opacity = '0';
+                msg.style.transition = 'opacity 0.5s';
+                setTimeout(() => msg.remove(), 500);
+            }
+        }, 10000);
+        
+        // Allow manual close
+        document.getElementById('closeSuccess')?.addEventListener('click', () => {
+            const msg = document.getElementById('successMessage');
+            if (msg) {
+                msg.style.opacity = '0';
+                msg.style.transition = 'opacity 0.5s';
+                setTimeout(() => msg.remove(), 500);
+            }
+        });
+    </script>
+    {% endif %}
+    
     <!-- Header Section -->
     <header class="text-center mb-12">
         <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-green-600 rounded-3xl shadow-2xl p-12 text-white relative overflow-hidden">
