@@ -2,13 +2,13 @@
  * Application Controller Tests
  */
 
-import { describe, expect, it, beforeEach, vi } from "vitest";
 import type { Request, Response } from "express";
-import { ApplicationController } from "./application-controller.js";
-import type { ApplicationService } from "../services/application-service.js";
-import type { JobRoleService } from "../services/job-role-service.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ApplicationResponse } from "../models/application-request.js";
 import type { JobRoleDetailedResponse } from "../models/job-role-detailed-response.js";
+import type { ApplicationService } from "../services/application-service.js";
+import type { JobRoleService } from "../services/job-role-service.js";
+import { ApplicationController } from "./application-controller.js";
 
 // Mock services
 const mockApplicationService: ApplicationService = {
