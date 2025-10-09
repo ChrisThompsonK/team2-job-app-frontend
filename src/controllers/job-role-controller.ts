@@ -84,4 +84,47 @@ export class JobRoleController {
 	public getLogin = (_req: Request, res: Response): void => {
 		res.render("login.njk");
 	};
+
+	/**
+	 * DELETE /job-roles/:id
+	 * Deletes a job role by ID
+	 */
+	public deleteJobRole = async (req: Request, res: Response): Promise<void> => {
+		try {
+			const id = req.params["id"];
+
+			const jobRoleId = validateJobRoleId(id);
+
+			if (jobRoleId === null) {
+				res.status(400).json({
+					success: false,
+					message:
+						"Invalid job role ID provided. Please provide a valid numeric ID.",
+				});
+				return;
+			}
+
+			const deleted = await this.jobRoleService.deleteJobRole(jobRoleId);
+
+			if (!deleted) {
+				res.status(404).json({
+					success: false,
+					message: "Job role not found or could not be deleted.",
+				});
+				return;
+			}
+
+			res.status(200).json({
+				success: true,
+				message: "Job role deleted successfully.",
+			});
+		} catch (error) {
+			console.error("Error in JobRoleController.deleteJobRole:", error);
+			res.status(500).json({
+				success: false,
+				message:
+					"Sorry, we couldn't delete the job role at this time. Please try again later.",
+			});
+		}
+	};
 }

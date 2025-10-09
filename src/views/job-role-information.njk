@@ -76,12 +76,32 @@
             </div>
             
             <!-- Status and Closing Date -->
-            <div class="flex flex-wrap gap-4 items-center mb-8 p-4 bg-gray-50 rounded-xl">
-                {{ statusBadge(jobRole.status) }}
+            <div class="flex flex-wrap gap-4 items-center justify-between mb-8 p-4 bg-gray-50 rounded-xl">
+                <div class="flex flex-wrap gap-4 items-center">
+                    {{ statusBadge(jobRole.status) }}
+                    
+                    <div class="flex items-center gap-2">
+                        <span class="icon text-gray-500 text-xl">📅</span>
+                        <span class="text-gray-700 font-medium">Closes: {{ jobRole.closingDate | formatDate }}</span>
+                    </div>
+                </div>
                 
-                <div class="flex items-center gap-2">
-                    <span class="icon text-gray-500 text-xl">📅</span>
-                    <span class="text-gray-700 font-medium">Closes: {{ jobRole.closingDate | formatDate }}</span>
+                <div id="deleteButtonContainer" class="flex items-center">
+                    <button id="deleteJobRoleBtn" data-job-role-id="{{ jobRole.jobRoleId }}" class="inline-flex items-center px-4 py-2 font-medium rounded-lg transition-all duration-200 shadow-lg border" style="background-color: #dc2626; color: white; border-color: #b91c1c;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="white" viewBox="0 0 24 24" style="color: white;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Delete Job
+                    </button>
+                    <div id="confirmButtons" class="hidden items-center gap-3">
+                        <span class="text-gray-700 dark:text-gray-300 font-semibold text-lg">Delete?</span>
+                        <button id="confirmYes" class="px-5 py-2 font-bold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5" style="background-color: #dc2626; color: white;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
+                            Yes
+                        </button>
+                        <button id="confirmNo" class="px-5 py-2 font-bold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5" style="background-color: #6b7280; color: white;" onmouseover="this.style.backgroundColor='#4b5563'" onmouseout="this.style.backgroundColor='#6b7280'">
+                            No
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -147,6 +167,118 @@
             </a>
         </div>
     </div>
+
+    <!-- Success/Error Message Toast -->
+    <div id="messageToast" class="hidden fixed top-8 right-8 z-50 animate-slide-in">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-5 flex items-center gap-4 max-w-md border-l-4">
+            <div id="toastIcon" class="text-3xl"></div>
+            <p id="toastMessage" class="font-semibold text-lg"></p>
+        </div>
+    </div>
 </div>
 </main>
+
+<script>
+// Delete Job Role Functionality
+(function() {
+    const deleteBtn = document.getElementById('deleteJobRoleBtn');
+    const confirmButtons = document.getElementById('confirmButtons');
+    const confirmYes = document.getElementById('confirmYes');
+    const confirmNo = document.getElementById('confirmNo');
+    const toast = document.getElementById('messageToast');
+    const toastIcon = document.getElementById('toastIcon');
+    const toastMessage = document.getElementById('toastMessage');
+    
+    let jobRoleId = null;
+
+    // Show confirmation buttons when delete is clicked
+    deleteBtn?.addEventListener('click', function() {
+        jobRoleId = this.getAttribute('data-job-role-id');
+        // Hide delete button
+        deleteBtn.style.display = 'none';
+        // Show confirmation buttons
+        confirmButtons.style.display = 'flex';
+    });
+
+    // Handle "No" - cancel deletion
+    confirmNo?.addEventListener('click', function() {
+        // Hide confirmation buttons
+        confirmButtons.style.display = 'none';
+        // Show delete button
+        deleteBtn.style.display = 'inline-flex';
+        jobRoleId = null;
+    });
+
+    // Handle "Yes" - confirm deletion
+    confirmYes?.addEventListener('click', async function() {
+        if (!jobRoleId) return;
+
+        // Disable buttons during request
+        confirmYes.disabled = true;
+        confirmNo.disabled = true;
+        confirmYes.textContent = 'Deleting...';
+
+        try {
+            const response = await fetch(`/job-roles/${jobRoleId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                // Show success message
+                showToast('✅', 'Job role deleted successfully!', 'text-green-600');
+                
+                // Redirect after short delay
+                setTimeout(() => {
+                    window.location.href = '/job-roles';
+                }, 1500);
+            } else {
+                // Show error message
+                showToast('❌', data.message || 'Failed to delete job role.', 'text-red-600');
+                confirmButtons.style.display = 'none';
+                deleteBtn.style.display = 'inline-flex';
+                confirmYes.disabled = false;
+                confirmNo.disabled = false;
+                confirmYes.textContent = 'Yes';
+            }
+        } catch (error) {
+            console.error('Error deleting job role:', error);
+            showToast('❌', 'An error occurred. Please try again.', 'text-red-600');
+            confirmButtons.style.display = 'none';
+            deleteBtn.style.display = 'inline-flex';
+            confirmYes.disabled = false;
+            confirmNo.disabled = false;
+            confirmYes.textContent = 'Yes';
+        }
+    });
+
+    // Show toast message
+    function showToast(icon, message, colorClass) {
+        const toastContainer = toast?.querySelector('div');
+        
+        toastIcon.textContent = icon;
+        toastIcon.className = `text-3xl ${colorClass}`;
+        toastMessage.textContent = message;
+        toastMessage.className = `font-semibold text-lg ${colorClass}`;
+        
+        // Add colored border based on type
+        if (colorClass.includes('green')) {
+            toastContainer.style.borderLeftColor = '#10b981';
+        } else if (colorClass.includes('red')) {
+            toastContainer.style.borderLeftColor = '#ef4444';
+        }
+        
+        toast?.classList.remove('hidden');
+        
+        setTimeout(() => {
+            toast?.classList.add('hidden');
+        }, 3000);
+    }
+})();
+</script>
+
 {% endblock %}

@@ -170,6 +170,7 @@ class App {
 		// Job Roles endpoints (public, read-only)
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
 		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
+		this.server.delete("/job-roles/:id", this.jobRoleController.deleteJobRole);
 
 		// Admin endpoints for job role creation
 		this.server.get(
