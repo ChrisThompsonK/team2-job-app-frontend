@@ -176,9 +176,12 @@ export class JobRoleValidator {
 	}
 
 	private validateClosingDate(closingDate: string): ValidationResult {
+		// Trim whitespace before validation
+		const trimmedDate = closingDate.trim();
+
 		// Validate date format (YYYY-MM-DD)
 		const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-		if (!dateRegex.test(closingDate)) {
+		if (!dateRegex.test(trimmedDate)) {
 			return {
 				isValid: false,
 				error: "Invalid date format. Please use YYYY-MM-DD format.",
@@ -186,7 +189,7 @@ export class JobRoleValidator {
 		}
 
 		// Validate date is not in the past
-		const selectedDate = new Date(closingDate);
+		const selectedDate = new Date(trimmedDate);
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 		if (selectedDate < today) {
@@ -201,7 +204,7 @@ export class JobRoleValidator {
 
 	private validateJobSpecLink(jobSpecLink: string): ValidationResult {
 		try {
-			const url = new URL(jobSpecLink);
+			const url = new URL(jobSpecLink.trim());
 			if (url.protocol !== "http:" && url.protocol !== "https:") {
 				throw new Error("Invalid protocol");
 			}

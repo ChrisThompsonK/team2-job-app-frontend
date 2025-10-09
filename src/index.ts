@@ -10,6 +10,7 @@ import express, {
 	type Response,
 } from "express";
 import nunjucks from "nunjucks";
+import { AdminController } from "./controllers/admin-controller.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
 import { AxiosJobRoleService } from "./services/axios-job-role-service.js";
 import { JobRoleValidator } from "./utils/job-role-validator.js";
@@ -29,6 +30,7 @@ class App {
 	private server: Application;
 	private jobRoleService: AxiosJobRoleService;
 	private jobRoleController: JobRoleController;
+	private adminController: AdminController;
 
 	constructor(config: AppConfig) {
 		this.config = config;
@@ -37,7 +39,10 @@ class App {
 		// Initialize services with dependency injection
 		this.jobRoleService = new AxiosJobRoleService();
 		const jobRoleValidator = new JobRoleValidator();
-		this.jobRoleController = new JobRoleController(
+
+		// Initialize controllers
+		this.jobRoleController = new JobRoleController(this.jobRoleService);
+		this.adminController = new AdminController(
 			this.jobRoleService,
 			jobRoleValidator
 		);
@@ -162,11 +167,16 @@ class App {
 			});
 		});
 
-		// Job Roles endpoints (now public, no auth required)
+		// Job Roles endpoints (public, read-only)
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
-		this.server.get("/job-roles/new", this.jobRoleController.getCreateJobRole);
-		this.server.post("/job-roles", this.jobRoleController.createJobRole);
 		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
+
+		// Admin endpoints for job role creation
+		this.server.get(
+			"/admin/job-roles/new",
+			this.adminController.getCreateJobRole
+		);
+		this.server.post("/admin/job-roles", this.adminController.createJobRole);
 	}
 
 	public start(): void {

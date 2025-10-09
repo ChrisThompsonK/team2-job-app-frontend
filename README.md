@@ -127,23 +127,27 @@ The application uses [Lucide](https://lucide.dev/) for beautiful, consistent SVG
 
 ## 🎯 Job Roles Feature
 
-The application includes a comprehensive job roles management system:
+The application includes a comprehensive job roles management system with separate admin and public interfaces:
 
-### Routes
+### Public Routes
 - **`/`**: Enhanced home page with premium animations, hero section, and interactive stat cards
 - **`/job-roles`**: Premium job listings with smooth card animations and enhanced visual effects
-- **`/job-roles/new`**: Admin form for creating new job roles with comprehensive validation
-- **`POST /job-roles`**: Backend endpoint for saving new job roles to the database
 - **`/job-roles/{id}`**: Individual job role details accessible via "View Details" button with comprehensive role information
+
+### Admin Routes
+- **`/admin/job-roles/new`**: Admin form for creating new job roles with comprehensive validation
+- **`POST /admin/job-roles`**: Backend endpoint for saving new job roles to the database
 
 ### Architecture
 - **JobRoleService**: Handles API communication with axios, includes fallback to mock data
-- **JobRoleController**: Express route handlers with proper error handling
+- **JobRoleController**: Express route handlers for read-only operations (list, details)
+- **AdminController**: Separate controller for admin operations (create, update, delete)
+- **JobRoleValidator**: Comprehensive validation for all job role fields
 - **JobRoleResponse**: TypeScript models for type safety
 - **Dependency Injection**: Clean separation of concerns with service layer
 - **View-Based Titles**: Page titles are defined directly in templates for better maintainability
 
-### Features
+### Public Features
 - Display job roles with role name, location, capability, band, and closing date
 - **Dual Action Buttons**: Each job role card features both "View Details" (secondary style) and "Apply Now" (primary gradient) buttons for complete user workflow
 - **Seamless Navigation**: "View Details" button links to individual job role information pages (`/job-roles/{id}`) with proper routing
@@ -158,10 +162,20 @@ The application includes a comprehensive job roles management system:
 - **Enhanced Visual Design**: Custom animated icons with color-coded gradient backgrounds and premium branded buttons
 - **Staggered Animations**: Cards appear with sequential timing for smooth loading experience
 - **Button Visibility**: Fixed contrast issues ensuring all interactive elements are clearly visible
-- **JSON Data Source**: Comprehensive job roles data loaded from JSON file
-- Automatic fallback to mock data when API is unavailable
 - Error handling with user-friendly error pages styled to match Kainos branding
 - Beautiful UI combining daisyUI components with Lucide icons and custom advanced CSS animations and effects
+
+### Admin Features
+- **Job Role Creation**: Full form with validation for creating new job roles
+- **Dropdown Selection**: Band and capability dropdowns populated from validation constants
+- **Automatic Status**: New job roles automatically set to "Open" status
+- **Input Validation**: Both client-side and server-side validation for all fields
+- **Whitespace Handling**: Automatic trimming of all string inputs
+- **Error Messages**: Clear, user-friendly error messages for validation failures
+- **Form Data Persistence**: Form data preserved on validation errors for better UX
+- **Date Validation**: Closing date must be in the future with YYYY-MM-DD format
+- **URL Validation**: Job spec link must be a valid HTTP/HTTPS URL
+- **Comprehensive Testing**: 17 test cases covering all validation scenarios
 
 ### Data Management
 - **Primary Data**: JSON file (`src/data/job-roles.json`) with 12 diverse job roles
