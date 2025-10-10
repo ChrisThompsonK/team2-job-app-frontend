@@ -10,6 +10,10 @@
 
 	if (savedDarkMode) {
 		document.documentElement.classList.add("dark-mode");
+		// Also add to body for better compatibility
+		document.addEventListener("DOMContentLoaded", () => {
+			document.body.classList.add("dark-mode");
+		});
 	}
 
 	// Remove all text size classes and apply saved one
@@ -173,8 +177,9 @@ class AccessibilityManager {
 
 			console.log(`Simple dark toggle: ${isDark} -> ${newState}`);
 
-			// Toggle dark-mode class
+			// Toggle dark-mode class on both html and body for better compatibility
 			document.documentElement.classList.toggle("dark-mode", newState);
+			document.body.classList.toggle("dark-mode", newState);
 
 			// Save to localStorage
 			localStorage.setItem("darkMode", newState.toString());
@@ -248,6 +253,10 @@ class AccessibilityManager {
 	applyToggle(button, status, config, enabled) {
 		// Optimized: pass elements directly to avoid repeated DOM queries
 		document.documentElement.classList.toggle(config.className, enabled);
+		// Also apply to body for better compatibility
+		if (config.className === "dark-mode") {
+			document.body.classList.toggle(config.className, enabled);
+		}
 		button.setAttribute("aria-pressed", enabled.toString());
 
 		// Handle logo switching for dark mode
