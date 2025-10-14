@@ -5,6 +5,7 @@
 import type { Request, Response } from "express";
 import type { ApplicationService } from "../services/application-service.js";
 import type { JobRoleService } from "../services/job-role-service.js";
+import { validateApplicationData } from "../utils/application-validator.js";
 import { validateJobRoleId } from "../utils/validation.js";
 
 export class ApplicationController {
@@ -97,12 +98,26 @@ export class ApplicationController {
 				return;
 			}
 
-			// Check if file was uploaded
+			// Extract form data
+			const applicantName = req.body["applicantName"] as string | undefined;
+			const applicantEmail = req.body["applicantEmail"] as string | undefined;
+			const coverLetter = req.body["coverLetter"] as string | undefined;
 			const cvFile = req.file;
 
-			if (!cvFile) {
+			// Validate all application data
+			const validation = validateApplicationData(
+				applicantName,
+				applicantEmail,
+				coverLetter,
+				cvFile
+			);
+
+			if (!validation.isValid) {
+				// Collect all validation errors into a single message
+				const errorMessages = Object.values(validation.errors).join(". ");
 				res.status(400).render("error.njk", {
-					message: "Please upload your CV to submit your application.",
+					message: `Please correct the following errors: ${errorMessages}`,
+					errors: validation.errors,
 				});
 				return;
 			}
@@ -132,6 +147,9 @@ export class ApplicationController {
 			// Submit the application
 			const application = await this.applicationService.submitApplication(
 				jobRoleId,
+				applicantName as string,
+				applicantEmail as string,
+				coverLetter,
 				cvFile
 			);
 
@@ -142,9 +160,36 @@ export class ApplicationController {
 			});
 		} catch (error) {
 			console.error("Error in ApplicationController.submitApplication:", error);
+
+			// Provide more specific error messages
+			let errorMessage =
+				"Sorry, we couldn't submit your application at this time. Please try again later.";
+
+			if (error instanceof Error) {
+				// Check if it's a connection error
+				if (
+					error.message.includes("ECONNREFUSED") ||
+					error.message.includes("connect")
+				) {
+					errorMessage =
+						"Unable to connect to the application service. Please ensure the backend API is running and try again.";
+				} else if (error.message.includes("timeout")) {
+					errorMessage =
+						"The request timed out. Please check your connection and try again.";
+				} else if (error.message.includes("Network Error")) {
+					errorMessage =
+						"Network error occurred. Please check your connection and try again.";
+				} else if (
+					error.message &&
+					error.message !== "Failed to submit application. Please try again."
+				) {
+					// Use the specific error message if available
+					errorMessage = error.message;
+				}
+			}
+
 			res.status(500).render("error.njk", {
-				message:
-					"Sorry, we couldn't submit your application at this time. Please try again later.",
+				message: errorMessage,
 			});
 		}
 	};
