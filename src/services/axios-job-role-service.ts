@@ -41,7 +41,7 @@ export class AxiosJobRoleService implements JobRoleService {
 	private axiosInstance: AxiosInstance;
 
 	constructor(
-		baseURL = process.env["API_BASE_URL"] || "http://localhost:8080"
+		baseURL = process.env["API_BASE_URL"] || "http://localhost:8000"
 	) {
 		this.axiosInstance = axios.create({
 			baseURL,
@@ -58,13 +58,13 @@ export class AxiosJobRoleService implements JobRoleService {
 	 */
 	async getJobRoles(): Promise<JobRoleResponse[]> {
 		try {
-			const response =
-				await this.axiosInstance.get<BackendResponse<BackendJobRole[]>>(
-					"/api/job-roles"
-				);
+			const response = await this.axiosInstance.get<{
+				success: boolean;
+				data: { jobRoles: BackendJobRole[] };
+			}>("/api/job-roles?limit=100");
 
 			// Map backend format to frontend format
-			return response.data.data.map((role) => ({
+			return response.data.data.jobRoles.map((role) => ({
 				jobRoleId: role.id,
 				roleName: role.jobRoleName,
 				location: role.location,
