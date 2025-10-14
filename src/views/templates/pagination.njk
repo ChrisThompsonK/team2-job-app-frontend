@@ -1,0 +1,143 @@
+{% macro paginationControls(pagination, baseUrl, limit = pagination.limit) %}
+  {% if pagination.totalPages > 1 %}
+    <style>
+      .pagination-custom {
+        background: white !important;
+        color: #000000 !important;
+        border: 2px solid #333333 !important;
+        padding: 8px 12px !important;
+        margin: 2px !important;
+        text-decoration: none !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        border-radius: 6px !important;
+      }
+      .pagination-custom:hover {
+        background: #1e40af !important;
+        color: white !important;
+        border-color: #1e40af !important;
+      }
+      .pagination-custom.active {
+        background: #1e40af !important;
+        color: white !important;
+        border-color: #1e40af !important;
+      }
+      .pagination-disabled {
+        background: #f3f4f6 !important;
+        color: #6b7280 !important;
+        border: 2px solid #d1d5db !important;
+        padding: 8px 12px !important;
+        margin: 2px !important;
+        display: inline-block !important;
+        border-radius: 6px !important;
+      }
+    </style>
+    <div class="flex flex-col items-center gap-4 mt-8">
+      <!-- Pagination Info -->
+      <div class="text-sm text-gray-600">
+        Showing {{ ((pagination.currentPage - 1) * pagination.limit) + 1 }} to 
+        {% set endIndex = pagination.currentPage * pagination.limit %}
+        {% if endIndex > pagination.totalCount %}
+          {{ pagination.totalCount }}
+        {% else %}
+          {{ endIndex }}
+        {% endif %}
+        of {{ pagination.totalCount }} results
+      </div>
+
+      <!-- Pagination Controls -->
+      <div class="flex flex-wrap gap-1 justify-center">
+        <!-- First Page -->
+        {% if pagination.currentPage > 1 %}
+          <a href="{{ baseUrl }}?page=1&limit={{ limit }}" 
+             class="pagination-custom" 
+             aria-label="First page">
+            «
+          </a>
+        {% endif %}
+
+        <!-- Previous Page -->
+        {% if pagination.hasPrevious %}
+          <a href="{{ baseUrl }}?page={{ pagination.currentPage - 1 }}&limit={{ limit }}" 
+             class="pagination-custom" 
+             aria-label="Previous page">
+            ‹
+          </a>
+        {% endif %}
+
+        <!-- Calculate visible page range -->
+        {% set startPage = 1 %}
+        {% set endPage = pagination.totalPages %}
+        {% set showStartEllipsis = false %}
+        {% set showEndEllipsis = false %}
+
+        {% if pagination.totalPages > 7 %}
+          {% if pagination.currentPage <= 4 %}
+            {% set endPage = 5 %}
+            {% set showEndEllipsis = true %}
+          {% elif pagination.currentPage >= pagination.totalPages - 3 %}
+            {% set startPage = pagination.totalPages - 4 %}
+            {% set showStartEllipsis = true %}
+          {% else %}
+            {% set startPage = pagination.currentPage - 2 %}
+            {% set endPage = pagination.currentPage + 2 %}
+            {% set showStartEllipsis = true %}
+            {% set showEndEllipsis = true %}
+          {% endif %}
+        {% endif %}
+
+        <!-- First page (if not in range) -->
+        {% if showStartEllipsis %}
+          <a href="{{ baseUrl }}?page=1&limit={{ limit }}" 
+             class="pagination-custom">
+            1
+          </a>
+          {% if startPage > 2 %}
+            <span class="pagination-disabled">...</span>
+          {% endif %}
+        {% endif %}
+
+        <!-- Page number range -->
+        {% for pageNum in range(startPage, endPage + 1) %}
+          {% if pageNum == pagination.currentPage %}
+            <span class="pagination-custom active">{{ pageNum }}</span>
+          {% else %}
+            <a href="{{ baseUrl }}?page={{ pageNum }}&limit={{ limit }}" 
+               class="pagination-custom">
+              {{ pageNum }}
+            </a>
+          {% endif %}
+        {% endfor %}
+
+        <!-- Last page (if not in range) -->
+        {% if showEndEllipsis %}
+          {% if endPage < pagination.totalPages - 1 %}
+            <span class="pagination-disabled">...</span>
+          {% endif %}
+          <a href="{{ baseUrl }}?page={{ pagination.totalPages }}&limit={{ limit }}" 
+             class="pagination-custom">
+            {{ pagination.totalPages }}
+          </a>
+        {% endif %}
+
+        <!-- Next Page -->
+        {% if pagination.hasNext %}
+          <a href="{{ baseUrl }}?page={{ pagination.currentPage + 1 }}&limit={{ limit }}" 
+             class="pagination-custom" 
+             aria-label="Next page">
+            ›
+          </a>
+        {% endif %}
+
+        <!-- Last Page -->
+        {% if pagination.currentPage < pagination.totalPages %}
+          <a href="{{ baseUrl }}?page={{ pagination.totalPages }}&limit={{ limit }}" 
+             class="pagination-custom" 
+             aria-label="Last page">
+            »
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+{% endmacro %}

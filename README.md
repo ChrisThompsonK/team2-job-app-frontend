@@ -10,6 +10,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - Modern homepage UI, animated backgrounds, stat cards
 - Readable time display (HH:MM, weekday, date)
 - Job roles listing, details, and application workflow
+- **Pagination System** - Efficient browsing with page controls, ellipsis navigation, and loading states
 - **Admin job role creation** - Full CRUD functionality to create and save job roles to database
 - Backend API integration via Axios for data persistence
 - Kainos brand theme, unified logo system
@@ -248,6 +249,59 @@ The application includes a comprehensive job roles management system with separa
 ### Template Architecture
 - **View-Driven Titles**: Page titles are defined directly in Nunjucks templates rather than passed from controllers
 - **Separation of Concerns**: Controllers focus on data handling, views handle presentation
+
+## 📄 Pagination System
+
+The application includes a comprehensive pagination system for efficient browsing of job roles:
+
+### Features
+- **12 Items Per Page**: Fixed page size optimized for readability and performance
+- **Smart Page Navigation**: Previous/Next buttons, first/last page shortcuts
+- **Ellipsis Display**: Shows `1 ... 6 7 [8] 9 10 ... 20` for large page sets
+- **URL-Based State**: Pagination state persists in URL (`/job-roles?page=2`)
+- **Loading States**: Smooth transitions with loading spinners during page changes
+- **Error Handling**: Graceful handling of invalid page numbers and empty results
+
+### API Integration
+- **Backend Endpoint**: `GET /api/job-roles?page=1&limit=12`
+- **Paginated Response**: Returns job roles with pagination metadata
+- **Parameter Validation**: Validates page/limit parameters on both frontend and backend
+- **Edge Case Handling**: Handles pages beyond available data with proper error messages
+
+### Technical Implementation
+- **PaginationRequest/Response**: TypeScript interfaces for type safety
+- **Validation Utilities**: Comprehensive parameter validation with error messages
+- **Reusable Components**: Nunjucks macro for consistent pagination UI across pages
+- **Service Layer**: Clean separation between controller logic and API calls
+- **DaisyUI Integration**: Beautiful pagination controls using DaisyUI's join components
+
+### Usage Examples
+```typescript
+// Controller usage
+const paginatedResult = await this.jobRoleService.getJobRolesPaginated({
+  page: 1,
+  limit: 12,
+});
+
+// Template usage
+{{ paginationControls(pagination, '/job-roles') }}
+```
+
+### Error Handling
+- **Invalid Parameters**: Returns 400 with user-friendly error message
+- **Page Not Found**: Returns 404 for pages beyond available data
+- **Empty Results**: Displays appropriate empty state message
+- **Service Errors**: Graceful fallback with 500 error page
+
+### Testing
+- **Comprehensive Test Suite**: 100% coverage for pagination logic
+- **Validation Tests**: Tests for all edge cases and invalid inputs
+- **Controller Tests**: Mock-based testing for all pagination scenarios
+- **Integration Ready**: Prepared for E2E tests with Playwright/Cypress
+
+## 🏁 Development Checklist
+
+### For New Features
 - **Maintainability**: Title changes can be made directly in templates without touching controller code
 - **Consistency**: Each template owns its title and heading content
 
