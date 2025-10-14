@@ -18,14 +18,19 @@ const mockApplicationService: ApplicationService = {
 const mockJobRoleService: JobRoleService = {
 	getJobRoles: vi.fn(),
 	getJobRoleById: vi.fn(),
+	getJobRolesPaginated: vi.fn(),
+	createJobRole: vi.fn(),
+	deleteJobRole: vi.fn(),
 };
 
 // Mock Express Request and Response
 const createMockRequest = (
 	params = {},
+	body = {},
 	file?: Express.Multer.File
 ): Partial<Request> => ({
 	params,
+	body,
 	file,
 });
 
@@ -169,7 +174,10 @@ describe("ApplicationController", () => {
 			const mockApplication: ApplicationResponse = {
 				applicationId: 123,
 				jobRoleId: 1,
-				status: "In Progress",
+				applicantName: "John Doe",
+				applicantEmail: "john.doe@example.com",
+				coverLetter: "I am very interested in this position...",
+				status: "pending",
 				submittedAt: "2025-10-09T10:00:00Z",
 			};
 
@@ -180,13 +188,22 @@ describe("ApplicationController", () => {
 				mockApplication
 			);
 
-			const req = createMockRequest({ id: "1" }, mockFile) as Request;
+			const mockBody = {
+				applicantName: "John Doe",
+				applicantEmail: "john.doe@example.com",
+				coverLetter: "I am very interested in this position...",
+			};
+
+			const req = createMockRequest({ id: "1" }, mockBody, mockFile) as Request;
 			const res = createMockResponse() as Response;
 
 			await controller.submitApplication(req, res);
 
 			expect(mockApplicationService.submitApplication).toHaveBeenCalledWith(
 				1,
+				"John Doe",
+				"john.doe@example.com",
+				"I am very interested in this position...",
 				mockFile
 			);
 			expect(res.render).toHaveBeenCalledWith("application-success.njk", {
@@ -196,30 +213,135 @@ describe("ApplicationController", () => {
 		});
 
 		it("should return 400 if no file uploaded", async () => {
-			const req = createMockRequest({ id: "1" }) as Request;
+			const mockBody = {
+				applicantName: "John Doe",
+				applicantEmail: "john.doe@example.com",
+				coverLetter: "I am very interested in this position...",
+			};
+
+			const req = createMockRequest({ id: "1" }, mockBody) as Request; // No file provided
 			const res = createMockResponse() as Response;
 
 			await controller.submitApplication(req, res);
 
 			expect(res.status).toHaveBeenCalledWith(400);
 			expect(res.render).toHaveBeenCalledWith("error.njk", {
-				message: expect.stringContaining("upload your CV"),
+				message: expect.stringContaining("CV file is required"),
+				errors: expect.any(Object),
 			});
 		});
 
 		it("should return 500 on service error", async () => {
+			const mockBody = {
+				applicantName: "John Doe",
+				applicantEmail: "john.doe@example.com",
+				coverLetter: "I am very interested in this position...",
+			};
+
 			vi.mocked(mockJobRoleService.getJobRoleById).mockRejectedValue(
 				new Error("Service error")
 			);
 
-			const req = createMockRequest({ id: "1" }, mockFile) as Request;
+			const req = createMockRequest({ id: "1" }, mockBody, mockFile) as Request;
 			const res = createMockResponse() as Response;
 
 			await controller.submitApplication(req, res);
 
 			expect(res.status).toHaveBeenCalledWith(500);
 			expect(res.render).toHaveBeenCalledWith("error.njk", {
-				message: expect.stringContaining("couldn't submit your application"),
+				message: expect.stringContaining("Service error"),
+			});
+		});
+
+		it("should return 400 for missing applicant name", async () => {
+			const mockBody = {
+				applicantEmail: "john.doe@example.com",
+				coverLetter: "I am very interested in this position...",
+			}; // Missing applicantName
+
+			const req = createMockRequest({ id: "1" }, mockBody, mockFile) as Request;
+			const res = createMockResponse() as Response;
+
+			await controller.submitApplication(req, res);
+
+			expect(res.status).toHaveBeenCalledWith(400);
+			expect(res.render).toHaveBeenCalledWith("error.njk", {
+				message: expect.stringContaining("Applicant name is required"),
+				errors: expect.any(Object),
+			});
+		});
+
+		it("should return 400 for invalid email", async () => {
+			const mockBody = {
+				applicantName: "John Doe",
+				applicantEmail: "invalid-email", // Invalid email
+				coverLetter: "I am very interested in this position...",
+			};
+
+			const req = createMockRequest({ id: "1" }, mockBody, mockFile) as Request;
+			const res = createMockResponse() as Response;
+
+			await controller.submitApplication(req, res);
+
+			expect(res.status).toHaveBeenCalledWith(400);
+			expect(res.render).toHaveBeenCalledWith("error.njk", {
+				message: expect.stringContaining("valid email address"),
+				errors: expect.any(Object),
+			});
+		});
+
+		it("should handle missing cover letter gracefully", async () => {
+			const mockJobRole: JobRoleDetailedResponse = {
+				jobRoleId: 1,
+				roleName: "Software Engineer",
+				description: "Test description",
+				responsibilities: "Test responsibilities",
+				jobSpecLink: "http://example.com",
+				location: "Belfast",
+				capability: "Engineering",
+				band: "Band 1",
+				closingDate: "2025-12-31",
+				status: "Active",
+				numberOfOpenPositions: 3,
+			};
+
+			const mockApplication: ApplicationResponse = {
+				applicationId: 123,
+				jobRoleId: 1,
+				applicantName: "John Doe",
+				applicantEmail: "john.doe@example.com",
+				status: "pending",
+				submittedAt: "2025-10-09T10:00:00Z",
+			};
+
+			const mockBody = {
+				applicantName: "John Doe",
+				applicantEmail: "john.doe@example.com",
+				// No coverLetter provided
+			};
+
+			vi.mocked(mockJobRoleService.getJobRoleById).mockResolvedValue(
+				mockJobRole
+			);
+			vi.mocked(mockApplicationService.submitApplication).mockResolvedValue(
+				mockApplication
+			);
+
+			const req = createMockRequest({ id: "1" }, mockBody, mockFile) as Request;
+			const res = createMockResponse() as Response;
+
+			await controller.submitApplication(req, res);
+
+			expect(mockApplicationService.submitApplication).toHaveBeenCalledWith(
+				1,
+				"John Doe",
+				"john.doe@example.com",
+				undefined, // coverLetter should be undefined
+				mockFile
+			);
+			expect(res.render).toHaveBeenCalledWith("application-success.njk", {
+				application: mockApplication,
+				jobRole: mockJobRole,
 			});
 		});
 	});

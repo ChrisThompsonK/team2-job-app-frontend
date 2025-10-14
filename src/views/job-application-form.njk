@@ -78,7 +78,7 @@
         <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
             <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
                 <span class="icon text-green-600 text-2xl">📄</span>
-                Upload Your CV
+                Your Application Details
             </h2>
             
             <form action="/job-roles/{{ jobRole.jobRoleId }}/apply" method="POST" enctype="multipart/form-data" class="space-y-6">
@@ -91,24 +91,88 @@
                     <ul class="space-y-2 text-blue-800">
                         <li class="flex items-start gap-2">
                             <span class="icon text-blue-600 mt-1">✓</span>
-                            <span>Please upload your CV in PDF, DOC, or DOCX format</span>
+                            <span>All required fields must be completed</span>
                         </li>
                         <li class="flex items-start gap-2">
                             <span class="icon text-blue-600 mt-1">✓</span>
-                            <span>Maximum file size: 5MB</span>
+                            <span>CV must be in PDF, DOC, or DOCX format (Max size: 5MB)</span>
                         </li>
                         <li class="flex items-start gap-2">
                             <span class="icon text-blue-600 mt-1">✓</span>
-                            <span>Ensure your CV includes your contact information and relevant experience</span>
+                            <span>Cover letter is optional but recommended</span>
                         </li>
                         <li class="flex items-start gap-2">
                             <span class="icon text-blue-600 mt-1">✓</span>
-                            <span>Your application status will be set to "In Progress" after submission</span>
+                            <span>Your application status will be set to "Pending" after submission</span>
                         </li>
                     </ul>
                 </div>
 
-                <!-- File Upload -->
+                <!-- Personal Information Section -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                        <span class="icon text-blue-600">👤</span>
+                        Personal Information
+                    </h3>
+
+                    <!-- Full Name -->
+                    <div>
+                        <label for="applicant-name" class="block text-lg font-semibold text-gray-900 mb-3">
+                            Full Name <span class="text-red-600">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="applicant-name" 
+                            name="applicantName" 
+                            required
+                            maxlength="100"
+                            placeholder="Enter your full name"
+                            class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        >
+                        <p class="mt-2 text-sm text-gray-600">
+                            Please provide your full legal name
+                        </p>
+                    </div>
+
+                    <!-- Email Address -->
+                    <div>
+                        <label for="applicant-email" class="block text-lg font-semibold text-gray-900 mb-3">
+                            Email Address <span class="text-red-600">*</span>
+                        </label>
+                        <input 
+                            type="email" 
+                            id="applicant-email" 
+                            name="applicantEmail" 
+                            required
+                            maxlength="255"
+                            placeholder="your.email@example.com"
+                            class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        >
+                        <p class="mt-2 text-sm text-gray-600">
+                            We'll use this email to contact you about your application
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Cover Letter Section -->
+                <div>
+                    <label for="cover-letter" class="block text-lg font-semibold text-gray-900 mb-3">
+                        Cover Letter <span class="text-gray-500 text-sm font-normal">(Optional)</span>
+                    </label>
+                    <textarea 
+                        id="cover-letter" 
+                        name="coverLetter" 
+                        rows="8"
+                        maxlength="5000"
+                        placeholder="Tell us why you're interested in this role and what makes you a great fit..."
+                        class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-vertical"
+                    ></textarea>
+                    <p class="mt-2 text-sm text-gray-600">
+                        Optional: Share your motivation and relevant experience (Max 5000 characters)
+                    </p>
+                </div>
+
+                <!-- File Upload Section -->
                 <div>
                     <label for="cv-upload" class="block text-lg font-semibold text-gray-900 mb-3">
                         CV/Resume <span class="text-red-600">*</span>

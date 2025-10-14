@@ -185,6 +185,45 @@ class App {
 		// Login page (kept for future better-auth implementation)
 		this.server.get("/login", this.jobRoleController.getLogin);
 
+		// Health check endpoint to test backend connectivity
+		this.server.get("/api/health", async (_req: Request, res: Response) => {
+			try {
+				const backendUrl =
+					process.env["API_BASE_URL"] || "http://localhost:8080";
+				const testResponse = await fetch(`${backendUrl}/api/job-roles`);
+
+				if (testResponse.ok) {
+					res.json({
+						status: "ok",
+						backend: "connected",
+						backendUrl,
+						message: "Backend API is reachable",
+					});
+				} else {
+					res.status(503).json({
+						status: "error",
+						backend: "error",
+						backendUrl,
+						statusCode: testResponse.status,
+						message: `Backend API returned status ${testResponse.status}`,
+					});
+				}
+			} catch (error) {
+				const backendUrl =
+					process.env["API_BASE_URL"] || "http://localhost:8080";
+				res.status(503).json({
+					status: "error",
+					backend: "unreachable",
+					backendUrl,
+					message:
+						error instanceof Error
+							? error.message
+							: "Cannot connect to backend API",
+					suggestion: `Please ensure the backend API is running on ${backendUrl}`,
+				});
+			}
+		});
+
 		// Home page
 		this.server.get("/", (_req: Request, res: Response) => {
 			const now = new Date();
@@ -231,6 +270,77 @@ class App {
 			"/job-roles/:id/apply",
 			this.upload.single("cv"),
 			this.applicationController.submitApplication
+		);
+
+		// Error handling middleware - must be last
+		this.setupErrorHandling();
+	}
+
+	private setupErrorHandling(): void {
+		// Multer error handling middleware
+		this.server.use(
+			(
+				err: Error,
+				_req: express.Request,
+				res: express.Response,
+				next: express.NextFunction
+			) => {
+				if (err instanceof multer.MulterError) {
+					// Handle multer-specific errors
+					let message = "File upload error occurred.";
+
+					switch (err.code) {
+						case "LIMIT_FILE_SIZE":
+							message =
+								"File is too large. Maximum file size is 5MB. Please upload a smaller file.";
+							break;
+						case "LIMIT_FILE_COUNT":
+							message =
+								"Too many files uploaded. Please upload only one CV file.";
+							break;
+						case "LIMIT_UNEXPECTED_FILE":
+							message =
+								"Unexpected field name. Please use the correct form field.";
+							break;
+						default:
+							message = `File upload error: ${err.message}`;
+					}
+
+					console.error("Multer error:", err);
+					res.status(400).render("error.njk", {
+						message,
+					});
+					return;
+				}
+
+				// Handle other errors
+				if (err.message?.includes("Invalid file type")) {
+					console.error("File type error:", err);
+					res.status(400).render("error.njk", {
+						message: err.message,
+					});
+					return;
+				}
+
+				// Pass to next error handler
+				next(err);
+			}
+		);
+
+		// Generic error handling middleware
+		this.server.use(
+			(
+				err: Error,
+				_req: express.Request,
+				res: express.Response,
+				_next: express.NextFunction
+			) => {
+				console.error("Unhandled error:", err);
+				res.status(500).render("error.njk", {
+					message:
+						"An unexpected error occurred. Please try again later or contact support.",
+				});
+			}
 		);
 	}
 

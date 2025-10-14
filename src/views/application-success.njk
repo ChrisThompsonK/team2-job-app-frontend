@@ -89,6 +89,41 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Applicant Information -->
+            <div class="space-y-4 mt-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Your Information</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl">
+                        <span class="icon text-slate-600 text-2xl mt-1">👤</span>
+                        <div>
+                            <p class="text-sm text-gray-600 font-medium">Name</p>
+                            <p class="font-semibold text-gray-900">{{ application.applicantName }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl">
+                        <span class="icon text-slate-600 text-2xl mt-1">📧</span>
+                        <div>
+                            <p class="text-sm text-gray-600 font-medium">Email</p>
+                            <p class="font-semibold text-gray-900">{{ application.applicantEmail }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {% if application.coverLetter %}
+                <div class="p-4 bg-slate-50 rounded-xl">
+                    <div class="flex items-start gap-3">
+                        <span class="icon text-slate-600 text-2xl mt-1">📝</span>
+                        <div class="flex-1">
+                            <p class="text-sm text-gray-600 font-medium mb-2">Cover Letter</p>
+                            <p class="text-gray-700 leading-relaxed">{{ application.coverLetter }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
         </div>
 
         <!-- Next Steps Card -->
