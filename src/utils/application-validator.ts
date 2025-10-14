@@ -47,8 +47,8 @@ export function validateApplicantName(name: string | undefined): string | null {
 		return `Name must not exceed ${MAX_NAME_LENGTH} characters`;
 	}
 
-	// Check for valid characters (letters, spaces, hyphens, apostrophes)
-	const nameRegex = /^[a-zA-Z\s'-]+$/;
+	// Check for valid characters (letters, spaces, hyphens, apostrophes, including Unicode)
+	const nameRegex = /^[\p{L}\s'-]+$/u;
 	if (!nameRegex.test(trimmedName)) {
 		return "Name can only contain letters, spaces, hyphens, and apostrophes";
 	}
