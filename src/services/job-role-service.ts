@@ -6,6 +6,10 @@
 import type { JobRoleCreate } from "../models/job-role-create.js";
 import type { JobRoleDetailedResponse } from "../models/job-role-detailed-response.js";
 import type { JobRoleResponse } from "../models/job-role-response.js";
+import type {
+	PaginatedResponse,
+	PaginationRequest,
+} from "../models/pagination.js";
 
 /**
  * Service interface for fetching and managing job role data
@@ -13,10 +17,19 @@ import type { JobRoleResponse } from "../models/job-role-response.js";
  */
 export interface JobRoleService {
 	/**
-	 * Fetches all job roles
+	 * Fetches all job roles (legacy method for backward compatibility)
 	 * @returns Promise<JobRoleResponse[]> List of job roles with essential fields
 	 */
 	getJobRoles(): Promise<JobRoleResponse[]>;
+
+	/**
+	 * Fetches paginated job roles
+	 * @param pagination The pagination parameters
+	 * @returns Promise<PaginatedResponse<JobRoleResponse>> Paginated job roles with metadata
+	 */
+	getJobRolesPaginated(
+		pagination: PaginationRequest
+	): Promise<PaginatedResponse<JobRoleResponse>>;
 
 	/**
 	 * Fetches a specific job role by ID

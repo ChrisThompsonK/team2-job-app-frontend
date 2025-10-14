@@ -4,6 +4,7 @@
 
 import type { Request, Response } from "express";
 import type { JobRoleService } from "../services/job-role-service.js";
+import { validatePaginationParams } from "../utils/pagination-validation.js";
 import { validateJobRoleId } from "../utils/validation.js";
 
 export class JobRoleController {
@@ -15,15 +16,53 @@ export class JobRoleController {
 
 	/**
 	 * GET /job-roles
-	 * Renders the job roles list view with data from the API
+	 * Renders the job roles list view with paginated data from the API
 	 */
-	public getJobRoles = async (_req: Request, res: Response): Promise<void> => {
+	public getJobRoles = async (req: Request, res: Response): Promise<void> => {
 		try {
-			const jobRoles = await this.jobRoleService.getJobRoles();
+			// Validate pagination parameters from query string
+			const paginationValidation = validatePaginationParams(
+				req.query["page"] as string,
+				req.query["limit"] as string
+			);
+
+			if (!paginationValidation.isValid) {
+				return res.status(400).render("pagination-error.njk", {
+					message: paginationValidation.error,
+				});
+			}
+
+			// Fetch paginated job roles
+			const paginatedResult = await this.jobRoleService.getJobRolesPaginated({
+				page: paginationValidation.page,
+				limit: paginationValidation.limit,
+			});
+
+			// Handle case where user navigates to a page beyond available data
+			if (
+				paginatedResult.pagination.totalPages > 0 &&
+				paginationValidation.page > paginatedResult.pagination.totalPages
+			) {
+				return res.status(404).render("pagination-error.njk", {
+					message: `Page ${paginationValidation.page} does not exist. There are only ${paginatedResult.pagination.totalPages} pages available.`,
+				});
+			}
+
+			// Handle empty results gracefully
+			if (paginatedResult.pagination.totalCount === 0) {
+				return res.render("job-role-list.njk", {
+					jobRoles: [],
+					pagination: null,
+					totalRoles: 0,
+					currentUrl: req.path,
+				});
+			}
 
 			res.render("job-role-list.njk", {
-				jobRoles,
-				totalRoles: jobRoles.length,
+				jobRoles: paginatedResult.data,
+				pagination: paginatedResult.pagination,
+				totalRoles: paginatedResult.pagination.totalCount,
+				currentUrl: req.path,
 			});
 		} catch (error) {
 			console.error("Error in JobRoleController.getJobRoles:", error);

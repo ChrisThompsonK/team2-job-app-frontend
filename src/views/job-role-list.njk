@@ -1,4 +1,5 @@
 {% extends "templates/layout.njk" %}
+{% from "templates/pagination.njk" import paginationControls %}
 
 {% block availableJobTitle %}Available Job Roles at Kainos{% endblock %}
 
@@ -26,7 +27,12 @@
                 
                 <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-4">
                     <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6">
-                        <p class="text-xl">🚀 {{ jobRoles.length }} Premium Positions Available</p>
+                        <p class="text-xl">🚀 {{ totalRoles }} Premium Positions Available</p>
+                        {% if pagination %}
+                            <p class="text-sm opacity-90 mt-1">
+                                Showing page {{ pagination.currentPage }} of {{ pagination.totalPages }}
+                            </p>
+                        {% endif %}
                     </div>
                     
                     <!-- Admin Add Job Role Button -->
@@ -120,6 +126,11 @@
                 </div>
             {% endfor %}
         </section>
+
+        <!-- Pagination Controls -->
+        {% if pagination %}
+            {{ paginationControls(pagination, '/job-roles') }}
+        {% endif %}
     {% else %}
         <!-- No Jobs Available -->
         <section class="text-center py-16">
@@ -140,4 +151,7 @@
     {% endif %}
 </div>
 </main>
+
+<!-- Pagination JavaScript -->
+<script src="/js/pagination.js"></script>
 {% endblock %}

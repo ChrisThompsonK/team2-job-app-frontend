@@ -6,6 +6,10 @@ import axios, { type AxiosInstance } from "axios";
 import type { JobRoleCreate } from "../models/job-role-create.js";
 import type { JobRoleDetailedResponse } from "../models/job-role-detailed-response.js";
 import type { JobRoleResponse } from "../models/job-role-response.js";
+import type {
+	PaginatedResponse,
+	PaginationRequest,
+} from "../models/pagination.js";
 import type { JobRoleService } from "./job-role-service.js";
 
 /**
@@ -14,6 +18,21 @@ import type { JobRoleService } from "./job-role-service.js";
 interface BackendResponse<T> {
 	success: boolean;
 	data: T;
+}
+
+/**
+ * Backend paginated response format
+ */
+interface BackendPaginatedResponse {
+	jobRoles: BackendJobRole[];
+	pagination: {
+		currentPage: number;
+		totalPages: number;
+		totalCount: number;
+		limit: number;
+		hasNext: boolean;
+		hasPrevious: boolean;
+	};
 }
 
 /**
@@ -192,6 +211,57 @@ export class AxiosJobRoleService implements JobRoleService {
 		} catch (error) {
 			console.error(`Error deleting job role ${id}:`, error);
 			return false;
+		}
+	}
+
+	/**
+	 * Fetches paginated job roles from /api/job-roles endpoint with pagination parameters
+	 * @param pagination The pagination parameters (page and limit)
+	 * @returns Promise<PaginatedResponse<JobRoleResponse>> Paginated job roles with metadata
+	 */
+	async getJobRolesPaginated(
+		pagination: PaginationRequest
+	): Promise<PaginatedResponse<JobRoleResponse>> {
+		try {
+			const response = await this.axiosInstance.get<
+				BackendResponse<BackendPaginatedResponse>
+			>("/api/job-roles", {
+				params: {
+					page: pagination.page,
+					limit: pagination.limit,
+				},
+			});
+
+			const backendData = response.data.data;
+
+			// Map backend format to frontend format
+			const mappedJobRoles = backendData.jobRoles.map((role) => ({
+				jobRoleId: role.id,
+				roleName: role.jobRoleName,
+				location: role.location,
+				capability: role.capability,
+				band: role.band,
+				closingDate: role.closingDate,
+			}));
+
+			return {
+				data: mappedJobRoles,
+				pagination: backendData.pagination,
+			};
+		} catch (error) {
+			console.error("Error fetching paginated job roles:", error);
+			// Return empty result with basic pagination metadata on error
+			return {
+				data: [],
+				pagination: {
+					currentPage: pagination.page,
+					totalPages: 0,
+					totalCount: 0,
+					limit: pagination.limit,
+					hasNext: false,
+					hasPrevious: false,
+				},
+			};
 		}
 	}
 }
