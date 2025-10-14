@@ -2,20 +2,21 @@
  * Tests for Job Role Controller
  */
 
-import type { Request, Response } from "express";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { JobRoleController } from "../controllers/job-role-controller";
-import type { JobRoleResponse } from "../models/job-role-response";
-import type { JobRoleService } from "../services/job-role-service";
-import { JobRoleValidator } from "../utils/job-role-validator";
 
-// Mock the pagination validation
+// Mock the pagination validation (must be before imports that use it)
 vi.mock("../utils/pagination-validation.js", () => ({
 	validatePaginationParams: vi.fn(),
 }));
 
+import type { Request, Response } from "express";
+import { JobRoleController } from "../controllers/job-role-controller";
+import type { JobRoleResponse } from "../models/job-role-response";
+import type { JobRoleService } from "../services/job-role-service";
+import { JobRoleValidator } from "../utils/job-role-validator";
 import { validatePaginationParams } from "../utils/pagination-validation.js";
 
+// Get typed mock reference
 const mockedValidatePaginationParams = validatePaginationParams as ReturnType<
 	typeof vi.fn
 >;
