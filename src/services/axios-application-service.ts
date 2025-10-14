@@ -54,6 +54,11 @@ export class AxiosApplicationService implements ApplicationService {
 		try {
 			const formData = new FormData();
 			formData.append("jobRoleId", jobRoleId.toString());
+			formData.append("applicantName", applicantName);
+			formData.append("applicantEmail", applicantEmail);
+			if (coverLetter) {
+				formData.append("coverLetter", coverLetter);
+			}
 			formData.append("cv", cvFile.buffer, {
 				filename: cvFile.originalname,
 				contentType: cvFile.mimetype,
