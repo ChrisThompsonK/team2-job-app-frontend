@@ -27,7 +27,7 @@
 
     <!-- Form Section -->
     <div class="bg-white rounded-3xl shadow-xl p-8">
-        <form id="addJobRoleForm" action="/admin/job-roles" method="POST" class="space-y-8">
+    <form id="addJobRoleForm" action="/admin/job-roles" method="POST" class="space-y-8">
             <!-- Role Name and Location -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -106,7 +106,7 @@
                     </label>
                     <input type="date" id="closingDate" name="closingDate" required 
                            value="{{ formData.closingDate if formData else '' }}"
-                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white calendar-input">
                 </div>
 
                 <div>
@@ -184,10 +184,25 @@
 </div>
 {% endif %}
 
+<style>
+.calendar-input::-webkit-calendar-picker-indicator {
+    filter: invert(27%) sepia(91%) saturate(2068%) hue-rotate(104deg) brightness(98%) contrast(105%);
+    cursor: pointer;
+}
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('addJobRoleForm');
-    
+    // Set minimum date for closing date input
+    const closingDateInput = document.getElementById('closingDate');
+    if (closingDateInput) {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        closingDateInput.min = `${yyyy}-${mm}-${dd}`;
+    }
     // Validation helpers
     const validateURL = (str) => {
         try { 
@@ -202,6 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const selected = new Date(dateStr);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+        selected.setHours(0, 0, 0, 0);
         return selected >= today;
     };
     
@@ -213,12 +229,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Form validation and submission
     form.addEventListener('submit', function(e) {
+        // Prevent HTML5 validation messages
+        e.preventDefault();
+        
         const errors = [
             validateField(form.roleName, () => form.roleName.value.trim(), 'Role Name is required'),
             validateField(form.location, () => form.location.value, 'Location is required'),
             validateField(form.capability, () => form.capability.value, 'Capability is required'),
             validateField(form.band, () => form.band.value, 'Band Level is required'),
-            validateField(form.closingDate, () => form.closingDate.value && validateDate(form.closingDate.value), 'Closing Date must be in the future'),
+            validateField(form.closingDate, () => {
+                if (!form.closingDate.value) return false;
+                return validateDate(form.closingDate.value);
+            }, 'Closing Date is required and must be today or in the future'),
             validateField(form.numberOfOpenPositions, () => parseInt(form.numberOfOpenPositions.value, 10) >= 1, 'Number of Positions must be at least 1'),
             validateField(form.jobSpecLink, () => form.jobSpecLink.value.trim() && validateURL(form.jobSpecLink.value.trim()), 'Job Spec Link must be a valid URL'),
             validateField(form.description, () => form.description.value.trim(), 'Job Description is required'),
@@ -226,11 +248,11 @@ document.addEventListener('DOMContentLoaded', function() {
         ].filter(Boolean);
 
         if (errors.length) {
-            e.preventDefault();
             alert('Please fix the following errors:\n\n' + errors.join('\n'));
             return;
         }
 
+        // If validation passes, submit the form
         // Show loading state
         const submitButton = form.querySelector('button[type="submit"]');
         submitButton.disabled = true;
@@ -242,10 +264,8 @@ document.addEventListener('DOMContentLoaded', function() {
             Creating Job Role...
         `;
         
-        // Prevent duplicate submissions
-        form.querySelectorAll('input, select, textarea, button').forEach(el => {
-            if (el !== submitButton) el.disabled = true;
-        });
+        // Submit the form programmatically
+        form.submit();
     });
 
     // Clear error styling on input

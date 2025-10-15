@@ -57,7 +57,7 @@ export class AxiosApplicationService implements ApplicationService {
 	private axiosInstance: AxiosInstance;
 
 	constructor(
-		baseURL = process.env["API_BASE_URL"] || "http://localhost:8080"
+		baseURL = process.env["API_BASE_URL"] || "http://localhost:8000"
 	) {
 		this.axiosInstance = axios.create({
 			baseURL,
