@@ -1,29 +1,29 @@
-<nav class="bg-white/80 backdrop-blur-sm border-b border-slate-200/60 sticky top-0 z-50">
+<nav class="site-header sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-slate-200/60">
     <div class="container mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
             <!-- Logo and Brand -->
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2 landscape:space-x-2 md:space-x-3">
                 <div class="flex items-center">
-                    <img src="/KainosLogoNoBackground.png" alt="Kainos Logo" class="h-8 w-auto">
+                    <img src="/KainosLogoNoBackground.png" alt="Kainos Logo" class="h-6 landscape:h-6 md:h-8 w-auto">
                 </div>
-                <div class="flex flex-col">
-                    <p class="text-sm text-slate-600 font-medium">Thinking Without Limitations</p>
+                <div class="flex flex-col tagline-container">
+                    <p class="text-xs landscape:text-xs md:text-sm text-slate-600 font-medium">Thinking Without Limitations</p>
                 </div>
             </div>
             
             <!-- Navigation -->
-            <div class="hidden md:flex items-center space-x-8">
+            <div class="hidden landscape:flex md:flex items-center space-x-4 landscape:space-x-4 md:space-x-8">
                 <nav role="navigation" aria-label="Main navigation">
-                    <a href="/" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200">Home</a>
-                    <a href="/job-roles" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 ml-8">Jobs</a>
-                    <a href="#about" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 ml-8">About</a>
-                    <a href="#contact" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 ml-8">Contact</a>
+                    <a href="/" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 text-sm landscape:text-sm md:text-base">Home</a>
+                    <a href="/job-roles" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 ml-4 landscape:ml-4 md:ml-8 text-sm landscape:text-sm md:text-base">Jobs</a>
+                    <a href="#about" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 ml-4 landscape:ml-4 md:ml-8 text-sm landscape:text-sm md:text-base">About</a>
+                    <a href="#contact" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 ml-4 landscape:ml-4 md:ml-8 text-sm landscape:text-sm md:text-base">Contact</a>
                 </nav>
                 
                 <!-- Simple Dark Mode Toggle (Backup) -->
                 <button 
                     id="simple-dark-toggle" 
-                    class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm ml-4"
+                    class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 landscape:px-2 md:px-3 py-2 rounded-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm ml-2 landscape:ml-2 md:ml-4"
                     aria-label="Toggle dark mode"
                     title="Toggle dark mode"
                 >
@@ -31,84 +31,20 @@
                 </button>
                 
                 <!-- Accessibility Button -->
-                <div class="relative ml-8">
-                    <button 
-                        id="accessibility-btn"
-                        class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm"
-                        aria-label="Accessibility options menu"
-                        aria-expanded="false"
-                        aria-controls="accessibility-panel"
-                    >
-                        <i data-lucide="accessibility" class="w-4 h-4"></i>
-                        <span class="text-sm font-medium">Accessibility</span>
-                    </button>
-                    
-                    <!-- Dropdown Panel -->
-                    <div 
-                        id="accessibility-panel"
-                        class="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg border border-slate-200 z-50 hidden
-                               md:absolute md:right-0 md:top-full md:mt-2 md:w-64
-                               fixed right-4 top-20 w-80 max-w-[calc(100vw-2rem)]"
-                        role="region"
-                        aria-labelledby="accessibility-btn"
-                        aria-label="Accessibility settings panel"
-                    >
-                        <div class="p-4">
-                            <h3 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-                                <i data-lucide="accessibility" class="w-5 h-5 mr-2"></i>
-                                Accessibility Options
-                            </h3>
-                            
-                            <!-- Text Size Controls -->
-                            <div class="mb-4">
-                                <h4 class="text-sm font-medium text-slate-700 mb-3 flex items-center">
-                                    <i data-lucide="type" class="w-4 h-4 mr-2"></i>
-                                    Text Size
-                                </h4>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button class="text-size-btn px-3 py-2 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500" data-size="small">
-                                        Small
-                                    </button>
-                                    <button class="text-size-btn px-3 py-2 text-sm bg-blue-600 text-white rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 active" data-size="medium">
-                                        Medium
-                                    </button>
-                                    <button class="text-size-btn px-3 py-2 text-base bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500" data-size="large">
-                                        Large
-                                    </button>
-                                    <button class="text-size-btn px-3 py-2 text-lg bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500" data-size="xlarge">
-                                        X-Large
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Display Mode Section -->
-                            <div class="mb-4">
-                                <h4 class="text-sm font-medium text-slate-700 mb-3 flex items-center">
-                                    <i data-lucide="contrast" class="w-4 h-4 mr-2"></i>
-                                    Display Mode
-                                </h4>
-                                
-                                <!-- Dark Mode Toggle -->
-                                <button 
-                                    id="dark-toggle" 
-                                    class="w-full px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
-                                    aria-pressed="false"
-                                    aria-label="Toggle dark mode"
-                                >
-                                    <span class="flex items-center">
-                                        <i data-lucide="moon" class="w-4 h-4 mr-2"></i>
-                                        Dark Mode
-                                    </span>
-                                    <span id="dark-status" class="text-xs text-slate-500">Off</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <button 
+                    id="accessibility-btn"
+                    class="flex items-center space-x-1 landscape:space-x-1 md:space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-2 landscape:px-2 md:px-3 py-2 rounded-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm ml-2 landscape:ml-2 md:ml-8"
+                    aria-label="Accessibility options menu"
+                    aria-expanded="false"
+                    aria-controls="accessibility-panel"
+                >
+                    <i data-lucide="accessibility" class="w-4 h-4"></i>
+                    <span class="text-xs landscape:text-xs md:text-sm font-medium">Accessibility</span>
+                </button>
             </div>
             
             <!-- Mobile Menu and Accessibility Buttons -->
-            <div class="md:hidden flex items-center space-x-3">
+            <div class="flex landscape:hidden md:hidden items-center space-x-3">
                 <!-- Mobile Accessibility Button -->
                 <button 
                     id="accessibility-btn-mobile"
@@ -122,58 +58,197 @@
                 
                 <!-- Mobile Menu Button -->
                 <button 
-                    id="mobileMenuBtn" class="text-slate-700 hover:text-blue-600 transition-colors duration-200 focus:outline-none"
+                    id="mobileMenuBtn" 
+                    type="button"
+                    class="text-slate-700 hover:text-blue-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg p-2"
                     aria-label="Open mobile menu"
                     aria-expanded="false"
+                    aria-controls="mobileMenuDropdown"
                 >
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
             </div>
-        </div>
-        <!-- Mobile Dropdown Menu -->
-        <div id="mobileMenuDropdown" class="md:hidden fixed inset-0 bg-black bg-opacity-40 z-50 hidden">
-            <div class="absolute top-0 right-0 w-3/4 max-w-xs bg-white shadow-lg h-full flex flex-col py-8 px-6">
-                <button id="closeMobileMenu" class="self-end mb-8 text-slate-700 hover:text-blue-600 focus:outline-none">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-                <a href="/" class="block py-3 px-2 text-slate-700 hover:text-blue-600 font-medium text-lg transition-colors duration-200">Home</a>
-                <a href="/job-roles" class="block py-3 px-2 text-slate-700 hover:text-blue-600 font-medium text-lg transition-colors duration-200">Jobs</a>
-                <a href="#about" class="block py-3 px-2 text-slate-700 hover:text-blue-600 font-medium text-lg transition-colors duration-200">About</a>
-                <a href="#contact" class="block py-3 px-2 text-slate-700 hover:text-blue-600 font-medium text-lg transition-colors duration-200">Contact</a>
-            </div>
+                </div>
         </div>
 </nav>
+
+<!-- Mobile Menu Overlay moved outside nav to avoid header stacking context -->
+<div 
+        id="mobileMenuDropdown"
+        class="landscape:hidden md:hidden fixed inset-0 bg-black/60 backdrop-blur-[2px] z-[1000] hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="mobileMenuDialogTitle"
+>
+        <div class="absolute top-0 right-0 w-3/4 max-w-xs h-full bg-white shadow-xl z-[1010] flex flex-col py-8 px-6 overflow-y-auto">
+                <h2 id="mobileMenuDialogTitle" class="sr-only">Mobile navigation menu</h2>
+                <button id="closeMobileMenu" class="self-end mb-8 text-slate-700 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-1" aria-label="Close mobile menu">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                </button>
+                <a href="/" class="block py-3 px-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded-lg font-medium text-lg transition-all duration-200">Home</a>
+                <a href="/job-roles" class="block py-3 px-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded-lg font-medium text-lg transition-all duration-200">Jobs</a>
+                <a href="#about" class="block py-3 px-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded-lg font-medium text-lg transition-all duration-200">About</a>
+                <a href="#contact" class="block py-3 px-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded-lg font-medium text-lg transition-all duration-200">Contact</a>
+        </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const menuBtn = document.getElementById('mobileMenuBtn');
     const menuDropdown = document.getElementById('mobileMenuDropdown');
     const closeBtn = document.getElementById('closeMobileMenu');
+    let lastFocusedElement = null;
+
+    // Debug logging to verify elements are found
+    console.log('Mobile menu elements:', { menuBtn, menuDropdown, closeBtn });
+
+    function getFocusable(container) {
+        return Array.from(container.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+            .filter(el => !el.hasAttribute('hidden') && (el.offsetParent !== null));
+    }
+
+    function openMenu() {
+        console.log('Opening menu...');
+        if (!menuDropdown) {
+            console.error('Menu dropdown not found!');
+            return;
+        }
+        lastFocusedElement = document.activeElement;
+        menuDropdown.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        const focusables = getFocusable(menuDropdown);
+        if (focusables.length) focusables[0].focus();
+        if (menuBtn) menuBtn.setAttribute('aria-expanded', 'true');
+        console.log('Menu opened successfully');
+    }
+
+    function closeMenu() {
+        console.log('Closing menu...');
+        if (!menuDropdown) return;
+        menuDropdown.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+        if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
+        if (lastFocusedElement instanceof HTMLElement) {
+            lastFocusedElement.focus();
+        } else if (menuBtn) {
+            menuBtn.focus();
+        }
+        console.log('Menu closed successfully');
+    }
+
     if (menuBtn && menuDropdown && closeBtn) {
-        menuBtn.addEventListener('click', function() {
-            menuDropdown.classList.remove('hidden');
+        console.log('Setting up event listeners...');
+        menuBtn.addEventListener('click', function(e) {
+            console.log('Menu button clicked!');
+            e.preventDefault();
+            openMenu();
         });
-        closeBtn.addEventListener('click', function() {
-            menuDropdown.classList.add('hidden');
+        closeBtn.addEventListener('click', function(e) {
+            console.log('Close button clicked!');
+            e.preventDefault();
+            closeMenu();
         });
-        // Close menu when clicking outside the drawer
+        // Click backdrop to close
         menuDropdown.addEventListener('click', function(e) {
             if (e.target === menuDropdown) {
-                menuDropdown.classList.add('hidden');
+                console.log('Backdrop clicked');
+                closeMenu();
             }
         });
-        // Close menu with Escape key
+        // Key handling for Escape + focus trap
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && !menuDropdown.classList.contains('hidden')) {
-                menuDropdown.classList.add('hidden');
+            if (menuDropdown.classList.contains('hidden')) return;
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                closeMenu();
+                return;
             }
+            if (e.key === 'Tab') {
+                const focusables = getFocusable(menuDropdown);
+                if (!focusables.length) return;
+                const first = focusables[0];
+                const last = focusables[focusables.length - 1];
+                if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+        });
+        console.log('Event listeners set up successfully');
+    } else {
+        console.error('Missing mobile menu elements:', { 
+            hasMenuBtn: !!menuBtn, 
+            hasMenuDropdown: !!menuDropdown, 
+            hasCloseBtn: !!closeBtn 
         });
     }
 });
 </script>
+
+<!-- Accessibility Panel (Positioned Independently) -->
+<div 
+    id="accessibility-panel"
+    class="hidden fixed right-4 top-20 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-xl border border-slate-200 z-[100]
+           md:absolute md:right-6 md:top-16 md:w-64 md:shadow-lg"
+    role="region"
+    aria-labelledby="accessibility-btn"
+    aria-label="Accessibility settings panel"
+>
+    <div class="p-4">
+        <h3 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+            <i data-lucide="accessibility" class="w-5 h-5 mr-2"></i>
+            Accessibility Options
+        </h3>
+        
+        <!-- Text Size Controls -->
+        <div class="mb-4">
+            <h4 class="text-sm font-medium text-slate-700 mb-3 flex items-center">
+                <i data-lucide="type" class="w-4 h-4 mr-2"></i>
+                Text Size
+            </h4>
+            <div class="grid grid-cols-2 gap-2">
+                <button class="text-size-btn px-3 py-2 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500" data-size="small">
+                    Small
+                </button>
+                <button class="text-size-btn px-3 py-2 text-sm bg-blue-600 text-white rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 active" data-size="medium">
+                    Medium
+                </button>
+                <button class="text-size-btn px-3 py-2 text-base bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500" data-size="large">
+                    Large
+                </button>
+                <button class="text-size-btn px-3 py-2 text-lg bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500" data-size="xlarge">
+                    X-Large
+                </button>
+            </div>
+        </div>
+        
+        <!-- Display Mode Section -->
+        <div class="mb-4">
+            <h4 class="text-sm font-medium text-slate-700 mb-3 flex items-center">
+                <i data-lucide="contrast" class="w-4 h-4 mr-2"></i>
+                Display Mode
+            </h4>
+            
+            <!-- Dark Mode Toggle -->
+            <button 
+                id="dark-toggle" 
+                class="w-full px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
+                aria-pressed="false"
+                aria-label="Toggle dark mode"
+            >
+                <span class="flex items-center">
+                    <i data-lucide="moon" class="w-4 h-4 mr-2"></i>
+                    Dark Mode
+                </span>
+                <span id="dark-status" class="text-xs text-slate-500">Off</span>
+            </button>
         </div>
     </div>
-</nav>
+</div>
