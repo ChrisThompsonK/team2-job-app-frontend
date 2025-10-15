@@ -67,7 +67,7 @@ describe("ApplicationController", () => {
 				capability: "Engineering",
 				band: "Band 1",
 				closingDate: "2025-12-31",
-				status: "Active",
+				status: "Open",
 				numberOfOpenPositions: 3,
 			};
 
@@ -170,7 +170,7 @@ describe("ApplicationController", () => {
 				capability: "Engineering",
 				band: "Band 1",
 				closingDate: "2025-12-31",
-				status: "Active",
+				status: "Open",
 				numberOfOpenPositions: 3,
 			};
 
@@ -304,7 +304,7 @@ describe("ApplicationController", () => {
 				capability: "Engineering",
 				band: "Band 1",
 				closingDate: "2025-12-31",
-				status: "Active",
+				status: "Open",
 				numberOfOpenPositions: 3,
 			};
 

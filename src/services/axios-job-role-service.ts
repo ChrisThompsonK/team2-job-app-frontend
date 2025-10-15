@@ -90,6 +90,11 @@ export class AxiosJobRoleService implements JobRoleService {
 				capability: role.capability,
 				band: role.band,
 				closingDate: role.closingDate,
+				status:
+					typeof role.status === "string" &&
+					role.status.toLowerCase() === "open"
+						? "Open"
+						: "Closed",
 			}));
 		} catch (error) {
 			console.error("Error fetching job roles:", error);
@@ -242,6 +247,11 @@ export class AxiosJobRoleService implements JobRoleService {
 				capability: role.capability,
 				band: role.band,
 				closingDate: role.closingDate,
+				status:
+					typeof role.status === "string" &&
+					role.status.toLowerCase() === "open"
+						? "Open"
+						: "Closed",
 			}));
 
 			return {

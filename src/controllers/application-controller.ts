@@ -54,7 +54,7 @@ export class ApplicationController {
 			// Check if the role is open for applications
 			if (
 				jobRole.numberOfOpenPositions <= 0 ||
-				jobRole.status.toLowerCase() !== "active"
+				jobRole.status.toLowerCase() !== "open"
 			) {
 				res.status(400).render("error.njk", {
 					message:
@@ -143,7 +143,7 @@ export class ApplicationController {
 
 			if (
 				jobRole.numberOfOpenPositions <= 0 ||
-				jobRole.status.toLowerCase() !== "active"
+				jobRole.status.toLowerCase() !== "open"
 			) {
 				console.warn(
 					"[ApplicationController] Rejected application due to eligibility check",
@@ -151,7 +151,7 @@ export class ApplicationController {
 						reason:
 							jobRole.numberOfOpenPositions <= 0
 								? "no-open-positions"
-								: "status-not-active",
+								: "status-not-open",
 						statusValue: jobRole.status,
 					}
 				);

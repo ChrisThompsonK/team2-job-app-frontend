@@ -9,6 +9,8 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - Tailwind CSS 4, DaisyUI, Biome, Vitest
 - Modern homepage UI with animated backgrounds and stat cards
 - Job roles listing, details, and application workflow
+  - **Status Badges**: Each job card now displays a badge indicating if the job is Open or Closed
+  - **Conditional Apply Button**: The "Apply Now" button is only shown for jobs with status Open
 - **Complete Application System** - Full application submission with file upload, validation, and error handling
 - **Applicant Management** - View and manage job applicants with responsive table, pagination, and filtering
 - **Pagination System** - Efficient browsing with page controls, ellipsis navigation, and loading states
@@ -197,7 +199,9 @@ The application includes a comprehensive job roles management system with separa
 - **View-Based Titles**: Page titles are defined directly in templates for better maintainability
 
 ### Public Features
-- Display job roles with role name, location, capability, band, and closing date
+- Display job roles with role name, location, capability, band, closing date, and status badge
+- **Status Badge**: Each job card displays an "Open" (green) or "Closed" (red) badge based on job status
+- **Conditional Apply Button**: "Apply Now" button is only visible for jobs with status "Open"; closed jobs hide the button for clarity
 - **Dual Action Buttons**: Each job role card features both "View Details" (secondary style) and "Apply Now" (primary gradient) buttons for complete user workflow
 - **Seamless Navigation**: "View Details" button links to individual job role information pages (`/job-roles/{id}`) with proper routing
 - **Kainos Brand Identity**: Professional theme with navy blue (#2E4374), green (#8BC34A), and white colors

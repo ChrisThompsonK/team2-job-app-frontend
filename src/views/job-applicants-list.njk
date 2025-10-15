@@ -80,7 +80,11 @@ Applicants for {{ jobRole.roleName }}
 								</td>
 								<td>
 									{% if applicant.coverLetter %}
-										<button class="btn btn-ghost btn-xs" onclick="showCoverLetter('{{ applicant.applicationId }}', '{{ applicant.applicantName | escape }}', {{ applicant.coverLetter | dump }})">
+										<button 
+											class="btn btn-ghost btn-xs cover-letter-btn" 
+											data-applicant-id="{{ applicant.applicationId }}"
+											data-applicant-name="{{ applicant.applicantName }}"
+											data-cover-letter="{{ applicant.coverLetter }}">
 											<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -147,7 +151,11 @@ Applicants for {{ jobRole.roleName }}
 							<div class="card-actions justify-between mt-4">
 								<div class="flex gap-2">
 									{% if applicant.coverLetter %}
-										<button class="btn btn-outline btn-xs" onclick="showCoverLetter('{{ applicant.applicationId }}', '{{ applicant.applicantName | escape }}', {{ applicant.coverLetter | dump }})">
+										<button 
+											class="btn btn-outline btn-xs cover-letter-btn"
+											data-applicant-id="{{ applicant.applicationId }}"
+											data-applicant-name="{{ applicant.applicantName }}"
+											data-cover-letter="{{ applicant.coverLetter }}">
 											Cover Letter
 										</button>
 									{% endif %}
@@ -217,11 +225,20 @@ Applicants for {{ jobRole.roleName }}
 </dialog>
 
 <script>
-	function showCoverLetter(applicationId, applicantName, coverLetter) {
-		document.getElementById('cover_letter_applicant').textContent = applicantName;
-		document.getElementById('cover_letter_content').textContent = coverLetter;
-		document.getElementById('cover_letter_modal').showModal();
-	}
+	// Event delegation for cover letter buttons
+	document.addEventListener('DOMContentLoaded', function() {
+		document.addEventListener('click', function(event) {
+			if (event.target.closest('.cover-letter-btn')) {
+				const button = event.target.closest('.cover-letter-btn');
+				const applicantName = button.getAttribute('data-applicant-name');
+				const coverLetter = button.getAttribute('data-cover-letter');
+				
+				document.getElementById('cover_letter_applicant').textContent = applicantName;
+				document.getElementById('cover_letter_content').textContent = coverLetter;
+				document.getElementById('cover_letter_modal').showModal();
+			}
+		});
+	});
 
 	function viewApplicationDetails(applicationId) {
 		// This could navigate to a detailed application view

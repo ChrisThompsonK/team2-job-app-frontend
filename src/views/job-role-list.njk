@@ -53,11 +53,16 @@
         <section class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {% for role in jobRoles %}
                 <div class="bg-white rounded-2xl shadow-md border-l-4 border-green-500 p-6 hover:shadow-lg transition-shadow duration-200 relative">
-                    <!-- Status Indicator -->
+                    <!-- Status Badge -->
                     <div class="absolute top-4 right-4">
-                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <!-- Debug: Status = "{{ role.status }}" -->
+                        {% if role.status and role.status | lower == 'open' %}
+                            <span class="badge badge-success text-white px-3 py-1 text-xs">Open</span>
+                        {% else %}
+                            <span class="badge badge-error text-white px-3 py-1 text-xs">Closed</span>
+                        {% endif %}
                     </div>
-                    
+
                     <!-- Job Title -->
                     <h2 class="text-xl font-bold text-gray-900 mb-6 pr-6">{{ role.roleName }}</h2>
                     
@@ -124,12 +129,14 @@
                                 </svg>
                                 Applicants
                             </a>
-                            <a href="/job-roles/{{ role.jobRoleId }}/apply" class="flex-1 bg-gradient-to-r from-blue-600 to-green-600 text-white font-medium py-2 px-3 rounded-lg hover:from-blue-700 hover:to-green-700 transition-colors duration-200 flex items-center justify-center text-sm">
-                                Apply Now
-                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                </svg>
-                            </a>
+                            {% if role.status and role.status | lower == 'open' %}
+                                <a href="/job-roles/{{ role.jobRoleId }}/apply" class="flex-1 bg-gradient-to-r from-blue-600 to-green-600 text-white font-medium py-2 px-3 rounded-lg hover:from-blue-700 hover:to-green-700 transition-colors duration-200 flex items-center justify-center text-sm">
+                                    Apply Now
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                    </svg>
+                                </a>
+                            {% endif %}
                         </div>
                         <!-- Admin Edit Button (TODO: Add admin role check when backend auth is implemented) -->
                         <a href="/admin/job-roles/{{ role.jobRoleId }}/edit" class="w-full bg-orange-500 text-white font-medium py-2 px-3 rounded-lg hover:bg-orange-600 transition-colors duration-200 flex items-center justify-center text-sm">
