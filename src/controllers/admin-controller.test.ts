@@ -21,7 +21,9 @@ describe("AdminController", () => {
 			getJobRoles: vi.fn(),
 			getJobRoleById: vi.fn(),
 			createJobRole: vi.fn(),
+			getJobRolesPaginated: vi.fn(),
 			deleteJobRole: vi.fn(),
+			updateJobRole: vi.fn(),
 		};
 
 		// Create real validator for testing
@@ -451,6 +453,293 @@ describe("AdminController", () => {
 				expect.objectContaining({
 					formData: invalidData,
 				})
+			);
+		});
+	});
+
+	describe("getEditJobRole", () => {
+		it("should render job-role-edit.njk with job role data", async () => {
+			const mockJobRole: JobRoleDetailedResponse = {
+				jobRoleId: 1,
+				roleName: "Senior Software Engineer",
+				description: "Lead development projects",
+				responsibilities: "Develop and mentor",
+				jobSpecLink: "https://example.com/spec",
+				location: "Belfast, Northern Ireland",
+				capability: "Engineering",
+				band: "Senior",
+				closingDate: "2025-12-31",
+				status: "Open",
+				numberOfOpenPositions: 2,
+			};
+
+			mockReq.params = { id: "1" };
+			vi.mocked(mockJobRoleService.getJobRoleById).mockResolvedValue(
+				mockJobRole
+			);
+
+			await adminController.getEditJobRole(
+				mockReq as Request,
+				mockRes as Response
+			);
+
+			expect(mockJobRoleService.getJobRoleById).toHaveBeenCalledWith(1);
+			expect(mockRes.render).toHaveBeenCalledWith("job-role-edit.njk", {
+				jobRole: mockJobRole,
+			});
+		});
+
+		it("should return 400 for invalid job role ID", async () => {
+			mockReq.params = { id: "invalid" };
+
+			await adminController.getEditJobRole(
+				mockReq as Request,
+				mockRes as Response
+			);
+
+			expect(mockRes.status).toHaveBeenCalledWith(400);
+			expect(mockRes.render).toHaveBeenCalledWith(
+				"error.njk",
+				expect.objectContaining({
+					message: expect.stringContaining("Invalid job role ID"),
+				})
+			);
+		});
+
+		it("should return 404 when job role not found", async () => {
+			mockReq.params = { id: "999" };
+			vi.mocked(mockJobRoleService.getJobRoleById).mockResolvedValue(null);
+
+			await adminController.getEditJobRole(
+				mockReq as Request,
+				mockRes as Response
+			);
+
+			expect(mockRes.status).toHaveBeenCalledWith(404);
+			expect(mockRes.render).toHaveBeenCalledWith(
+				"error.njk",
+				expect.objectContaining({
+					message: expect.stringContaining("Job role not found"),
+				})
+			);
+		});
+
+		it("should handle service errors gracefully", async () => {
+			mockReq.params = { id: "1" };
+			vi.mocked(mockJobRoleService.getJobRoleById).mockRejectedValue(
+				new Error("Database error")
+			);
+
+			const consoleSpy = vi
+				.spyOn(console, "error")
+				.mockImplementation(() => {});
+
+			await adminController.getEditJobRole(
+				mockReq as Request,
+				mockRes as Response
+			);
+
+			expect(mockRes.status).toHaveBeenCalledWith(500);
+			expect(mockRes.render).toHaveBeenCalledWith(
+				"error.njk",
+				expect.objectContaining({
+					message: expect.stringContaining(
+						"couldn't load the job role for editing"
+					),
+				})
+			);
+
+			consoleSpy.mockRestore();
+		});
+	});
+
+	describe("updateJobRole", () => {
+		const futureDate = new Date();
+		futureDate.setDate(futureDate.getDate() + 60);
+		const futureDateString = futureDate.toISOString().split("T")[0];
+
+		const validUpdateData = {
+			roleName: "Updated Senior Software Engineer",
+			description: "Updated description for the role",
+			responsibilities: "Updated responsibilities and duties",
+			jobSpecLink: "https://sharepoint.example.com/updated-spec",
+			location: "Dublin, Ireland",
+			capability: "Engineering",
+			band: "Senior",
+			closingDate: futureDateString as string,
+			status: "Open",
+			numberOfOpenPositions: "3",
+		};
+
+		it("should update a job role with valid data", async () => {
+			mockReq.params = { id: "1" };
+			mockReq.body = validUpdateData;
+
+			const mockUpdatedRole: JobRoleDetailedResponse = {
+				jobRoleId: 1,
+				roleName: "Updated Senior Software Engineer",
+				description: "Updated description for the role",
+				responsibilities: "Updated responsibilities and duties",
+				jobSpecLink: "https://sharepoint.example.com/updated-spec",
+				location: "Dublin, Ireland",
+				capability: "Engineering",
+				band: "Senior",
+				closingDate: futureDateString,
+				status: "Open",
+				numberOfOpenPositions: 3,
+			};
+
+			vi.mocked(mockJobRoleService.updateJobRole).mockResolvedValue(
+				mockUpdatedRole
+			);
+
+			await adminController.updateJobRole(
+				mockReq as Request,
+				mockRes as Response
+			);
+
+			expect(mockJobRoleService.updateJobRole).toHaveBeenCalledWith(
+				1,
+				expect.objectContaining({
+					roleName: "Updated Senior Software Engineer",
+					status: "Open",
+					numberOfOpenPositions: 3,
+				})
+			);
+			expect(mockRes.redirect).toHaveBeenCalledWith(
+				"/job-roles/1?updated=true"
+			);
+		});
+
+		it("should return 400 for invalid job role ID", async () => {
+			mockReq.params = { id: "invalid" };
+			mockReq.body = validUpdateData;
+
+			await adminController.updateJobRole(
+				mockReq as Request,
+				mockRes as Response
+			);
+
+			expect(mockRes.status).toHaveBeenCalledWith(400);
+			expect(mockRes.render).toHaveBeenCalledWith(
+				"error.njk",
+				expect.objectContaining({
+					message: expect.stringContaining("Invalid job role ID"),
+				})
+			);
+		});
+
+		it("should render edit form with error for invalid data", async () => {
+			const invalidData = {
+				...validUpdateData,
+				roleName: "ab", // Too short
+			};
+
+			mockReq.params = { id: "1" };
+			mockReq.body = invalidData;
+
+			const mockJobRole: JobRoleDetailedResponse = {
+				jobRoleId: 1,
+				roleName: "Original Name",
+				description: "Original description",
+				responsibilities: "Original responsibilities",
+				jobSpecLink: "https://example.com/spec",
+				location: "Belfast, Northern Ireland",
+				capability: "Engineering",
+				band: "Senior",
+				closingDate: "2025-12-31",
+				status: "Open",
+				numberOfOpenPositions: 2,
+			};
+
+			vi.mocked(mockJobRoleService.getJobRoleById).mockResolvedValue(
+				mockJobRole
+			);
+
+			await adminController.updateJobRole(
+				mockReq as Request,
+				mockRes as Response
+			);
+
+			expect(mockRes.status).toHaveBeenCalledWith(400);
+			expect(mockRes.render).toHaveBeenCalledWith(
+				"job-role-edit.njk",
+				expect.objectContaining({
+					error: expect.stringContaining("at least 3 characters"),
+					jobRole: mockJobRole,
+				})
+			);
+		});
+
+		it("should handle service errors gracefully", async () => {
+			mockReq.params = { id: "1" };
+			mockReq.body = validUpdateData;
+
+			vi.mocked(mockJobRoleService.updateJobRole).mockRejectedValue(
+				new Error("Database error")
+			);
+			vi.mocked(mockJobRoleService.getJobRoleById).mockResolvedValue(null);
+
+			const consoleSpy = vi
+				.spyOn(console, "error")
+				.mockImplementation(() => {});
+
+			await adminController.updateJobRole(
+				mockReq as Request,
+				mockRes as Response
+			);
+
+			expect(mockRes.status).toHaveBeenCalledWith(500);
+			expect(mockRes.render).toHaveBeenCalledWith(
+				"job-role-edit.njk",
+				expect.objectContaining({
+					error: expect.stringContaining("couldn't update the job role"),
+				})
+			);
+
+			consoleSpy.mockRestore();
+		});
+
+		it("should allow status to be changed from Open to Closed", async () => {
+			const dataWithClosedStatus = {
+				...validUpdateData,
+				status: "Closed",
+			};
+
+			mockReq.params = { id: "1" };
+			mockReq.body = dataWithClosedStatus;
+
+			const mockUpdatedRole: JobRoleDetailedResponse = {
+				jobRoleId: 1,
+				roleName: "Updated Senior Software Engineer",
+				description: "Updated description",
+				responsibilities: "Updated responsibilities",
+				jobSpecLink: "https://sharepoint.example.com/spec",
+				location: "Dublin, Ireland",
+				capability: "Engineering",
+				band: "Senior",
+				closingDate: futureDateString,
+				status: "Closed",
+				numberOfOpenPositions: 3,
+			};
+
+			vi.mocked(mockJobRoleService.updateJobRole).mockResolvedValue(
+				mockUpdatedRole
+			);
+
+			await adminController.updateJobRole(
+				mockReq as Request,
+				mockRes as Response
+			);
+
+			expect(mockJobRoleService.updateJobRole).toHaveBeenCalledWith(
+				1,
+				expect.objectContaining({
+					status: "Closed",
+				})
+			);
+			expect(mockRes.redirect).toHaveBeenCalledWith(
+				"/job-roles/1?updated=true"
 			);
 		});
 	});

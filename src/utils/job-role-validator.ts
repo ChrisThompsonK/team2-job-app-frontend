@@ -31,7 +31,10 @@ export class JobRoleValidator {
 	/**
 	 * Validates all fields for job role creation
 	 */
-	public validateJobRole(data: JobRoleData): ValidationResult {
+	public validateJobRole(
+		data: JobRoleData,
+		isUpdate = false
+	): ValidationResult {
 		// Validate required fields
 		const requiredFieldsResult = this.validateRequiredFields(data);
 		if (!requiredFieldsResult.isValid) {
@@ -70,8 +73,8 @@ export class JobRoleValidator {
 			return positionsResult;
 		}
 
-		// Validate closing date
-		const dateResult = this.validateClosingDate(data.closingDate);
+		// Validate closing date (allow past dates for updates)
+		const dateResult = this.validateClosingDate(data.closingDate, isUpdate);
 		if (!dateResult.isValid) {
 			return dateResult;
 		}
@@ -170,7 +173,10 @@ export class JobRoleValidator {
 		return { isValid: true };
 	}
 
-	private validateClosingDate(closingDate: string): ValidationResult {
+	private validateClosingDate(
+		closingDate: string,
+		allowPastDates = false
+	): ValidationResult {
 		// Trim whitespace before validation
 		const trimmedDate = closingDate.trim();
 
@@ -183,15 +189,17 @@ export class JobRoleValidator {
 			};
 		}
 
-		// Validate date is not in the past
-		const selectedDate = new Date(trimmedDate);
-		const today = new Date();
-		today.setHours(0, 0, 0, 0);
-		if (selectedDate < today) {
-			return {
-				isValid: false,
-				error: "Closing date cannot be in the past.",
-			};
+		// Validate date is not in the past (only for new job roles)
+		if (!allowPastDates) {
+			const selectedDate = new Date(trimmedDate);
+			const today = new Date();
+			today.setHours(0, 0, 0, 0);
+			if (selectedDate < today) {
+				return {
+					isValid: false,
+					error: "Closing date cannot be in the past.",
+				};
+			}
 		}
 
 		return { isValid: true };

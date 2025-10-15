@@ -6,6 +6,7 @@
 import type { Request, Response } from "express";
 import type { JobRoleService } from "../services/job-role-service.js";
 import type { JobRoleValidator } from "../utils/job-role-validator.js";
+import { validateJobRoleId } from "../utils/validation.js";
 
 export class AdminController {
 	private jobRoleService: JobRoleService;
@@ -118,6 +119,146 @@ export class AdminController {
 				error:
 					"Sorry, we couldn't create the job role at this time. Please try again later.",
 				formData: preservedFormData, // Pass back preserved form data
+			});
+		}
+	};
+
+	/**
+	 * GET /admin/job-roles/:id/edit
+	 * Renders the form for editing an existing job role
+	 * Pre-fills form with current job role data
+	 */
+	public getEditJobRole = async (
+		req: Request,
+		res: Response
+	): Promise<void> => {
+		try {
+			const jobRoleId = validateJobRoleId(req.params["id"]);
+
+			if (jobRoleId === null) {
+				res.status(400).render("error.njk", {
+					message:
+						"Invalid job role ID provided. Please provide a valid numeric ID.",
+				});
+				return;
+			}
+
+			const jobRole = await this.jobRoleService.getJobRoleById(jobRoleId);
+
+			if (!jobRole) {
+				res.status(404).render("error.njk", {
+					message:
+						"Job role not found. The role you're looking for may have been removed or doesn't exist.",
+				});
+				return;
+			}
+
+			res.render("job-role-edit.njk", {
+				jobRole,
+			});
+		} catch (error) {
+			console.error("Error in AdminController.getEditJobRole:", error);
+			res.status(500).render("error.njk", {
+				message:
+					"Sorry, we couldn't load the job role for editing at this time. Please try again later.",
+			});
+		}
+	};
+
+	/**
+	 * POST /admin/job-roles/:id
+	 * Updates an existing job role in the database
+	 * Validates input data and preserves status field
+	 */
+	public updateJobRole = async (req: Request, res: Response): Promise<void> => {
+		try {
+			const jobRoleId = validateJobRoleId(req.params["id"]);
+
+			if (jobRoleId === null) {
+				res.status(400).render("error.njk", {
+					message:
+						"Invalid job role ID provided. Please provide a valid numeric ID.",
+				});
+				return;
+			}
+
+			// Extract form data from request body
+			const {
+				roleName,
+				description,
+				responsibilities,
+				jobSpecLink,
+				location,
+				capability,
+				band,
+				closingDate,
+				status,
+				numberOfOpenPositions,
+			} = req.body;
+
+			// Validate all fields using the injected validator (isUpdate = true to allow past dates)
+			const validationResult = this.jobRoleValidator.validateJobRole(
+				{
+					roleName,
+					description,
+					responsibilities,
+					jobSpecLink,
+					location,
+					capability,
+					band,
+					closingDate,
+					status,
+					numberOfOpenPositions,
+				},
+				true
+			);
+
+			if (!validationResult.isValid) {
+				// Fetch job role again for re-rendering with error
+				const jobRole = await this.jobRoleService.getJobRoleById(jobRoleId);
+				res.status(400).render("job-role-edit.njk", {
+					error: validationResult.error,
+					jobRole: jobRole || req.body, // Use existing data or fallback to submitted data
+				});
+				return;
+			}
+
+			// Parse validated number of positions
+			const positions = parseInt(numberOfOpenPositions, 10);
+
+			// Update the job role via service
+			const updatedJobRole = await this.jobRoleService.updateJobRole(
+				jobRoleId,
+				{
+					roleName: roleName.trim(),
+					description: description.trim(),
+					responsibilities: responsibilities.trim(),
+					jobSpecLink: jobSpecLink.trim(),
+					location: location.trim(),
+					capability: capability.trim(),
+					band: band.trim(),
+					closingDate: closingDate.trim(),
+					status: status.trim(),
+					numberOfOpenPositions: positions,
+				}
+			);
+
+			// Redirect to the updated job role's detail page with success indicator
+			res.redirect(`/job-roles/${updatedJobRole.jobRoleId}?updated=true`);
+		} catch (error) {
+			console.error("Error in AdminController.updateJobRole:", error);
+
+			// Try to fetch job role for re-rendering form
+			const jobRoleId = validateJobRoleId(req.params["id"]);
+			let jobRole = null;
+			if (jobRoleId !== null) {
+				jobRole = await this.jobRoleService.getJobRoleById(jobRoleId);
+			}
+
+			res.status(500).render("job-role-edit.njk", {
+				error:
+					"Sorry, we couldn't update the job role at this time. Please try again later.",
+				jobRole: jobRole || req.body, // Pass back job role or form data
 			});
 		}
 	};

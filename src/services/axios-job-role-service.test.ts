@@ -14,12 +14,14 @@ describe("AxiosJobRoleService", () => {
 	let mockAxiosInstance: {
 		get: ReturnType<typeof vi.fn>;
 		delete: ReturnType<typeof vi.fn>;
+		put: ReturnType<typeof vi.fn>;
 	};
 
 	beforeEach(() => {
 		mockAxiosInstance = {
 			get: vi.fn(),
 			delete: vi.fn(),
+			put: vi.fn(),
 		};
 
 		vi.mocked(axios.create).mockReturnValue(
@@ -132,6 +134,182 @@ describe("AxiosJobRoleService", () => {
 			expect(result).toBe(false);
 			expect(consoleSpy).toHaveBeenCalled();
 
+			consoleSpy.mockRestore();
+		});
+	});
+
+	describe("updateJobRole", () => {
+		const mockJobRoleData = {
+			roleName: "Senior Software Engineer",
+			description: "Lead software development projects",
+			responsibilities: "Develop and maintain applications",
+			jobSpecLink: "https://example.com/job-spec",
+			location: "Belfast, Northern Ireland",
+			capability: "Engineering",
+			band: "Senior",
+			closingDate: "2025-12-31",
+			status: "Open",
+			numberOfOpenPositions: 2,
+		};
+
+		const mockBackendResponse = {
+			success: true,
+			data: {
+				id: 123,
+				jobRoleName: "Senior Software Engineer",
+				description: "Lead software development projects",
+				responsibilities: "Develop and maintain applications",
+				jobSpecLink: "https://example.com/job-spec",
+				location: "Belfast, Northern Ireland",
+				capability: "Engineering",
+				band: "Senior",
+				closingDate: "2025-12-31",
+				status: "Open",
+				numberOfOpenPositions: 2,
+			},
+		};
+
+		it("should successfully update a job role with valid ID", async () => {
+			mockAxiosInstance.put.mockResolvedValue({
+				status: 200,
+				data: mockBackendResponse,
+			});
+
+			const result = await service.updateJobRole(123, mockJobRoleData);
+
+			expect(mockAxiosInstance.put).toHaveBeenCalledWith("/api/job-roles/123", {
+				jobRoleName: "Senior Software Engineer",
+				description: "Lead software development projects",
+				responsibilities: "Develop and maintain applications",
+				jobSpecLink: "https://example.com/job-spec",
+				location: "Belfast, Northern Ireland",
+				capability: "Engineering",
+				band: "Senior",
+				closingDate: "2025-12-31",
+				status: "Open",
+				numberOfOpenPositions: 2,
+			});
+
+			expect(result).toEqual({
+				jobRoleId: 123,
+				roleName: "Senior Software Engineer",
+				description: "Lead software development projects",
+				responsibilities: "Develop and maintain applications",
+				jobSpecLink: "https://example.com/job-spec",
+				location: "Belfast, Northern Ireland",
+				capability: "Engineering",
+				band: "Senior",
+				closingDate: "2025-12-31",
+				status: "Open",
+				numberOfOpenPositions: 2,
+			});
+		});
+
+		it("should throw error for invalid ID (negative)", async () => {
+			await expect(service.updateJobRole(-1, mockJobRoleData)).rejects.toThrow(
+				"Invalid job role ID"
+			);
+
+			expect(mockAxiosInstance.put).not.toHaveBeenCalled();
+		});
+
+		it("should throw error for invalid ID (zero)", async () => {
+			await expect(service.updateJobRole(0, mockJobRoleData)).rejects.toThrow(
+				"Invalid job role ID"
+			);
+
+			expect(mockAxiosInstance.put).not.toHaveBeenCalled();
+		});
+
+		it("should throw error for invalid ID (non-integer)", async () => {
+			await expect(
+				service.updateJobRole(123.45, mockJobRoleData)
+			).rejects.toThrow("Invalid job role ID");
+
+			expect(mockAxiosInstance.put).not.toHaveBeenCalled();
+		});
+
+		it("should throw error when job role not found (404)", async () => {
+			mockAxiosInstance.put.mockRejectedValue({
+				isAxiosError: true,
+				response: { status: 404 },
+			});
+
+			vi.mocked(axios.isAxiosError).mockReturnValue(true);
+
+			const consoleSpy = vi
+				.spyOn(console, "error")
+				.mockImplementation(() => {});
+
+			await expect(service.updateJobRole(999, mockJobRoleData)).rejects.toThrow(
+				"Job role not found"
+			);
+
+			expect(consoleSpy).toHaveBeenCalled();
+			consoleSpy.mockRestore();
+		});
+
+		it("should throw error with backend message on validation error", async () => {
+			mockAxiosInstance.put.mockRejectedValue({
+				isAxiosError: true,
+				response: {
+					status: 400,
+					data: { message: "Invalid data provided" },
+				},
+			});
+
+			vi.mocked(axios.isAxiosError).mockReturnValue(true);
+
+			const consoleSpy = vi
+				.spyOn(console, "error")
+				.mockImplementation(() => {});
+
+			await expect(service.updateJobRole(123, mockJobRoleData)).rejects.toThrow(
+				"Invalid data provided"
+			);
+
+			expect(consoleSpy).toHaveBeenCalled();
+			consoleSpy.mockRestore();
+		});
+
+		it("should handle network errors gracefully", async () => {
+			const networkError = new Error("Network Error");
+			mockAxiosInstance.put.mockRejectedValue(networkError);
+
+			vi.mocked(axios.isAxiosError).mockReturnValue(false);
+
+			const consoleSpy = vi
+				.spyOn(console, "error")
+				.mockImplementation(() => {});
+
+			await expect(service.updateJobRole(123, mockJobRoleData)).rejects.toThrow(
+				"Failed to update job role"
+			);
+
+			expect(consoleSpy).toHaveBeenCalled();
+			consoleSpy.mockRestore();
+		});
+
+		it("should handle server errors (500) gracefully", async () => {
+			mockAxiosInstance.put.mockRejectedValue({
+				isAxiosError: true,
+				response: {
+					status: 500,
+					data: { message: "Internal Server Error" },
+				},
+			});
+
+			vi.mocked(axios.isAxiosError).mockReturnValue(true);
+
+			const consoleSpy = vi
+				.spyOn(console, "error")
+				.mockImplementation(() => {});
+
+			await expect(service.updateJobRole(123, mockJobRoleData)).rejects.toThrow(
+				"Internal Server Error"
+			);
+
+			expect(consoleSpy).toHaveBeenCalled();
 			consoleSpy.mockRestore();
 		});
 	});

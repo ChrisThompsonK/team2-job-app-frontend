@@ -254,12 +254,20 @@ class App {
 			this.jobRoleController.deleteJobRoleForm
 		);
 
-		// Admin endpoints (job role creation)
+		// Admin endpoints (job role creation and editing)
 		this.server.get(
 			"/admin/job-roles/new",
 			this.adminController.getCreateJobRole
 		);
 		this.server.post("/admin/job-roles", this.adminController.createJobRole);
+		this.server.get(
+			"/admin/job-roles/:id/edit",
+			this.adminController.getEditJobRole
+		);
+		this.server.post(
+			"/admin/job-roles/:id",
+			this.adminController.updateJobRole
+		);
 
 		// Application endpoints
 		this.server.get(
