@@ -51,4 +51,15 @@ export interface JobRoleService {
 	 * @returns Promise<boolean> True if deletion was successful, false otherwise
 	 */
 	deleteJobRole(id: number): Promise<boolean>;
+
+	/**
+	 * Updates an existing job role
+	 * @param id The job role ID to update
+	 * @param jobRole The updated job role data
+	 * @returns Promise<JobRoleDetailedResponse> The updated job role details
+	 */
+	updateJobRole(
+		id: number,
+		jobRole: JobRoleCreate
+	): Promise<JobRoleDetailedResponse>;
 }

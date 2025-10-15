@@ -264,4 +264,69 @@ export class AxiosJobRoleService implements JobRoleService {
 			};
 		}
 	}
+
+	/**
+	 * Updates an existing job role via PUT /api/job-roles/:id endpoint
+	 * @param id The job role ID to update
+	 * @param jobRole The updated job role data
+	 * @returns Promise<JobRoleDetailedResponse> The updated job role details
+	 * @throws Error if update fails
+	 */
+	async updateJobRole(
+		id: number,
+		jobRole: JobRoleCreate
+	): Promise<JobRoleDetailedResponse> {
+		// Validate input
+		if (!Number.isInteger(id) || id <= 0) {
+			throw new Error("Invalid job role ID");
+		}
+
+		try {
+			// Map frontend format to backend format
+			const backendPayload = {
+				jobRoleName: jobRole.roleName,
+				description: jobRole.description,
+				responsibilities: jobRole.responsibilities,
+				jobSpecLink: jobRole.jobSpecLink,
+				location: jobRole.location,
+				capability: jobRole.capability,
+				band: jobRole.band,
+				closingDate: jobRole.closingDate,
+				status: jobRole.status,
+				numberOfOpenPositions: jobRole.numberOfOpenPositions,
+			};
+
+			const response = await this.axiosInstance.put<
+				BackendResponse<BackendJobRole>
+			>(`/api/job-roles/${id}`, backendPayload);
+
+			const role = response.data.data;
+
+			// Map backend format back to frontend format
+			return {
+				jobRoleId: role.id,
+				roleName: role.jobRoleName,
+				description: role.description,
+				responsibilities: role.responsibilities,
+				jobSpecLink: role.jobSpecLink,
+				location: role.location,
+				capability: role.capability,
+				band: role.band,
+				closingDate: role.closingDate,
+				status: role.status,
+				numberOfOpenPositions: role.numberOfOpenPositions,
+			};
+		} catch (error) {
+			console.error(`Error updating job role ${id}:`, error);
+			if (axios.isAxiosError(error)) {
+				if (error.response?.status === 404) {
+					throw new Error("Job role not found");
+				}
+				const message =
+					error.response?.data?.message || "Failed to update job role";
+				throw new Error(message);
+			}
+			throw new Error("Failed to update job role");
+		}
+	}
 }

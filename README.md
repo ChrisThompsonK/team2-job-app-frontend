@@ -7,15 +7,15 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 ## 🚀 Features
 - TypeScript, ES Modules, Express, Nunjucks templating
 - Tailwind CSS 4, DaisyUI, Biome, Vitest
-- Modern homepage UI, animated backgrounds, stat cards
-- Readable time display (HH:MM, weekday, date)
+- Modern homepage UI with animated backgrounds and stat cards
 - Job roles listing, details, and application workflow
-- **Pagination System** - Efficient browsing with page controls, ellipsis navigation, and loading states
-- **Admin job role creation** - Full CRUD functionality to create and save job roles to database
-- Backend API integration via Axios for data persistence
-- Kainos brand theme, unified logo system
-- Dark mode (dual toggle, persistent)
-- Accessibility: skip links, text size, ARIA, keyboard navigation
+- **Pagination System** - Efficient browsing with page controls and navigation
+- **Admin CRUD Operations** - Create, edit, and delete job roles with full validation
+- **Edit Job Roles** - Update existing roles with pre-filled forms and orange-styled edit buttons
+- Backend API integration via Axios (localhost:8000)
+- Kainos brand theme with unified logo system
+- Dark mode with persistent toggle
+- Accessibility features: skip links, text size, ARIA, keyboard navigation
 
 ## 📦 Project Structure
 ```
@@ -200,21 +200,16 @@ The application includes a comprehensive job roles management system with separa
 
 ### Admin Features
 - **Job Role Creation**: Full form with validation for creating new job roles
-- **Dropdown Selection**: Band and capability dropdowns populated from validation constants (`job-role-validation-constants.ts`)
-- **Automatic Status**: New job roles automatically set to "Open" status (configurable via constant)
-- **Input Validation**: Both client-side and server-side validation for all fields
-- **Whitespace Handling**: Automatic trimming of all string inputs before validation and storage
-- **Error Messages**: Clear, user-friendly error messages for validation failures
-- **Form Data Persistence**: All form fields retain their values when validation fails - users never lose their work
-- **Smart Field Retention**: Text inputs, textareas, dropdowns, and date fields all preserve user input on validation errors
-- **Loading State**: Animated spinner and disabled form during submission to prevent duplicate entries
-- **Success Confirmation**: Green success banner with celebration icon after creating a job role
-- **Quick Navigation**: "View All Open Positions" button on success message for easy navigation to job list
-- **Auto-dismissible Alerts**: Success messages automatically fade after 10 seconds (manually closeable)
-- **Date Validation**: Closing date must be in the future with YYYY-MM-DD format
-- **URL Validation**: Job spec link must be a valid HTTP/HTTPS URL (http:// or https://)
-- **Security**: Nunjucks auto-escaping enabled to prevent XSS attacks
-- **Comprehensive Testing**: 17 test cases covering all validation scenarios with 100% pass rate
+- **Job Role Editing**: Update existing roles with pre-filled forms, orange edit buttons with 📝 emoji
+- **Status Management**: Admins can change job status between "Open" and "Closed"
+- **Smart Validation**: Date validation allows past dates for edits, requires future dates for creation
+- **Input Validation**: Client-side and server-side validation with clear error messages
+- **Form Persistence**: Field values retained on validation errors
+- **Loading States**: Animated spinner during submission to prevent duplicates
+- **Success Confirmation**: Visual feedback after create/update operations
+- **URL Validation**: Job spec link must be valid HTTP/HTTPS URL
+- **Security**: Nunjucks auto-escaping enabled for XSS prevention
+- **Comprehensive Testing**: Full test coverage for CRUD operations
 
 ### Known Limitations & Future Work
 - **Authentication/Authorization**: Admin routes (`/admin/*`) currently have no authentication. This is intentional for MVP and will be addressed in a future PR. See `FUTURE_AUTH_IMPLEMENTATION.md` for planned approach.

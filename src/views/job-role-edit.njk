@@ -1,0 +1,279 @@
+{% extends "templates/layout.njk" %}
+
+{% block applicationTitle %}Edit Job Role - Kainos Job Application{% endblock %}
+
+{% block content %}
+<main id="main-content" class="pt-4">
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+    <!-- Header Section -->
+    <header class="mb-8">
+        <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-green-600 rounded-3xl shadow-2xl p-8 text-white relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-bold mb-2">Edit Job Role</h1>
+                        <p class="text-blue-100">Update job opportunity details</p>
+                    </div>
+                    <a href="/job-roles/{{ jobRole.jobRoleId }}" class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Back to Job Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Form Section -->
+    <div class="bg-white rounded-3xl shadow-xl p-8">
+        <form id="editJobRoleForm" action="/admin/job-roles/{{ jobRole.jobRoleId }}" method="POST" class="space-y-8">
+            <!-- Role Name and Location -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="roleName" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Role Name <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="roleName" name="roleName" required 
+                           value="{{ jobRole.roleName }}"
+                           placeholder="e.g., Senior Software Engineer"
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-500">
+                </div>
+
+                <div>
+                    <label for="location" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Location <span class="text-red-500">*</span>
+                    </label>
+                    <select id="location" name="location" required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                        <option value="">Select Location</option>
+                        <option value="Belfast, Northern Ireland" {% if jobRole.location == "Belfast, Northern Ireland" %}selected{% endif %}>Belfast, Northern Ireland</option>
+                        <option value="Birmingham, England" {% if jobRole.location == "Birmingham, England" %}selected{% endif %}>Birmingham, England</option>
+                        <option value="Derry~Londonderry, Northern Ireland" {% if jobRole.location == "Derry~Londonderry, Northern Ireland" %}selected{% endif %}>Derry~Londonderry, Northern Ireland</option>
+                        <option value="Dublin, Ireland" {% if jobRole.location == "Dublin, Ireland" %}selected{% endif %}>Dublin, Ireland</option>
+                        <option value="London, England" {% if jobRole.location == "London, England" %}selected{% endif %}>London, England</option>
+                        <option value="Gdansk, Poland" {% if jobRole.location == "Gdansk, Poland" %}selected{% endif %}>Gdansk, Poland</option>
+                        <option value="Helsinki, Finland" {% if jobRole.location == "Helsinki, Finland" %}selected{% endif %}>Helsinki, Finland</option>
+                        <option value="Paris, France" {% if jobRole.location == "Paris, France" %}selected{% endif %}>Paris, France</option>
+                        <option value="Antwerp, Belgium" {% if jobRole.location == "Antwerp, Belgium" %}selected{% endif %}>Antwerp, Belgium</option>
+                        <option value="Buenos Aires, Argentina" {% if jobRole.location == "Buenos Aires, Argentina" %}selected{% endif %}>Buenos Aires, Argentina</option>
+                        <option value="Indianapolis, United States" {% if jobRole.location == "Indianapolis, United States" %}selected{% endif %}>Indianapolis, United States</option>
+                        <option value="Nova Scotia, Canada" {% if jobRole.location == "Nova Scotia, Canada" %}selected{% endif %}>Nova Scotia, Canada</option>
+                        <option value="Toronto, Canada" {% if jobRole.location == "Toronto, Canada" %}selected{% endif %}>Toronto, Canada</option>
+                        <option value="Remote" {% if jobRole.location == "Remote" %}selected{% endif %}>Remote</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Capability and Band -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="capability" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Capability <span class="text-red-500">*</span>
+                    </label>
+                    <select id="capability" name="capability" required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                        <option value="">Select Capability</option>
+                        <option value="Engineering" {% if jobRole.capability == "Engineering" %}selected{% endif %}>Engineering</option>
+                        <option value="Analytics" {% if jobRole.capability == "Analytics" %}selected{% endif %}>Analytics</option>
+                        <option value="Product" {% if jobRole.capability == "Product" %}selected{% endif %}>Product</option>
+                        <option value="Design" {% if jobRole.capability == "Design" %}selected{% endif %}>Design</option>
+                        <option value="Quality Assurance" {% if jobRole.capability == "Quality Assurance" %}selected{% endif %}>Quality Assurance</option>
+                        <option value="Documentation" {% if jobRole.capability == "Documentation" %}selected{% endif %}>Documentation</option>
+                        <option value="Testing" {% if jobRole.capability == "Testing" %}selected{% endif %}>Testing</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="band" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Band Level <span class="text-red-500">*</span>
+                    </label>
+                    <select id="band" name="band" required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                        <option value="">Select Band</option>
+                        <option value="Junior" {% if jobRole.band == "Junior" %}selected{% endif %}>Junior</option>
+                        <option value="Mid" {% if jobRole.band == "Mid" %}selected{% endif %}>Mid</option>
+                        <option value="Senior" {% if jobRole.band == "Senior" %}selected{% endif %}>Senior</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Closing Date, Number of Open Positions, and Status -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label for="closingDate" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Closing Date <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" id="closingDate" name="closingDate" required 
+                           value="{{ jobRole.closingDate.split('T')[0] }}"
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                </div>
+
+                <div>
+                    <label for="numberOfOpenPositions" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Number of Open Positions <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="numberOfOpenPositions" name="numberOfOpenPositions" min="1" 
+                           value="{{ jobRole.numberOfOpenPositions }}" required 
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                </div>
+
+                <div>
+                    <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Status <span class="text-red-500">*</span>
+                    </label>
+                    <select id="status" name="status" required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white">
+                        <option value="">Select Status</option>
+                        <option value="Open" {% if jobRole.status == "Open" %}selected{% endif %}>Open</option>
+                        <option value="Closed" {% if jobRole.status == "Closed" %}selected{% endif %}>Closed</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Job Spec Link -->
+            <div>
+                <label for="jobSpecLink" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Job Spec Link (SharePoint) <span class="text-red-500">*</span>
+                </label>
+                <input type="url" id="jobSpecLink" name="jobSpecLink" required 
+                       value="{{ jobRole.jobSpecLink }}"
+                       placeholder="https://sharepoint.com/job-spec"
+                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-500">
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Job Description <span class="text-red-500">*</span>
+                </label>
+                <textarea id="description" name="description" rows="5" required 
+                          placeholder="Provide a comprehensive description of the role, including key information about the position..."
+                          class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-vertical text-gray-900 bg-white placeholder-gray-500">{{ jobRole.description }}</textarea>
+            </div>
+
+            <!-- Responsibilities -->
+            <div>
+                <label for="responsibilities" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Key Responsibilities <span class="text-red-500">*</span>
+                </label>
+                <textarea id="responsibilities" name="responsibilities" rows="5" required 
+                          placeholder="List the main responsibilities and duties for this role..."
+                          class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-vertical text-gray-900 bg-white placeholder-gray-500">{{ jobRole.responsibilities }}</textarea>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex gap-4 pt-6 border-t border-gray-200">
+                <a href="/job-roles/{{ jobRole.jobRoleId }}" 
+                   class="flex-1 text-center px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-green-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-green-700 transition-colors flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Update Job Role
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Success/Error Messages -->
+{% if error %}
+<div id="errorMessage" class="fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 z-50">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+    <span>{{ error }}</span>
+</div>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('editJobRoleForm');
+    
+    // Validation helpers
+    const validateURL = (str) => {
+        try { 
+            const url = new URL(str); 
+            return url.protocol === 'http:' || url.protocol === 'https:'; 
+        } catch { 
+            return false; 
+        }
+    };
+    
+    const validateDate = (dateStr) => {
+        if (!dateStr) return false;
+        const selected = new Date(dateStr);
+        // Check if date is valid
+        if (isNaN(selected.getTime())) return false;
+        // For editing, allow dates in the past (they may have been set before)
+        // Only validate that it's a valid date
+        return true;
+    };
+    
+    const validateField = (field, check, message) => {
+        const isValid = check();
+        field.classList.toggle('border-red-500', !isValid);
+        return isValid ? null : message;
+    };
+
+    // Form validation and submission
+    form.addEventListener('submit', function(e) {
+        const errors = [
+            validateField(form.roleName, () => form.roleName.value.trim().length > 0, 'Role Name is required'),
+            validateField(form.location, () => form.location.value.length > 0, 'Location is required'),
+            validateField(form.capability, () => form.capability.value.length > 0, 'Capability is required'),
+            validateField(form.band, () => form.band.value.length > 0, 'Band Level is required'),
+            validateField(form.closingDate, () => form.closingDate.value && validateDate(form.closingDate.value), 'Closing Date is required'),
+            validateField(form.numberOfOpenPositions, () => {
+                const val = parseInt(form.numberOfOpenPositions.value, 10);
+                return !isNaN(val) && val >= 1;
+            }, 'Number of Positions must be at least 1'),
+            validateField(form.status, () => form.status.value.length > 0, 'Status is required'),
+            validateField(form.jobSpecLink, () => form.jobSpecLink.value.trim() && validateURL(form.jobSpecLink.value.trim()), 'Job Spec Link must be a valid URL'),
+            validateField(form.description, () => form.description.value.trim().length > 0, 'Job Description is required'),
+            validateField(form.responsibilities, () => form.responsibilities.value.trim().length > 0, 'Key Responsibilities is required'),
+        ].filter(Boolean);
+
+        if (errors.length) {
+            e.preventDefault();
+            alert('Please fix the following errors:\n\n' + errors.join('\n'));
+            return;
+        }
+
+        // Show loading state (but don't disable form fields yet - they need to submit!)
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.innerHTML = `
+            <svg class="animate-spin w-5 h-5 inline-block mr-2" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Updating Job Role...
+        `;
+        
+        // Don't disable other fields - they need to be enabled to submit their values!
+        // The disabled submit button is enough to prevent duplicate submissions
+    });
+
+    // Clear error styling on input
+    form.querySelectorAll('input, select, textarea').forEach(input => {
+        input.addEventListener('input', () => input.classList.remove('border-red-500'));
+    });
+
+    // Auto-hide error message
+    const errorMessage = document.getElementById('errorMessage');
+    if (errorMessage) {
+        setTimeout(() => {
+            errorMessage.style.opacity = '0';
+            errorMessage.style.transition = 'opacity 0.5s';
+            setTimeout(() => errorMessage.remove(), 500);
+        }, 5000);
+    }
+});
+</script>
+</main>
+{% endblock %}

@@ -144,3 +144,6 @@ Icon?
 
 # Backup files
 *.bak
+
+# Project spec files
+src/spec/
