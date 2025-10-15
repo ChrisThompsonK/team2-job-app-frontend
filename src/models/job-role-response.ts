@@ -9,4 +9,5 @@ export interface JobRoleResponse {
 	capability: string;
 	band: string;
 	closingDate: string; // ISO date string (YYYY-MM-DD)
+	status: string; // Job role status: "Open" or "Closed"
 }
