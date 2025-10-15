@@ -13,6 +13,7 @@ import { ApplicationController } from "./application-controller.js";
 // Mock services
 const mockApplicationService: ApplicationService = {
 	submitApplication: vi.fn(),
+	getApplicantsByJobRole: vi.fn(),
 };
 
 const mockJobRoleService: JobRoleService = {
@@ -27,11 +28,13 @@ const mockJobRoleService: JobRoleService = {
 const createMockRequest = (
 	params = {},
 	body = {},
-	file?: Express.Multer.File
+	file?: Express.Multer.File,
+	query = {}
 ): Partial<Request> => ({
 	params,
 	body,
 	file,
+	query,
 });
 
 const createMockResponse = (): Partial<Response> => {
@@ -342,6 +345,214 @@ describe("ApplicationController", () => {
 			expect(res.render).toHaveBeenCalledWith("application-success.njk", {
 				application: mockApplication,
 				jobRole: mockJobRole,
+			});
+		});
+	});
+
+	describe("getApplicants", () => {
+		const mockJobRole: JobRoleDetailedResponse = {
+			jobRoleId: 1,
+			roleName: "Software Engineer",
+			description: "Test description",
+			responsibilities: "Test responsibilities",
+			jobSpecLink: "http://example.com",
+			location: "Belfast",
+			capability: "Engineering",
+			band: "Associate",
+			status: "Open",
+			numberOfOpenPositions: 5,
+			closingDate: "2025-12-31",
+		};
+
+		const mockApplicantsResponse = {
+			applicants: [
+				{
+					applicationId: 1,
+					applicantName: "John Doe",
+					applicantEmail: "john@example.com",
+					coverLetter: "I am interested in this position...",
+					resumeUrl: "https://example.com/resume1.pdf",
+					status: "submitted",
+					submittedAt: "2024-01-15T10:00:00Z",
+					updatedAt: "2024-01-15T10:00:00Z",
+				},
+				{
+					applicationId: 2,
+					applicantName: "Jane Smith",
+					applicantEmail: "jane@example.com",
+					status: "reviewed",
+					submittedAt: "2024-01-16T14:30:00Z",
+				},
+			],
+			pagination: {
+				currentPage: 1,
+				totalPages: 1,
+				totalApplicants: 2,
+				applicantsPerPage: 10,
+				hasNextPage: false,
+				hasPreviousPage: false,
+			},
+			jobRole: {
+				id: 1,
+				roleName: "Software Engineer",
+				status: "Open",
+			},
+		};
+
+		it("should render applicants list successfully", async () => {
+			const req = createMockRequest({ id: "1" }, {}, undefined, {});
+			const res = createMockResponse();
+
+			(
+				mockJobRoleService.getJobRoleById as ReturnType<typeof vi.fn>
+			).mockResolvedValue(mockJobRole);
+			(
+				mockApplicationService.getApplicantsByJobRole as ReturnType<
+					typeof vi.fn
+				>
+			).mockResolvedValue(mockApplicantsResponse);
+
+			await controller.getApplicants(req as Request, res as Response);
+
+			expect(mockJobRoleService.getJobRoleById).toHaveBeenCalledWith(1);
+			expect(
+				mockApplicationService.getApplicantsByJobRole
+			).toHaveBeenCalledWith(1, 1, 10);
+			expect(res.render).toHaveBeenCalledWith("job-applicants-list.njk", {
+				applicants: mockApplicantsResponse.applicants,
+				pagination: mockApplicantsResponse.pagination,
+				jobRole: mockApplicantsResponse.jobRole,
+				currentPage: 1,
+			});
+		});
+
+		it("should handle custom pagination parameters", async () => {
+			const req = createMockRequest({ id: "1" }, {}, undefined, {
+				page: "2",
+				limit: "5",
+			});
+			const res = createMockResponse();
+
+			(
+				mockJobRoleService.getJobRoleById as ReturnType<typeof vi.fn>
+			).mockResolvedValue(mockJobRole);
+			(
+				mockApplicationService.getApplicantsByJobRole as ReturnType<
+					typeof vi.fn
+				>
+			).mockResolvedValue(mockApplicantsResponse);
+
+			await controller.getApplicants(req as Request, res as Response);
+
+			expect(
+				mockApplicationService.getApplicantsByJobRole
+			).toHaveBeenCalledWith(1, 2, 5);
+		});
+
+		it("should return 400 for invalid job role ID", async () => {
+			const req = createMockRequest({ id: "invalid" }, {}, undefined, {});
+			const res = createMockResponse();
+
+			await controller.getApplicants(req as Request, res as Response);
+
+			expect(res.status).toHaveBeenCalledWith(400);
+			expect(res.render).toHaveBeenCalledWith("error.njk", {
+				message: "Invalid job role ID provided.",
+			});
+		});
+
+		it("should return 400 for invalid pagination parameters", async () => {
+			const req = createMockRequest({ id: "1" }, {}, undefined, {
+				page: "0",
+				limit: "100",
+			});
+			const res = createMockResponse();
+
+			await controller.getApplicants(req as Request, res as Response);
+
+			expect(res.status).toHaveBeenCalledWith(400);
+			expect(res.render).toHaveBeenCalledWith("error.njk", {
+				message: "Invalid pagination parameters.",
+			});
+		});
+
+		it("should return 404 if job role not found", async () => {
+			const req = createMockRequest({ id: "999" }, {}, undefined, {});
+			const res = createMockResponse();
+
+			(
+				mockJobRoleService.getJobRoleById as ReturnType<typeof vi.fn>
+			).mockResolvedValue(null);
+
+			await controller.getApplicants(req as Request, res as Response);
+
+			expect(res.status).toHaveBeenCalledWith(404);
+			expect(res.render).toHaveBeenCalledWith("error.njk", {
+				message: "Job role not found.",
+			});
+		});
+
+		it("should handle service errors gracefully", async () => {
+			const req = createMockRequest({ id: "1" }, {}, undefined, {});
+			const res = createMockResponse();
+
+			(
+				mockJobRoleService.getJobRoleById as ReturnType<typeof vi.fn>
+			).mockResolvedValue(mockJobRole);
+			(
+				mockApplicationService.getApplicantsByJobRole as ReturnType<
+					typeof vi.fn
+				>
+			).mockRejectedValue(new Error("Database connection failed"));
+
+			await controller.getApplicants(req as Request, res as Response);
+
+			expect(res.status).toHaveBeenCalledWith(500);
+			expect(res.render).toHaveBeenCalledWith("error.njk", {
+				message: "Database connection failed",
+			});
+		});
+
+		it("should handle backend connection errors", async () => {
+			const req = createMockRequest({ id: "1" }, {}, undefined, {});
+			const res = createMockResponse();
+
+			(
+				mockJobRoleService.getJobRoleById as ReturnType<typeof vi.fn>
+			).mockResolvedValue(mockJobRole);
+			(
+				mockApplicationService.getApplicantsByJobRole as ReturnType<
+					typeof vi.fn
+				>
+			).mockRejectedValue(new Error("Unable to connect to the backend API"));
+
+			await controller.getApplicants(req as Request, res as Response);
+
+			expect(res.status).toHaveBeenCalledWith(500);
+			expect(res.render).toHaveBeenCalledWith("error.njk", {
+				message:
+					"Backend service is currently unavailable. Please try again later.",
+			});
+		});
+
+		it("should handle timeout errors", async () => {
+			const req = createMockRequest({ id: "1" }, {}, undefined, {});
+			const res = createMockResponse();
+
+			(
+				mockJobRoleService.getJobRoleById as ReturnType<typeof vi.fn>
+			).mockResolvedValue(mockJobRole);
+			(
+				mockApplicationService.getApplicantsByJobRole as ReturnType<
+					typeof vi.fn
+				>
+			).mockRejectedValue(new Error("Request timeout occurred"));
+
+			await controller.getApplicants(req as Request, res as Response);
+
+			expect(res.status).toHaveBeenCalledWith(500);
+			expect(res.render).toHaveBeenCalledWith("error.njk", {
+				message: "Request timeout occurred. Please try again.",
 			});
 		});
 	});

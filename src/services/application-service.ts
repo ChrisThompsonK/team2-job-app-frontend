@@ -1,12 +1,13 @@
 /**
  * Application Service Interface
- * Defines the contract for job application submission
+ * Defines the contract for job application submission and retrieval
  */
 
+import type { ApplicantsPageResponse } from "../models/applicant-display.js";
 import type { ApplicationResponse } from "../models/application-request.js";
 
 /**
- * Service interface for submitting job applications
+ * Service interface for managing job applications
  */
 export interface ApplicationService {
 	/**
@@ -25,4 +26,17 @@ export interface ApplicationService {
 		coverLetter: string | undefined,
 		cvFile: Express.Multer.File | undefined
 	): Promise<ApplicationResponse>;
+
+	/**
+	 * Retrieves paginated list of applicants for a specific job role
+	 * @param jobRoleId The ID of the job role to get applicants for
+	 * @param page The page number (1-based, defaults to 1)
+	 * @param limit The number of applicants per page (defaults to 10)
+	 * @returns Promise<ApplicantsPageResponse> The paginated applicants response
+	 */
+	getApplicantsByJobRole(
+		jobRoleId: number,
+		page?: number,
+		limit?: number
+	): Promise<ApplicantsPageResponse>;
 }

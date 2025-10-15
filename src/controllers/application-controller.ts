@@ -133,10 +133,22 @@ export class ApplicationController {
 				return;
 			}
 
+			// Debug logging for job role state during submission
+			console.log("[ApplicationController] Submitting for jobRole:", {
+				jobRoleId: jobRole.jobRoleId,
+				status: jobRole.status,
+				numberOfOpenPositions: jobRole.numberOfOpenPositions,
+				closingDate: jobRole.closingDate,
+			});
+
 			if (
 				jobRole.numberOfOpenPositions <= 0 ||
 				jobRole.status.toLowerCase() !== "active"
 			) {
+				console.warn("[ApplicationController] Rejected application due to eligibility check", {
+					reason: jobRole.numberOfOpenPositions <= 0 ? "no-open-positions" : "status-not-active",
+					statusValue: jobRole.status,
+				});
 				res.status(400).render("error.njk", {
 					message:
 						"This job role is no longer accepting applications. Please browse other opportunities.",
@@ -190,6 +202,65 @@ export class ApplicationController {
 
 			res.status(500).render("error.njk", {
 				message: errorMessage,
+			});
+		}
+	};
+
+	/**
+	 * GET /job-roles/:id/applicants
+	 * Renders the applicants list for a specific job role
+	 */
+	public getJobApplicants = async (
+		req: Request,
+		res: Response
+	): Promise<void> => {
+		try {
+			const id = req.params["id"];
+			const jobRoleId = validateJobRoleId(id);
+
+			if (jobRoleId === null) {
+				res.status(400).render("error.njk", {
+					message:
+						"Invalid job role ID provided. Please provide a valid numeric ID.",
+				});
+				return;
+			}
+
+			// Get pagination parameters
+			const page = Number.parseInt(req.query["page"] as string) || 1;
+			const limit = Number.parseInt(req.query["limit"] as string) || 10;
+
+			// Fetch job role to verify it exists
+			const jobRole = await this.jobRoleService.getJobRoleById(jobRoleId);
+
+			if (!jobRole) {
+				res.status(404).render("error.njk", {
+					message:
+						"Job role not found. The role you're looking for may have been removed or doesn't exist.",
+				});
+				return;
+			}
+
+			// Fetch applicants for this job role
+			const applicantsData = await this.applicationService.getApplicantsByJobRole(
+				jobRoleId,
+				page,
+				limit
+			);
+
+			res.render("job-applicants-list.njk", {
+				jobRole,
+				applicants: applicantsData.applicants,
+				pagination: applicantsData.pagination,
+			});
+		} catch (error) {
+			console.error(
+				"Error in ApplicationController.getJobApplicants:",
+				error
+			);
+			res.status(500).render("error.njk", {
+				message:
+					"Sorry, we couldn't load the applicants list at this time. Please try again later.",
 			});
 		}
 	};

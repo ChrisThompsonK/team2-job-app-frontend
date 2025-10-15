@@ -10,6 +10,8 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - Modern homepage UI, animated backgrounds, stat cards
 - Readable time display (HH:MM, weekday, date)
 - Job roles listing, details, and application workflow
+- **Complete Application System** - Full application submission with file upload, validation, and error handling
+- **Applicant Management** - View and manage job applicants with responsive table, pagination, and filtering
 - **Pagination System** - Efficient browsing with page controls, ellipsis navigation, and loading states
 - **Admin job role creation** - Full CRUD functionality to create and save job roles to database
 - Backend API integration via Axios for data persistence
@@ -24,25 +26,38 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   ├── controllers/
 │   │   ├── job-role-controller.ts        # Public job role operations (read-only)
 │   │   ├── admin-controller.ts           # Admin operations (create, update, delete)
+│   │   ├── application-controller.ts     # Job application submission and applicant viewing
 │   │   └── *.test.ts                     # Controller unit tests
 │   ├── services/
 │   │   ├── job-role-service.ts           # JobRoleService interface
 │   │   ├── axios-job-role-service.ts     # API implementation with Axios
+│   │   ├── application-service.ts        # ApplicationService interface
+│   │   ├── axios-application-service.ts  # Application API implementation with Axios
 │   │   └── interfaces.ts                 # Service interfaces
 │   ├── models/
 │   │   ├── job-role-response.ts          # TypeScript data models
 │   │   ├── job-role-create.ts            # Create request model
-│   │   └── job-role-detailed-response.ts # Detailed response model
+│   │   ├── job-role-detailed-response.ts # Detailed response model
+│   │   ├── application-request.ts        # Application submission models
+│   │   └── applicant-display.ts          # Applicant listing and pagination models
 │   ├── utils/
 │   │   ├── job-role-validator.ts         # Comprehensive validation logic
 │   │   ├── job-role-validation-constants.ts  # Valid options for dropdowns
+│   │   ├── application-validator.ts      # Application form validation
 │   │   └── validation.ts                 # General validation helpers
 │   ├── data/
 │   │   └── job-roles.json                # Sample data (fallback)
 │   ├── styles/
 │   │   └── input.css                     # Tailwind CSS source
 │   └── views/
-│       ├── *.njk                         # Nunjucks templates
+│       ├── job-role-list.njk             # Job roles listing page
+│       ├── job-role-information.njk      # Individual job role details
+│       ├── job-role-create.njk           # Admin job role creation form
+│       ├── job-application-form.njk      # Job application submission form
+│       ├── job-applicants-list.njk       # Applicants management page
+│       ├── application-success.njk       # Application confirmation page
+│       ├── index.njk                     # Homepage
+│       ├── error.njk                     # Error page
 │       └── templates/                    # Layout & partials
 ├── public/
 │   ├── css/
@@ -233,6 +248,44 @@ The application includes a comprehensive job roles management system with separa
 ### Recent Quality Improvements
 - **Admin Controller Separation**: Separated admin operations from public JobRoleController for better security and maintainability
 - **Validation Constants**: Centralized all dropdown options in `job-role-validation-constants.ts` for single source of truth
+
+## 📋 Job Application & Applicant Management
+
+The application features a complete job application system with applicant management capabilities:
+
+### Job Application System
+- **Application Form** (`/job-roles/{id}/apply`): Full application submission with personal information, cover letter, and CV upload
+- **File Upload Support**: PDF, DOC, and DOCX files up to 5MB with comprehensive validation
+- **Form Validation**: Client-side and server-side validation for all fields including international names (Unicode support)
+- **Error Handling**: Detailed error messages for connection issues, timeouts, and backend failures
+- **Success Confirmation**: Professional confirmation page with application details and next steps
+
+### Applicant Management System
+- **Applicant Viewing** (`/job-roles/{id}/applicants`): Comprehensive applicant management interface
+- **Responsive Design**: Desktop table view and mobile card layout for optimal viewing on all devices
+- **Pagination Support**: Efficient browsing with page controls for large applicant lists (default 10 per page, max 50)
+- **Status Tracking**: Color-coded badges for application status (submitted, reviewed, shortlisted, etc.)
+- **Cover Letter Modal**: In-browser viewing of applicant cover letters with responsive modal
+- **Resume Download**: Direct download links for uploaded CV files
+- **Contact Integration**: One-click email contact for applicants
+- **Navigation Integration**: "View Applicants" button added to job role cards for easy access
+
+### Technical Features
+- **ApplicationService Interface**: Clean service layer for application submission and retrieval
+- **AxiosApplicationService**: Full backend API integration with comprehensive error handling
+- **ApplicantDisplay Models**: TypeScript interfaces for type-safe applicant data handling
+- **Comprehensive Testing**: 18 test cases covering all controller methods with 100% pass rate
+- **Unicode Support**: International character support in name validation (e.g., "José García")
+- **Application Validator**: Dedicated validation utility for all application form fields
+- **Empty State Handling**: Friendly empty states when no applicants exist for a job role
+
+### User Experience
+- **Three-Button Navigation**: Job role cards now feature Details, Applicants, and Apply Now buttons
+- **Breadcrumb Navigation**: Clear navigation path with job role context
+- **Filter-Friendly URLs**: Clean URLs with pagination parameters (?page=1&limit=10)
+- **Loading States**: Professional loading indicators during API calls
+- **Error Recovery**: Helpful error messages with specific guidance for different failure scenarios
+- **Accessibility**: ARIA labels, keyboard navigation, and screen reader compatibility
 - **Comprehensive Testing**: 75 tests passing including 17 new tests for AdminController (100% pass rate)
 - **Template Optimization**: Reduced job-role-create.njk from 402 to 247 lines (38.6% smaller) through code refactoring
 - **UX Enhancements**: Added loading spinner, success confirmation banner, and auto-dismissible alerts

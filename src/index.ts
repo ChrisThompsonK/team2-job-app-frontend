@@ -189,7 +189,7 @@ class App {
 		this.server.get("/api/health", async (_req: Request, res: Response) => {
 			try {
 				const backendUrl =
-					process.env["API_BASE_URL"] || "http://localhost:8080";
+					process.env["API_BASE_URL"] || "http://localhost:8000";
 				const testResponse = await fetch(`${backendUrl}/api/job-roles`);
 
 				if (testResponse.ok) {
@@ -210,7 +210,7 @@ class App {
 				}
 			} catch (error) {
 				const backendUrl =
-					process.env["API_BASE_URL"] || "http://localhost:8080";
+					process.env["API_BASE_URL"] || "http://localhost:8000";
 				res.status(503).json({
 					status: "error",
 					backend: "unreachable",
@@ -270,6 +270,12 @@ class App {
 			"/job-roles/:id/apply",
 			this.upload.single("cv"),
 			this.applicationController.submitApplication
+		);
+
+		// View applicants endpoint
+		this.server.get(
+			"/job-roles/:id/applicants",
+			this.applicationController.getJobApplicants
 		);
 
 		// Error handling middleware - must be last
