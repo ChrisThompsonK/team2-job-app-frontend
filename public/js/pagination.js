@@ -3,16 +3,14 @@
  * Handles loading indicators during page transitions
  */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 	// Add loading state to all pagination links
 	const paginationLinks = document.querySelectorAll(".pagination-link");
 
 	paginationLinks.forEach((link) => {
-		link.addEventListener("click", function (e) {
+		link.addEventListener("click", (_e) => {
 			// Show loading indicator
-			showLoadingState();
-
-			// Allow the navigation to proceed
+			showLoadingState(); // Allow the navigation to proceed
 			// The page will reload with new content
 		});
 	});

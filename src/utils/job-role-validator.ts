@@ -95,23 +95,18 @@ export class JobRoleValidator {
 	}
 
 	private validateRequiredFields(data: JobRoleData): ValidationResult {
-		if (
-			!data.roleName ||
-			!data.description ||
-			!data.responsibilities ||
-			!data.jobSpecLink ||
-			!data.location ||
-			!data.capability ||
-			!data.band ||
-			!data.closingDate ||
-			!data.status ||
-			!data.numberOfOpenPositions
-		) {
-			return {
-				isValid: false,
-				error: "All fields are required. Please fill in all information.",
-			};
+		// Iterate over each field to check for empty values
+		for (const [key, value] of Object.entries(data)) {
+			// Use optional chaining and trim to handle null/undefined and whitespace
+			if (!value?.trim()) {
+				// Provide a clear error message indicating which field is missing
+				return {
+					isValid: false,
+					error: `All fields are required. The '${key}' field was empty.`,
+				};
+			}
 		}
+
 		return { isValid: true };
 	}
 

@@ -1,0 +1,232 @@
+{% extends "templates/layout.njk" %}
+
+{% block title %}
+Applicants for {{ jobRole.roleName }}
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+	<!-- Header Section -->
+	<div class="mb-6">
+		<div class="breadcrumbs text-sm">
+			<ul>
+				<li><a href="/">Home</a></li>
+				<li><a href="/job-roles">Job Roles</a></li>
+				<li><a href="/job-roles/{{ jobRole.id }}">{{ jobRole.roleName }}</a></li>
+				<li>Applicants</li>
+			</ul>
+		</div>
+		
+		<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-4">
+			<div>
+				<h1 class="text-3xl font-bold">Applicants</h1>
+				<p class="text-base-content/70 mt-1">
+					Showing applicants for: <span class="font-semibold">{{ jobRole.roleName }}</span>
+				</p>
+				<div class="text-sm text-base-content/60 mt-2">
+					<span class="badge badge-outline">{{ jobRole.status }}</span>
+					<span class="ml-2">Total: {{ pagination.totalApplicants }} applicants</span>
+				</div>
+			</div>
+			
+			<div class="flex gap-2">
+				<a href="/job-roles/{{ jobRole.id }}" class="btn btn-ghost btn-sm">
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+					</svg>
+					Back to Job Role
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- Applicants Table -->
+	{% if applicants.length > 0 %}
+		<div class="card bg-base-100 shadow-xl">
+			<div class="card-body p-0">
+				<!-- Desktop Table -->
+				<div class="hidden lg:block overflow-x-auto">
+					<table class="table table-zebra">
+						<thead>
+							<tr>
+								<th>Applicant Name</th>
+								<th>Email</th>
+								<th>Status</th>
+								<th>Applied Date</th>
+								<th>Cover Letter</th>
+								<th>Resume</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for applicant in applicants %}
+							<tr>
+								<td>
+									<div class="font-medium">{{ applicant.applicantName }}</div>
+								</td>
+								<td>
+									<div class="text-sm">{{ applicant.applicantEmail }}</div>
+								</td>
+								<td>
+									<div class="badge badge-info">
+										{{ applicant.status | title }}
+									</div>
+								</td>
+								<td>
+									<div class="text-sm">{{ applicant.submittedAt | formatDateTime }}</div>
+									{% if applicant.updatedAt and applicant.updatedAt != applicant.submittedAt %}
+										<div class="text-xs text-base-content/60">Updated: {{ applicant.updatedAt | formatDate }}</div>
+									{% endif %}
+								</td>
+								<td>
+									{% if applicant.coverLetter %}
+										<button class="btn btn-ghost btn-xs" onclick="showCoverLetter('{{ applicant.applicationId }}', '{{ applicant.applicantName | escape }}', {{ applicant.coverLetter | dump }})">
+											<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+											</svg>
+											View
+										</button>
+									{% else %}
+										<span class="text-base-content/40 text-xs">No cover letter</span>
+									{% endif %}
+								</td>
+								<td>
+									{% if applicant.resumeUrl %}
+										<a href="{{ applicant.resumeUrl }}" target="_blank" class="btn btn-ghost btn-xs">
+											<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+											</svg>
+											Download
+										</a>
+									{% else %}
+										<span class="text-base-content/40 text-xs">No resume</span>
+									{% endif %}
+								</td>
+								<td>
+									<div class="dropdown dropdown-end">
+										<div tabindex="0" role="button" class="btn btn-ghost btn-xs">
+											<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+											</svg>
+										</div>
+										<ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+											<li><a href="mailto:{{ applicant.applicantEmail }}">Contact Applicant</a></li>
+											<li><a onclick="viewApplicationDetails('{{ applicant.applicationId }}')">View Details</a></li>
+										</ul>
+									</div>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+
+				<!-- Mobile Cards -->
+				<div class="lg:hidden">
+					{% for applicant in applicants %}
+					<div class="card bg-base-200 m-4 shadow">
+						<div class="card-body">
+							<div class="flex justify-between items-start">
+								<div>
+									<h3 class="card-title text-lg">{{ applicant.applicantName }}</h3>
+									<p class="text-sm text-base-content/70">{{ applicant.applicantEmail }}</p>
+								</div>
+								<div class="badge badge-info">
+									{{ applicant.status | title }}
+								</div>
+							</div>
+							
+							<div class="text-sm mt-2">
+								<p><span class="font-medium">Applied:</span> {{ applicant.submittedAt | formatDateTime }}</p>
+								{% if applicant.updatedAt and applicant.updatedAt != applicant.submittedAt %}
+									<p><span class="font-medium">Updated:</span> {{ applicant.updatedAt | formatDate }}</p>
+								{% endif %}
+							</div>
+							
+							<div class="card-actions justify-between mt-4">
+								<div class="flex gap-2">
+									{% if applicant.coverLetter %}
+										<button class="btn btn-outline btn-xs" onclick="showCoverLetter('{{ applicant.applicationId }}', '{{ applicant.applicantName | escape }}', {{ applicant.coverLetter | dump }})">
+											Cover Letter
+										</button>
+									{% endif %}
+									{% if applicant.resumeUrl %}
+										<a href="{{ applicant.resumeUrl }}" target="_blank" class="btn btn-outline btn-xs">
+											Resume
+										</a>
+									{% endif %}
+								</div>
+								<a href="mailto:{{ applicant.applicantEmail }}" class="btn btn-primary btn-xs">
+									Contact
+								</a>
+							</div>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+
+		<!-- Pagination -->
+		{% if pagination.totalPages > 1 %}
+			{% include "templates/pagination.njk" %}
+		{% endif %}
+
+	{% else %}
+		<!-- Empty State -->
+		<div class="card bg-base-100 shadow-xl">
+			<div class="card-body text-center py-16">
+				<div class="mx-auto w-24 h-24 bg-base-200 rounded-full flex items-center justify-center mb-4">
+					<svg class="w-12 h-12 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+					</svg>
+				</div>
+				<h2 class="text-2xl font-semibold mb-2">No Applicants Yet</h2>
+				<p class="text-base-content/60 mb-6">This job role hasn't received any applications yet.</p>
+				<div class="flex flex-col sm:flex-row gap-2 justify-center">
+					<a href="/job-roles/{{ jobRole.id }}" class="btn btn-primary">
+						View Job Role Details
+					</a>
+					<a href="/job-roles/{{ jobRole.id }}/apply" class="btn btn-ghost">
+						Test Application Form
+					</a>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+</div>
+
+<!-- Cover Letter Modal -->
+<dialog id="cover_letter_modal" class="modal">
+	<div class="modal-box max-w-2xl">
+		<form method="dialog">
+			<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+		</form>
+		<h3 class="font-bold text-lg mb-4">Cover Letter</h3>
+		<div class="text-sm text-base-content/70 mb-4">
+			From: <span id="cover_letter_applicant" class="font-medium"></span>
+		</div>
+		<div class="bg-base-200 p-4 rounded-lg">
+			<p id="cover_letter_content" class="whitespace-pre-wrap"></p>
+		</div>
+	</div>
+	<form method="dialog" class="modal-backdrop">
+		<button>close</button>
+	</form>
+</dialog>
+
+<script>
+	function showCoverLetter(applicationId, applicantName, coverLetter) {
+		document.getElementById('cover_letter_applicant').textContent = applicantName;
+		document.getElementById('cover_letter_content').textContent = coverLetter;
+		document.getElementById('cover_letter_modal').showModal();
+	}
+
+	function viewApplicationDetails(applicationId) {
+		// This could navigate to a detailed application view
+		// For now, we'll just show an alert
+		alert(`Viewing details for application ${applicationId}\n\nThis feature can be implemented to show full application details in a modal or separate page.`);
+	}
+</script>
+{% endblock %}

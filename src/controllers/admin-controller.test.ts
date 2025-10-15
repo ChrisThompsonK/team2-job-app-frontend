@@ -140,8 +140,18 @@ describe("AdminController", () => {
 
 			expect(mockRes.status).toHaveBeenCalledWith(400);
 			expect(mockRes.render).toHaveBeenCalledWith("job-role-create.njk", {
-				error: "All fields are required. Please fill in all information.",
-				formData: mockReq.body,
+				error: "All fields are required. The 'roleName' field was empty.",
+				formData: {
+					roleName: "",
+					description: "",
+					responsibilities: "",
+					jobSpecLink: "",
+					location: "",
+					capability: "",
+					band: "",
+					closingDate: "",
+					numberOfOpenPositions: "1",
+				},
 			});
 		});
 
