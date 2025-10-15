@@ -145,10 +145,16 @@ export class ApplicationController {
 				jobRole.numberOfOpenPositions <= 0 ||
 				jobRole.status.toLowerCase() !== "active"
 			) {
-				console.warn("[ApplicationController] Rejected application due to eligibility check", {
-					reason: jobRole.numberOfOpenPositions <= 0 ? "no-open-positions" : "status-not-active",
-					statusValue: jobRole.status,
-				});
+				console.warn(
+					"[ApplicationController] Rejected application due to eligibility check",
+					{
+						reason:
+							jobRole.numberOfOpenPositions <= 0
+								? "no-open-positions"
+								: "status-not-active",
+						statusValue: jobRole.status,
+					}
+				);
 				res.status(400).render("error.njk", {
 					message:
 						"This job role is no longer accepting applications. Please browse other opportunities.",
@@ -210,10 +216,7 @@ export class ApplicationController {
 	 * GET /job-roles/:id/applicants
 	 * Renders the applicants list for a specific job role
 	 */
-	public getJobApplicants = async (
-		req: Request,
-		res: Response
-	): Promise<void> => {
+	public getApplicants = async (req: Request, res: Response): Promise<void> => {
 		try {
 			const id = req.params["id"];
 			const jobRoleId = validateJobRoleId(id);
@@ -227,40 +230,61 @@ export class ApplicationController {
 			}
 
 			// Get pagination parameters
-			const page = Number.parseInt(req.query["page"] as string) || 1;
-			const limit = Number.parseInt(req.query["limit"] as string) || 10;
+			const page = Number.parseInt(req.query["page"] as string, 10) || 1;
+			const limit = Number.parseInt(req.query["limit"] as string, 10) || 10;
+
+			// Validate pagination parameters
+			if (page < 1 || limit < 1 || limit > 50) {
+				res.status(400).render("error.njk", {
+					message: "Invalid pagination parameters.",
+				});
+				return;
+			}
 
 			// Fetch job role to verify it exists
 			const jobRole = await this.jobRoleService.getJobRoleById(jobRoleId);
 
 			if (!jobRole) {
 				res.status(404).render("error.njk", {
-					message:
-						"Job role not found. The role you're looking for may have been removed or doesn't exist.",
+					message: "Job role not found.",
 				});
 				return;
 			}
 
 			// Fetch applicants for this job role
-			const applicantsData = await this.applicationService.getApplicantsByJobRole(
-				jobRoleId,
-				page,
-				limit
-			);
+			const applicantsData =
+				await this.applicationService.getApplicantsByJobRole(
+					jobRoleId,
+					page,
+					limit
+				);
 
 			res.render("job-applicants-list.njk", {
-				jobRole,
 				applicants: applicantsData.applicants,
 				pagination: applicantsData.pagination,
+				jobRole: applicantsData.jobRole,
+				currentPage: page,
 			});
 		} catch (error) {
-			console.error(
-				"Error in ApplicationController.getJobApplicants:",
-				error
-			);
+			console.error("Error in ApplicationController.getApplicants:", error);
+
+			// Handle specific error types
+			let errorMessage =
+				"Sorry, we couldn't load the applicants list at this time. Please try again later.";
+
+			if (error instanceof Error) {
+				if (error.message.includes("Unable to connect to the backend API")) {
+					errorMessage =
+						"Backend service is currently unavailable. Please try again later.";
+				} else if (error.message.includes("Request timeout")) {
+					errorMessage = "Request timeout occurred. Please try again.";
+				} else {
+					errorMessage = error.message;
+				}
+			}
+
 			res.status(500).render("error.njk", {
-				message:
-					"Sorry, we couldn't load the applicants list at this time. Please try again later.",
+				message: errorMessage,
 			});
 		}
 	};

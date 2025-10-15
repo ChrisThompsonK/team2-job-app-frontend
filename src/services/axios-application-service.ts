@@ -49,10 +49,6 @@ interface BackendApplicationResponse {
 	};
 }
 
-
-
-
-
 /**
  * Axios-based Application Service implementation
  * Submits applications to backend REST API
@@ -61,7 +57,7 @@ export class AxiosApplicationService implements ApplicationService {
 	private axiosInstance: AxiosInstance;
 
 	constructor(
-		baseURL = process.env["API_BASE_URL"] || "http://localhost:8000"
+		baseURL = process.env["API_BASE_URL"] || "http://localhost:8080"
 	) {
 		this.axiosInstance = axios.create({
 			baseURL,
@@ -210,30 +206,33 @@ export class AxiosApplicationService implements ApplicationService {
 			const paginatedApplications = allApplications.slice(startIndex, endIndex);
 
 			// Map applications to applicant display format
-			const applicants: ApplicantDisplay[] = paginatedApplications.map((app) => {
-				const applicant: ApplicantDisplay = {
-					applicationId: app.id,
-					applicantName: app.applicantName,
-					applicantEmail: app.applicantEmail,
-					status: app.status,
-					submittedAt: app.submittedAt,
-				};
-				
-				if (app.coverLetter) {
-					applicant.coverLetter = app.coverLetter;
+			const applicants: ApplicantDisplay[] = paginatedApplications.map(
+				(app) => {
+					const applicant: ApplicantDisplay = {
+						applicationId: app.id,
+						applicantName: app.applicantName,
+						applicantEmail: app.applicantEmail,
+						status: app.status,
+						submittedAt: app.submittedAt,
+					};
+
+					if (app.coverLetter) {
+						applicant.coverLetter = app.coverLetter;
+					}
+					if (app.resumeUrl) {
+						applicant.resumeUrl = app.resumeUrl;
+					}
+					if (app.updatedAt) {
+						applicant.updatedAt = app.updatedAt;
+					}
+
+					return applicant;
 				}
-				if (app.resumeUrl) {
-					applicant.resumeUrl = app.resumeUrl;
-				}
-				if (app.updatedAt) {
-					applicant.updatedAt = app.updatedAt;
-				}
-				
-				return applicant;
-			});
+			);
 
 			// Get job role info from first application (they all have the same job role)
-			const jobRole = allApplications.length > 0 ? allApplications[0]?.jobRole : null;
+			const jobRole =
+				allApplications.length > 0 ? allApplications[0]?.jobRole : null;
 
 			return {
 				applicants,
@@ -250,12 +249,12 @@ export class AxiosApplicationService implements ApplicationService {
 							id: jobRole.id,
 							roleName: jobRole.jobRoleName,
 							status: jobRole.status,
-					  }
+						}
 					: {
 							id: jobRoleId,
 							roleName: "Unknown Job Role",
 							status: "unknown",
-					  },
+						},
 			};
 		} catch (error) {
 			if (axios.isAxiosError(error)) {
@@ -300,6 +299,4 @@ export class AxiosApplicationService implements ApplicationService {
 			throw new Error("An unexpected error occurred while fetching applicants");
 		}
 	}
-
-
 }

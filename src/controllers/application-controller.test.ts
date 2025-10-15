@@ -457,7 +457,8 @@ describe("ApplicationController", () => {
 
 			expect(res.status).toHaveBeenCalledWith(400);
 			expect(res.render).toHaveBeenCalledWith("error.njk", {
-				message: "Invalid job role ID provided.",
+				message:
+					"Invalid job role ID provided. Please provide a valid numeric ID.",
 			});
 		});
 
