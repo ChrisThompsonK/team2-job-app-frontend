@@ -3,20 +3,26 @@
  * Optimized version with reduced complexity and better maintainability
  */
 
-// Apply saved preferences immediately to prevent flash
+// Apply saved preferences immediately to prevent flash (light is default)
 (() => {
-	const savedDarkMode = localStorage.getItem("darkMode") === "true";
+	const savedDarkMode = localStorage.getItem("darkMode") === "true"; // only true explicitly enables dark
 	const savedTextSize = localStorage.getItem("textSize") || "medium";
 
+	// Apply dark mode only if explicitly stored
 	if (savedDarkMode) {
 		document.documentElement.classList.add("dark-mode");
-		// Also add to body for better compatibility
 		document.addEventListener("DOMContentLoaded", () => {
 			document.body.classList.add("dark-mode");
 		});
+	} else {
+		// Ensure any stray dark-mode class is removed (in case markup was cached)
+		document.documentElement.classList.remove("dark-mode");
+		document.addEventListener("DOMContentLoaded", () => {
+			document.body.classList.remove("dark-mode");
+		});
 	}
 
-	// Remove all text size classes and apply saved one
+	// Apply text size preference (defaults to medium)
 	const sizeClasses = [
 		"text-size-small",
 		"text-size-medium",
@@ -168,14 +174,10 @@ class AccessibilityManager {
 		const simpleToggle = document.getElementById("simple-dark-toggle");
 		if (!simpleToggle) return;
 
-		console.log("Setting up simple dark toggle");
-
 		simpleToggle.addEventListener("click", (e) => {
 			e.preventDefault();
 			const isDark = document.documentElement.classList.contains("dark-mode");
 			const newState = !isDark;
-
-			console.log(`Simple dark toggle: ${isDark} -> ${newState}`);
 
 			// Toggle dark-mode class on both html and body for better compatibility
 			document.documentElement.classList.toggle("dark-mode", newState);
@@ -238,13 +240,11 @@ class AccessibilityManager {
 
 		button.addEventListener("click", (e) => {
 			e.preventDefault();
-			console.log(`${type} toggle clicked`);
 			const isEnabled = document.documentElement.classList.contains(
 				config.className
 			);
 			const newState = !isEnabled;
 
-			console.log(`${type} toggle: ${isEnabled} -> ${newState}`);
 			this.applyToggle(button, status, config, newState);
 			localStorage.setItem(config.storageKey, newState.toString());
 		});

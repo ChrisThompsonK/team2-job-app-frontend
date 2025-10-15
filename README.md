@@ -16,8 +16,9 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - **Admin job role creation** - Full CRUD functionality to create and save job roles to database
 - Backend API integration via Axios for data persistence
 - Kainos brand theme, unified logo system
-- Dark mode (dual toggle, persistent)
+- Dark mode (opt-in, dual toggles, persistent via localStorage; light theme is default) with a minimal header/link override (`public/css/overrides.css`)
 - Accessibility: skip links, text size, ARIA, keyboard navigation
+- **Accessible Mobile Navigation**: Off‑canvas mobile menu moved outside header stacking context for reliable overlay, includes focus trapping, ESC/backdrop close, body scroll lock, proper `role="dialog"` + `aria-modal` semantics
 
 ## 📦 Project Structure
 ```
@@ -61,7 +62,8 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │       └── templates/                    # Layout & partials
 ├── public/
 │   ├── css/
-│   │   └── styles.css                    # Compiled CSS output
+│   │   ├── styles.css                    # Compiled Tailwind + DaisyUI output
+│   │   └── overrides.css                 # Post-build dark mode & nav override rules
 │   ├── js/
 │   │   └── accessibility.js              # Client-side scripts
 │   └── *.png                             # Static assets
