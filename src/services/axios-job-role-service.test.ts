@@ -26,7 +26,7 @@ describe("AxiosJobRoleService", () => {
 			mockAxiosInstance as unknown as ReturnType<typeof axios.create>
 		);
 
-		service = new AxiosJobRoleService("http://localhost:8080");
+		service = new AxiosJobRoleService("http://localhost:8000");
 		vi.clearAllMocks();
 	});
 
@@ -141,7 +141,7 @@ describe("AxiosJobRoleService", () => {
 			new AxiosJobRoleService();
 
 			expect(axios.create).toHaveBeenCalledWith({
-				baseURL: "http://localhost:8080",
+				baseURL: "http://localhost:8000",
 				timeout: 10000,
 				headers: {
 					"Content-Type": "application/json",

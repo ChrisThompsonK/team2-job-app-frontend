@@ -4,6 +4,10 @@
 
 import axios, { type AxiosInstance } from "axios";
 import FormData from "form-data";
+import type {
+	ApplicantDisplay,
+	ApplicantsPageResponse,
+} from "../models/applicant-display.js";
 import type { ApplicationResponse } from "../models/application-request.js";
 import type { ApplicationService } from "./application-service.js";
 
@@ -28,6 +32,21 @@ interface BackendApplicationResponse {
 	status: string;
 	submittedAt: string;
 	updatedAt?: string;
+	jobRole?: {
+		id: number;
+		jobRoleName: string;
+		description: string;
+		responsibilities: string;
+		jobSpecLink: string;
+		location: string;
+		capability: string;
+		band: string;
+		closingDate: string;
+		status: string;
+		numberOfOpenPositions: number;
+		createdAt: string;
+		updatedAt: string;
+	};
 }
 
 /**
@@ -159,5 +178,125 @@ export class AxiosApplicationService implements ApplicationService {
 		}
 
 		return response;
+	}
+
+	/**
+	 * Retrieves paginated list of applicants for a specific job role
+	 */
+	async getApplicantsByJobRole(
+		jobRoleId: number,
+		page = 1,
+		limit = 10
+	): Promise<ApplicantsPageResponse> {
+		try {
+			const response = await this.axiosInstance.get<
+				BackendResponse<BackendApplicationResponse[]>
+			>(`/api/applications/job-role/${jobRoleId}`);
+
+			if (!response.data.success) {
+				throw new Error("Failed to fetch applicants");
+			}
+
+			// Since backend doesn't support pagination, we'll do client-side pagination
+			const allApplications = response.data.data;
+			const totalApplicants = allApplications.length;
+			const totalPages = Math.ceil(totalApplicants / limit);
+			const startIndex = (page - 1) * limit;
+			const endIndex = startIndex + limit;
+			const paginatedApplications = allApplications.slice(startIndex, endIndex);
+
+			// Map applications to applicant display format
+			const applicants: ApplicantDisplay[] = paginatedApplications.map(
+				(app) => {
+					const applicant: ApplicantDisplay = {
+						applicationId: app.id,
+						applicantName: app.applicantName,
+						applicantEmail: app.applicantEmail,
+						status: app.status,
+						submittedAt: app.submittedAt,
+					};
+
+					if (app.coverLetter) {
+						applicant.coverLetter = app.coverLetter;
+					}
+					if (app.resumeUrl) {
+						applicant.resumeUrl = app.resumeUrl;
+					}
+					if (app.updatedAt) {
+						applicant.updatedAt = app.updatedAt;
+					}
+
+					return applicant;
+				}
+			);
+
+			// Get job role info from first application (they all have the same job role)
+			const jobRole =
+				allApplications.length > 0 ? allApplications[0]?.jobRole : null;
+
+			return {
+				applicants,
+				pagination: {
+					currentPage: page,
+					totalPages,
+					totalApplicants,
+					applicantsPerPage: limit,
+					hasNextPage: page < totalPages,
+					hasPreviousPage: page > 1,
+				},
+				jobRole: jobRole
+					? {
+							id: jobRole.id,
+							roleName: jobRole.jobRoleName,
+							status: jobRole.status,
+						}
+					: {
+							id: jobRoleId,
+							roleName: "Unknown Job Role",
+							status: "unknown",
+						},
+			};
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				console.error(
+					"Failed to fetch applicants:",
+					error.response?.data || error.message
+				);
+
+				// Provide specific error messages based on error type
+				if (error.code === "ECONNREFUSED") {
+					throw new Error(
+						"Unable to connect to the backend API. Please ensure the API server is running on " +
+							this.axiosInstance.defaults.baseURL
+					);
+				}
+
+				if (error.code === "ECONNABORTED") {
+					throw new Error(
+						"Request timeout. The backend API may be slow to respond."
+					);
+				}
+
+				// Handle specific HTTP status codes
+				if (error.response?.status === 404) {
+					throw new Error("Job role not found");
+				}
+
+				if (error.response?.status === 400) {
+					throw new Error("Invalid parameters provided");
+				}
+
+				if (error.response?.status && error.response.status >= 500) {
+					throw new Error("Backend server error. Please try again later.");
+				}
+
+				throw new Error(
+					error.response?.data?.message ||
+						"An error occurred while fetching applicants"
+				);
+			}
+
+			throw new Error("An unexpected error occurred while fetching applicants");
+		}
 	}
 }

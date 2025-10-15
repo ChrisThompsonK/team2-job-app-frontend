@@ -272,6 +272,12 @@ class App {
 			this.applicationController.submitApplication
 		);
 
+		// View applicants endpoint
+		this.server.get(
+			"/job-roles/:id/applicants",
+			this.applicationController.getApplicants
+		);
+
 		// Error handling middleware - must be last
 		this.setupErrorHandling();
 	}
