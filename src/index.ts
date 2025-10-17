@@ -15,6 +15,7 @@ import nunjucks from "nunjucks";
 import { AdminController } from "./controllers/admin-controller.js";
 import { ApplicationController } from "./controllers/application-controller.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
+import { UserController } from "./controllers/user-controller.js";
 import { AxiosApplicationService } from "./services/axios-application-service.js";
 import { AxiosJobRoleService } from "./services/axios-job-role-service.js";
 import { JobRoleValidator } from "./utils/job-role-validator.js";
@@ -37,6 +38,7 @@ class App {
 	private adminController: AdminController;
 	private applicationService: AxiosApplicationService;
 	private applicationController: ApplicationController;
+	private userController: UserController;
 	private upload: multer.Multer;
 
 	constructor(config: AppConfig) {
@@ -58,6 +60,7 @@ class App {
 			this.applicationService,
 			this.jobRoleService
 		);
+		this.userController = new UserController();
 
 		// Configure multer for file uploads
 		this.upload = multer({
@@ -182,8 +185,9 @@ class App {
 	}
 
 	private setupRoutes(): void {
-		// Login page (kept for future better-auth implementation)
-		this.server.get("/login", this.jobRoleController.getLogin);
+		// Login routes
+		this.server.get("/login", this.userController.getLoginPage);
+		this.server.post("/login", this.userController.postLogin);
 
 		// Health check endpoint to test backend connectivity
 		this.server.get("/api/health", async (_req: Request, res: Response) => {
