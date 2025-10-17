@@ -7,6 +7,10 @@ import type { JobRoleCreate } from "../models/job-role-create.js";
 import type { JobRoleDetailedResponse } from "../models/job-role-detailed-response.js";
 import type { JobRoleResponse } from "../models/job-role-response.js";
 import type {
+	JobRoleFilterOptions,
+	JobRoleSearchParams,
+} from "../models/job-role-search-params.js";
+import type {
 	PaginatedResponse,
 	PaginationRequest,
 } from "../models/pagination.js";
@@ -62,4 +66,19 @@ export interface JobRoleService {
 		id: number,
 		jobRole: JobRoleCreate
 	): Promise<JobRoleDetailedResponse>;
+
+	/**
+	 * Search and filter job roles with pagination
+	 * @param searchParams The search and filter parameters
+	 * @returns Promise<PaginatedResponse<JobRoleResponse>> Paginated search results
+	 */
+	searchJobRoles(
+		searchParams: JobRoleSearchParams
+	): Promise<PaginatedResponse<JobRoleResponse>>;
+
+	/**
+	 * Get available filter options (capabilities, locations, bands)
+	 * @returns Promise<JobRoleFilterOptions> Available filter options for dropdowns
+	 */
+	getFilterOptions(): Promise<JobRoleFilterOptions>;
 }

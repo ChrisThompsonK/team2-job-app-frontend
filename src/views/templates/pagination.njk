@@ -1,5 +1,21 @@
-{% macro paginationControls(pagination, baseUrl, limit = pagination.limit) %}
+{% macro paginationControls(pagination, baseUrl, limit = pagination.limit, searchParams = null) %}
   {% if pagination.totalPages > 1 %}
+    {# Build query string with search parameters #}
+    {% set queryString = "" %}
+    {% if searchParams %}
+      {% if searchParams.search %}
+        {% set queryString = queryString + "&search=" + searchParams.search %}
+      {% endif %}
+      {% if searchParams.capability %}
+        {% set queryString = queryString + "&capability=" + searchParams.capability %}
+      {% endif %}
+      {% if searchParams.location %}
+        {% set queryString = queryString + "&location=" + searchParams.location %}
+      {% endif %}
+      {% if searchParams.band %}
+        {% set queryString = queryString + "&band=" + searchParams.band %}
+      {% endif %}
+    {% endif %}
     <style>
       .pagination-custom {
         background: white !important;
@@ -49,7 +65,7 @@
       <div class="flex flex-wrap gap-1 justify-center">
         <!-- First Page -->
         {% if pagination.currentPage > 1 %}
-          <a href="{{ baseUrl }}?page=1&limit={{ limit }}" 
+          <a href="{{ baseUrl }}?page=1&limit={{ limit }}{{ queryString }}" 
              class="pagination-custom" 
              aria-label="First page">
             «
@@ -58,7 +74,7 @@
 
         <!-- Previous Page -->
         {% if pagination.hasPrevious %}
-          <a href="{{ baseUrl }}?page={{ pagination.currentPage - 1 }}&limit={{ limit }}" 
+          <a href="{{ baseUrl }}?page={{ pagination.currentPage - 1 }}&limit={{ limit }}{{ queryString }}" 
              class="pagination-custom" 
              aria-label="Previous page">
             ‹
@@ -88,7 +104,7 @@
 
         <!-- First page (if not in range) -->
         {% if showStartEllipsis %}
-          <a href="{{ baseUrl }}?page=1&limit={{ limit }}" 
+          <a href="{{ baseUrl }}?page=1&limit={{ limit }}{{ queryString }}" 
              class="pagination-custom">
             1
           </a>
@@ -102,7 +118,7 @@
           {% if pageNum == pagination.currentPage %}
             <span class="pagination-custom active">{{ pageNum }}</span>
           {% else %}
-            <a href="{{ baseUrl }}?page={{ pageNum }}&limit={{ limit }}" 
+            <a href="{{ baseUrl }}?page={{ pageNum }}&limit={{ limit }}{{ queryString }}" 
                class="pagination-custom">
               {{ pageNum }}
             </a>
@@ -114,7 +130,7 @@
           {% if endPage < pagination.totalPages - 1 %}
             <span class="pagination-disabled">...</span>
           {% endif %}
-          <a href="{{ baseUrl }}?page={{ pagination.totalPages }}&limit={{ limit }}" 
+          <a href="{{ baseUrl }}?page={{ pagination.totalPages }}&limit={{ limit }}{{ queryString }}" 
              class="pagination-custom">
             {{ pagination.totalPages }}
           </a>
@@ -122,7 +138,7 @@
 
         <!-- Next Page -->
         {% if pagination.hasNext %}
-          <a href="{{ baseUrl }}?page={{ pagination.currentPage + 1 }}&limit={{ limit }}" 
+          <a href="{{ baseUrl }}?page={{ pagination.currentPage + 1 }}&limit={{ limit }}{{ queryString }}" 
              class="pagination-custom" 
              aria-label="Next page">
             ›
@@ -131,7 +147,7 @@
 
         <!-- Last Page -->
         {% if pagination.currentPage < pagination.totalPages %}
-          <a href="{{ baseUrl }}?page={{ pagination.totalPages }}&limit={{ limit }}" 
+          <a href="{{ baseUrl }}?page={{ pagination.totalPages }}&limit={{ limit }}{{ queryString }}" 
              class="pagination-custom" 
              aria-label="Last page">
             »

@@ -7,6 +7,10 @@ import type { JobRoleCreate } from "../models/job-role-create.js";
 import type { JobRoleDetailedResponse } from "../models/job-role-detailed-response.js";
 import type { JobRoleResponse } from "../models/job-role-response.js";
 import type {
+	JobRoleFilterOptions,
+	JobRoleSearchParams,
+} from "../models/job-role-search-params.js";
+import type {
 	PaginatedResponse,
 	PaginationRequest,
 } from "../models/pagination.js";
@@ -337,6 +341,136 @@ export class AxiosJobRoleService implements JobRoleService {
 				throw new Error(message);
 			}
 			throw new Error("Failed to update job role");
+		}
+	}
+
+	/**
+	 * Search and filter job roles with pagination
+	 * @param searchParams The search and filter parameters
+	 * @returns Promise<PaginatedResponse<JobRoleResponse>> Paginated search results
+	 */
+	async searchJobRoles(
+		searchParams: JobRoleSearchParams
+	): Promise<PaginatedResponse<JobRoleResponse>> {
+		try {
+			// Build query parameters, only including defined values
+			const params: Record<string, string | number> = {
+				page: searchParams.page ?? 1,
+				limit: searchParams.limit ?? 12,
+			};
+
+			// Add optional search/filter parameters if provided
+			if (searchParams.search?.trim()) {
+				params["search"] = searchParams.search.trim();
+			}
+			if (searchParams.capability?.trim()) {
+				params["capability"] = searchParams.capability.trim();
+			}
+			if (searchParams.location?.trim()) {
+				params["location"] = searchParams.location.trim();
+			}
+			if (searchParams.band?.trim()) {
+				params["band"] = searchParams.band.trim();
+			}
+
+			const response = await this.axiosInstance.get<
+				BackendResponse<BackendPaginatedResponse>
+			>("/api/job-roles/search", { params });
+
+			const backendData = response.data.data;
+
+			// Map backend format to frontend format
+			const mappedJobRoles = backendData.jobRoles.map((role) => ({
+				jobRoleId: role.id,
+				roleName: role.jobRoleName,
+				location: role.location,
+				capability: role.capability,
+				band: role.band,
+				closingDate: role.closingDate,
+				status:
+					typeof role.status === "string" &&
+					role.status.toLowerCase() === "open"
+						? "Open"
+						: "Closed",
+			}));
+
+			return {
+				data: mappedJobRoles,
+				pagination: backendData.pagination,
+			};
+		} catch (error) {
+			console.error("Error searching job roles:", error);
+			// Return empty result with basic pagination metadata on error
+			return {
+				data: [],
+				pagination: {
+					currentPage: searchParams.page ?? 1,
+					totalPages: 0,
+					totalCount: 0,
+					limit: searchParams.limit ?? 12,
+					hasNext: false,
+					hasPrevious: false,
+				},
+			};
+		}
+	}
+
+	/**
+	 * Get available filter options (capabilities, locations, bands)
+	 * Fetches from backend API endpoints
+	 * @returns Promise<JobRoleFilterOptions> Available filter options for dropdowns
+	 */
+	async getFilterOptions(): Promise<JobRoleFilterOptions> {
+		try {
+			// Fetch all filter options in parallel
+			const [capabilitiesRes, locationsRes, bandsRes] = await Promise.all([
+				this.axiosInstance.get<BackendResponse<string[]>>(
+					"/api/job-roles/capabilities"
+				),
+				this.axiosInstance.get<BackendResponse<string[]>>(
+					"/api/job-roles/locations"
+				),
+				this.axiosInstance.get<BackendResponse<string[]>>(
+					"/api/job-roles/bands"
+				),
+			]);
+
+			return {
+				capabilities: capabilitiesRes.data.data,
+				locations: locationsRes.data.data,
+				bands: bandsRes.data.data,
+			};
+		} catch (error) {
+			console.error("Error fetching filter options:", error);
+			// Return hardcoded defaults as fallback
+			return {
+				capabilities: [
+					"Engineering",
+					"Analytics",
+					"Product",
+					"Design",
+					"Quality Assurance",
+					"Documentation",
+					"Testing",
+				],
+				locations: [
+					"Belfast, Northern Ireland",
+					"Birmingham, England",
+					"Derry~Londonderry, Northern Ireland",
+					"Dublin, Ireland",
+					"London, England",
+					"Gdansk, Poland",
+					"Helsinki, Finland",
+					"Paris, France",
+					"Antwerp, Belgium",
+					"Buenos Aires, Argentina",
+					"Indianapolis, United States",
+					"Nova Scotia, Canada",
+					"Toronto, Canada",
+					"Remote",
+				],
+				bands: ["Junior", "Mid", "Senior"],
+			};
 		}
 	}
 }
