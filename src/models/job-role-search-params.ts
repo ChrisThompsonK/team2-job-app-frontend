@@ -33,6 +33,12 @@ export interface JobRoleSearchParams {
 	band?: string;
 
 	/**
+	 * Filter by job status (exact match)
+	 * @example "Open", "Closed"
+	 */
+	status?: string;
+
+	/**
 	 * Page number for pagination (starts at 1)
 	 * @default 1
 	 */

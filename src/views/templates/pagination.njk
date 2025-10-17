@@ -15,6 +15,9 @@
       {% if searchParams.band %}
         {% set queryString = queryString + "&band=" + searchParams.band %}
       {% endif %}
+      {% if searchParams.status %}
+        {% set queryString = queryString + "&status=" + searchParams.status %}
+      {% endif %}
     {% endif %}
     <style>
       .pagination-custom {

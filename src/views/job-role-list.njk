@@ -69,7 +69,7 @@
                 </div>
 
                 <!-- Filter Dropdowns Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Capability Filter -->
                     <div class="form-control w-full">
                         <label for="capability" class="label">
@@ -135,6 +135,23 @@
                             {% endif %}
                         </select>
                     </div>
+
+                    <!-- Status Filter -->
+                    <div class="form-control w-full">
+                        <label for="status" class="label">
+                            <span class="label-text font-semibold text-gray-700">Status</span>
+                        </label>
+                        <select 
+                            id="status" 
+                            name="status" 
+                            class="select select-bordered w-full bg-gray-50 text-gray-900 border-gray-300 focus:border-blue-500 focus:bg-white"
+                            aria-label="Filter by status"
+                        >
+                            <option value="">All Statuses</option>
+                            <option value="Open" {% if searchParams and searchParams.status == "Open" %}selected{% endif %}>Open</option>
+                            <option value="Closed" {% if searchParams and searchParams.status == "Closed" %}selected{% endif %}>Closed</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Action Buttons -->
@@ -173,7 +190,7 @@
                 <div class="badge badge-lg bg-blue-100 text-blue-800 border-blue-200 gap-2">
                     {{ filter.label }}
                     <a 
-                        href="/jobs/search?{% for param in ['search', 'capability', 'location', 'band'] %}{% if param != filter.type and searchParams[param] %}{{ param }}={{ searchParams[param] }}{% if not loop.last %}&{% endif %}{% endif %}{% endfor %}"
+                        href="/jobs/search?{% for param in ['search', 'capability', 'location', 'band', 'status'] %}{% if param != filter.type and searchParams[param] %}{{ param }}={{ searchParams[param] }}{% if not loop.last %}&{% endif %}{% endif %}{% endfor %}"
                         class="hover:text-red-600"
                         aria-label="Remove {{ filter.label }} filter"
                     >

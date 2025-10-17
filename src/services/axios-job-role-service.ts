@@ -372,6 +372,9 @@ export class AxiosJobRoleService implements JobRoleService {
 			if (searchParams.band?.trim()) {
 				params["band"] = searchParams.band.trim();
 			}
+			if (searchParams.status?.trim()) {
+				params["status"] = searchParams.status.trim();
+			}
 
 			const response = await this.axiosInstance.get<
 				BackendResponse<BackendPaginatedResponse>

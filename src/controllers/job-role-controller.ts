@@ -223,6 +223,7 @@ export class JobRoleController {
 			const capability = (req.query["capability"] as string) || "";
 			const location = (req.query["location"] as string) || "";
 			const band = (req.query["band"] as string) || "";
+			const status = (req.query["status"] as string) || "";
 
 			// Validate pagination parameters
 			const paginationValidation = validatePaginationParams(
@@ -245,6 +246,7 @@ export class JobRoleController {
 				capability: capability,
 				location: location,
 				band: band,
+				status: status,
 				page: paginationValidation.page,
 				limit: paginationValidation.limit,
 			});
@@ -293,6 +295,13 @@ export class JobRoleController {
 					label: `Band: ${band}`,
 				});
 			}
+			if (status.trim()) {
+				activeFilters.push({
+					type: "status",
+					value: status,
+					label: `Status: ${status}`,
+				});
+			}
 
 			// Render the job roles list with search context
 			res.render("job-role-list.njk", {
@@ -309,6 +318,7 @@ export class JobRoleController {
 					capability: capability,
 					location: location,
 					band: band,
+					status: status,
 				},
 				activeFilters: activeFilters,
 				filterOptions: filterOptions,
