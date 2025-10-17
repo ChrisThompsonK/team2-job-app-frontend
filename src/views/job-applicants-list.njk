@@ -84,7 +84,9 @@ Applicants for {{ jobRole.roleName }}
 											class="btn btn-ghost btn-xs cover-letter-btn" 
 											data-applicant-id="{{ applicant.applicationId }}"
 											data-applicant-name="{{ applicant.applicantName }}"
-											data-cover-letter="{{ applicant.coverLetter }}">
+											data-applicant-email="{{ applicant.applicantEmail }}"
+											data-cover-letter="{{ applicant.coverLetter }}"
+											data-resume-url="{{ applicant.resumeUrl or '' }}">
 											<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -155,7 +157,9 @@ Applicants for {{ jobRole.roleName }}
 											class="btn btn-outline btn-xs cover-letter-btn"
 											data-applicant-id="{{ applicant.applicationId }}"
 											data-applicant-name="{{ applicant.applicantName }}"
-											data-cover-letter="{{ applicant.coverLetter }}">
+											data-applicant-email="{{ applicant.applicantEmail }}"
+											data-cover-letter="{{ applicant.coverLetter }}"
+											data-resume-url="{{ applicant.resumeUrl or '' }}">
 											Cover Letter
 										</button>
 									{% endif %}
@@ -205,36 +209,154 @@ Applicants for {{ jobRole.roleName }}
 	{% endif %}
 </div>
 
-<!-- Cover Letter Modal -->
-<dialog id="cover_letter_modal" class="modal">
-	<div class="modal-box max-w-2xl">
-		<form method="dialog">
-			<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-		</form>
-		<h3 class="font-bold text-lg mb-4">Cover Letter</h3>
-		<div class="text-sm text-base-content/70 mb-4">
-			From: <span id="cover_letter_applicant" class="font-medium"></span>
+<!-- Application Details Modal -->
+<dialog id="cover_letter_modal" class="modal modal-bottom sm:modal-middle">
+	<div class="modal-box max-w-6xl w-full h-[90vh] max-h-[90vh] p-0 bg-white">
+		<!-- Modal Header -->
+		<div class="sticky top-0 z-10 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 flex justify-between items-center shadow-md">
+			<div>
+				<h3 class="font-bold text-xl">Application Details</h3>
+				<div class="text-sm opacity-90 mt-1">
+					<span id="cover_letter_applicant" class="font-medium"></span>
+					<span class="mx-2">•</span>
+					<span id="cover_letter_email" class="italic"></span>
+				</div>
+			</div>
+			<form method="dialog">
+				<button class="btn btn-sm btn-circle btn-ghost hover:bg-white/20">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</button>
+			</form>
 		</div>
-		<div class="bg-base-200 p-4 rounded-lg">
-			<p id="cover_letter_content" class="whitespace-pre-wrap"></p>
+
+		<!-- Modal Content -->
+		<div class="overflow-y-auto h-full pb-6">
+			<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
+				<!-- Cover Letter Section -->
+				<div class="flex flex-col h-full">
+					<div class="bg-gradient-to-r from-purple-50 to-purple-100 rounded-t-lg px-4 py-3 border-b-2 border-purple-300">
+						<div class="flex items-center gap-2">
+							<svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+							</svg>
+							<h4 class="font-bold text-lg text-purple-900">Cover Letter</h4>
+						</div>
+					</div>
+					<div class="flex-1 bg-white border-2 border-purple-200 rounded-b-lg p-6 shadow-lg">
+						<div class="prose prose-sm max-w-none">
+							<p id="cover_letter_content" class="whitespace-pre-wrap text-gray-700 leading-relaxed"></p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Resume/CV Section -->
+				<div class="flex flex-col h-full">
+					<div class="bg-gradient-to-r from-green-50 to-green-100 rounded-t-lg px-4 py-3 border-b-2 border-green-300">
+						<div class="flex items-center gap-2">
+							<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+							</svg>
+							<h4 class="font-bold text-lg text-green-900">Resume / CV</h4>
+						</div>
+					</div>
+					<div id="resume_section" class="flex-1 bg-white border-2 border-green-200 rounded-b-lg shadow-lg">
+						<!-- Resume content will be injected here -->
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal Footer -->
+		<div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-between items-center">
+			<div class="text-sm text-gray-600">
+				<span class="font-medium">Application ID:</span> <span id="application_id" class="font-mono"></span>
+			</div>
+			<div class="flex gap-2">
+				<a id="contact_applicant_btn" href="#" class="btn btn-sm bg-blue-600 text-white hover:bg-blue-700">
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+					</svg>
+					Contact Applicant
+				</a>
+				<form method="dialog">
+					<button class="btn btn-sm btn-ghost">Close</button>
+				</form>
+			</div>
 		</div>
 	</div>
-	<form method="dialog" class="modal-backdrop">
+	<form method="dialog" class="modal-backdrop bg-black/50 backdrop-blur-sm">
 		<button>close</button>
 	</form>
 </dialog>
 
 <script>
-	// Event delegation for cover letter buttons
+	// Event delegation for application details buttons
 	document.addEventListener('DOMContentLoaded', function() {
 		document.addEventListener('click', function(event) {
 			if (event.target.closest('.cover-letter-btn')) {
 				const button = event.target.closest('.cover-letter-btn');
+				const applicantId = button.getAttribute('data-applicant-id');
 				const applicantName = button.getAttribute('data-applicant-name');
+				const applicantEmail = button.getAttribute('data-applicant-email');
 				const coverLetter = button.getAttribute('data-cover-letter');
+				const resumeUrl = button.getAttribute('data-resume-url');
 				
+				// Populate applicant info
 				document.getElementById('cover_letter_applicant').textContent = applicantName;
+				document.getElementById('cover_letter_email').textContent = applicantEmail;
+				document.getElementById('application_id').textContent = applicantId;
+				
+				// Populate cover letter
 				document.getElementById('cover_letter_content').textContent = coverLetter;
+				
+				// Populate resume section
+				const resumeSection = document.getElementById('resume_section');
+				if (resumeUrl && resumeUrl !== '') {
+					resumeSection.innerHTML = `
+						<div class="flex flex-col items-center justify-center h-full p-8 space-y-4">
+							<div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+								<svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+								</svg>
+							</div>
+							<div class="text-center">
+								<p class="text-lg font-semibold text-gray-800 mb-2">Resume Available</p>
+								<p class="text-sm text-gray-600 mb-4">Click below to view or download the applicant's resume</p>
+							</div>
+							<a href="${resumeUrl}" target="_blank" class="btn bg-green-600 text-white hover:bg-green-700">
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+								</svg>
+								Download Resume
+							</a>
+							<a href="${resumeUrl}" target="_blank" class="btn btn-outline btn-sm">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+								</svg>
+								Open in New Tab
+							</a>
+						</div>
+					`;
+				} else {
+					resumeSection.innerHTML = `
+						<div class="flex flex-col items-center justify-center h-full p-8 text-center">
+							<div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+								<svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+								</svg>
+							</div>
+							<p class="text-lg font-semibold text-gray-600 mb-2">No Resume Provided</p>
+							<p class="text-sm text-gray-500">This applicant did not upload a resume with their application.</p>
+						</div>
+					`;
+				}
+				
+				// Update contact button
+				document.getElementById('contact_applicant_btn').href = `mailto:${applicantEmail}`;
+				
+				// Show modal
 				document.getElementById('cover_letter_modal').showModal();
 			}
 		});
