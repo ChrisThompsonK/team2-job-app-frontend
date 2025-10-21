@@ -30,7 +30,7 @@ export class UserController {
 	 */
 	public postLogin = async (req: Request, res: Response): Promise<void> => {
 		// TODO: Implement actual authentication logic with backend
-		const { username } = req.body;
+		const { username, password } = req.body;
 
 		// Validate username field
 		if (
@@ -40,7 +40,26 @@ export class UserController {
 		) {
 			res.render("login.njk", {
 				error: "Please provide a valid username.",
-				formData: { username: "" },
+				formData: {
+					username: typeof username === "string" ? username.trim() : "",
+					password: "",
+				},
+			});
+			return;
+		}
+
+		// Validate password field
+		if (
+			!password ||
+			typeof password !== "string" ||
+			password.trim().length === 0
+		) {
+			res.render("login.njk", {
+				error: "Please provide a valid password.",
+				formData: {
+					username: username.trim(),
+					password: typeof password === "string" ? password.trim() : "",
+				},
 			});
 			return;
 		}
@@ -67,7 +86,7 @@ export class UserController {
 			console.error("Error in UserController.postLogin:", error);
 			res.render("login.njk", {
 				error: "An error occurred during login. Please try again.",
-				formData: { username },
+				formData: { username: username || "", password: "" },
 			});
 		}
 	};
