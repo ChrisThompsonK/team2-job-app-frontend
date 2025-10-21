@@ -285,6 +285,10 @@ export class AdminController {
 				return;
 			}
 
+			console.log(
+				`Exporting ${jobRoles.length} job role(s) to CSV`
+			);
+
 			// Convert to CSV format
 			const { jobRolesToCsv, generateCsvFilename } = await import(
 				"../utils/csv-export.js"
