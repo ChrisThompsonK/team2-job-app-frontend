@@ -301,6 +301,12 @@ class App {
 			this.applicationController.getApplicants
 		);
 
+		// CV download endpoint (proxy to backend)
+		this.server.get(
+			"/applications/:id/cv",
+			this.applicationController.downloadCv
+		);
+
 		// Error handling middleware - must be last
 		this.setupErrorHandling();
 	}
