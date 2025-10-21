@@ -1,6 +1,6 @@
 {% extends "templates/layout.njk" %}
 
-{% block applicationTitle %}Login - Kainos Job Application{% endblock %}
+{% block applicationTitle %}Register - Kainos Job Application{% endblock %}
 
 {% block content %}
 <main id="main-content" class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -8,14 +8,14 @@
         <!-- Header -->
         <div class="text-center">
             <img src="/KainosLogoNoBackground.png" alt="Kainos Logo" class="mx-auto h-16 w-auto mb-6">
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-            <p class="text-gray-600">Sign in to access your account</p>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
+            <p class="text-gray-600">Join us to start your career journey</p>
         </div>
 
-        <!-- Login Form -->
+        <!-- Registration Form -->
         <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-            <form id="loginForm" action="/login" method="POST" class="space-y-6">
-                <!-- Username/Email Field -->
+            <form id="registerForm" action="/register" method="POST" class="space-y-6">
+                <!-- Username Field -->
                 <div>
                     <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">
                         Email <span class="text-red-500">*</span>
@@ -25,8 +25,10 @@
                         id="username" 
                         name="username" 
                         required 
-                        value="{{ formData.username if formData else '' }}"
-                        placeholder="Enter your email"
+                        minlength="3"
+                        maxlength="50"
+                        value="{{ values.username if values else '' }}"
+                        placeholder="Enter your Email"
                         class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400"
                         autocomplete="username"
                     >
@@ -43,9 +45,10 @@
                             id="password" 
                             name="password" 
                             required 
+                            minlength="8"
                             placeholder="Enter your password"
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400"
-                            autocomplete="current-password"
+                            autocomplete="new-password"
                         >
                         <button 
                             type="button" 
@@ -63,31 +66,89 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Remember Me & Forgot Password -->
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
+                <!-- Confirm Password Field -->
+                <div>
+                    <label for="confirmPassword" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Confirm Password <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
                         <input 
-                            type="checkbox" 
-                            id="remember" 
-                            name="remember" 
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword" 
+                            required 
+                            minlength="8"
+                            placeholder="Re-enter your password"
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400"
+                            autocomplete="new-password"
                         >
-                        <label for="remember" class="ml-2 text-sm text-gray-700">Remember me</label>
+                        <button 
+                            type="button" 
+                            id="toggleConfirmPassword"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none flex items-center justify-center"
+                            aria-label="Toggle confirm password visibility"
+                        >
+                            <svg id="eyeIconConfirm" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            <svg id="eyeOffIconConfirm" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                            </svg>
+                        </button>
                     </div>
-                    <a href="/forgot-password" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                        Forgot password?
-                    </a>
+                </div>
+
+                <!-- Forename Field -->
+                <div>
+                    <label for="forename" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Forename <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="forename" 
+                        name="forename" 
+                        required 
+                        minlength="2"
+                        maxlength="50"
+                        value="{{ values.forename if values else '' }}"
+                        placeholder="Enter your first name"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400"
+                        autocomplete="given-name"
+                    >
+                </div>
+
+                <!-- Surname Field -->
+                <div>
+                    <label for="surname" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Surname <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="surname" 
+                        name="surname" 
+                        required 
+                        minlength="2"
+                        maxlength="50"
+                        value="{{ values.surname if values else '' }}"
+                        placeholder="Enter your last name"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400"
+                        autocomplete="family-name"
+                    >
                 </div>
 
                 <!-- Error Message -->
-                {% if error %}
+                {% if errors and errors.length > 0 %}
                 <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
                     <div class="flex items-center">
                         <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <p class="text-sm text-red-700">{{ error }}</p>
+                        <div>
+                            {% for error in errors %}
+                            <p class="text-sm text-red-700">{{ error }}</p>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
                 {% endif %}
@@ -98,18 +159,18 @@
                     class="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-green-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
-                    Sign In
+                    Create Account
                 </button>
             </form>
         </div>
 
-        <!-- Sign Up Link -->
+        <!-- Login Link -->
         <div class="text-center">
             <p class="text-gray-600">
-                Don't have an account? 
-                <a href="/register" class="text-blue-600 hover:text-blue-700 font-semibold">Sign up</a>
+                Already have an account? 
+                <a href="/login" class="text-blue-600 hover:text-blue-700 font-semibold">Sign in</a>
             </p>
         </div>
 
@@ -143,8 +204,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Confirm password visibility toggle
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const eyeIconConfirm = document.getElementById('eyeIconConfirm');
+    const eyeOffIconConfirm = document.getElementById('eyeOffIconConfirm');
+
+    if (toggleConfirmPassword && confirmPasswordInput) {
+        toggleConfirmPassword.addEventListener('click', function() {
+            const type = confirmPasswordInput.type === 'password' ? 'text' : 'password';
+            confirmPasswordInput.type = type;
+            
+            eyeIconConfirm.classList.toggle('hidden');
+            eyeOffIconConfirm.classList.toggle('hidden');
+        });
+    }
+
     // Form submission with loading state
-    const form = document.getElementById('loginForm');
+    const form = document.getElementById('registerForm');
     if (form) {
         form.addEventListener('submit', function() {
             const submitBtn = form.querySelector('button[type="submit"]');
@@ -154,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Signing In...
+                Creating Account...
             `;
         });
     }
