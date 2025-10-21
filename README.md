@@ -15,6 +15,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - **Applicant Management** - View and manage job applicants with responsive table, pagination, and filtering
 - **Pagination System** - Efficient browsing with page controls, ellipsis navigation, and loading states
 - **Admin job role creation** - Full CRUD functionality to create and save job roles to database
+- **CSV Export** - Generate comprehensive reports of all job roles in CSV format for stakeholder distribution
 - Backend API integration via Axios for data persistence
 - Kainos brand theme, unified logo system
 - Dark mode (opt-in, dual toggles, persistent via localStorage; light theme is default) with a minimal header/link override (`public/css/overrides.css`)
@@ -46,6 +47,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── job-role-validator.ts         # Comprehensive validation logic
 │   │   ├── job-role-validation-constants.ts  # Valid options for dropdowns
 │   │   ├── application-validator.ts      # Application form validation
+│   │   ├── csv-export.ts                 # CSV generation and export utilities
 │   │   └── validation.ts                 # General validation helpers
 │   ├── data/
 │   │   └── job-roles.json                # Sample data (fallback)
@@ -222,6 +224,11 @@ The application includes a comprehensive job roles management system with separa
 - **Job Role Creation**: Full form with validation for creating new job roles
 - **Job Role Editing**: Update existing roles with pre-filled forms, orange edit buttons with 📝 emoji
 - **Status Management**: Admins can change job status between "Open" and "Closed"
+- **CSV Export**: Generate comprehensive reports of all job roles in CSV format for stakeholder distribution
+  - One-click "Generate Report" button on job roles list page
+  - Downloads timestamped CSV file with all job role information
+  - Proper CSV escaping for special characters (commas, quotes, newlines)
+  - Comprehensive test coverage for CSV generation and export functionality
 - **Smart Validation**: Date validation allows past dates for edits, requires future dates for creation
 - **Input Validation**: Client-side and server-side validation with clear error messages
 - **Form Persistence**: Field values retained on validation errors
