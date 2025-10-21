@@ -247,6 +247,16 @@ class App {
 			});
 		});
 
+		// About page
+		this.server.get("/about", (_req: Request, res: Response) => {
+			res.render("about.njk");
+		});
+
+		// Contact page
+		this.server.get("/contact", (_req: Request, res: Response) => {
+			res.render("contact.njk");
+		});
+
 		// Job Roles endpoints (public, read-only)
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
 		this.server.get("/jobs/search", this.jobRoleController.searchJobRoles);
