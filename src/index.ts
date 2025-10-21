@@ -176,18 +176,6 @@ class App {
 	}
 
 	private setupMiddleware(): void {
-		// Determine session secret
-		let sessionSecret = process.env["SESSION_SECRET"];
-		if (!sessionSecret) {
-			if (process.env["NODE_ENV"] === "production") {
-				throw new Error("SESSION_SECRET environment variable must be set in production.");
-			} else {
-				console.warn(
-					"Warning: Using development fallback session secret. Set SESSION_SECRET in environment for security."
-				);
-				sessionSecret = "kainos-job-app-secret-key-dev";
-			}
-		}
 		// Add session middleware
 		let sessionSecret = process.env["SESSION_SECRET"];
 		if (!sessionSecret) {
