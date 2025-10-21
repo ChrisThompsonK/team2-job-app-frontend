@@ -801,30 +801,26 @@ describe("AdminController", () => {
 			);
 		});
 
-		it("should handle empty job roles list", async () => {
-			mockJobRoleService.getAllJobRolesForExport = vi
-				.fn()
-				.mockResolvedValue([]);
+	it("should handle empty job roles list", async () => {
+		mockJobRoleService.getAllJobRolesForExport = vi
+			.fn()
+			.mockResolvedValue([]);
 
-			mockRes.setHeader = vi.fn();
-			mockRes.send = vi.fn();
+		mockRes.status = vi.fn().mockReturnThis();
+		mockRes.render = vi.fn();
 
-			await adminController.exportJobRoles(
-				mockReq as Request,
-				mockRes as Response
-			);
+		await adminController.exportJobRoles(
+			mockReq as Request,
+			mockRes as Response
+		);
 
-			expect(mockJobRoleService.getAllJobRolesForExport).toHaveBeenCalled();
-			expect(mockRes.setHeader).toHaveBeenCalledWith(
-				"Content-Type",
-				"text/csv"
-			);
-			expect(mockRes.send).toHaveBeenCalledWith(
-				"Job Role ID,Role Name,Location,Capability,Band,Closing Date,Status"
-			);
+		expect(mockJobRoleService.getAllJobRolesForExport).toHaveBeenCalled();
+		expect(mockRes.status).toHaveBeenCalledWith(404);
+		expect(mockRes.render).toHaveBeenCalledWith("error.njk", {
+			message:
+				"No job roles available to export. Please ensure the backend is running and has data.",
 		});
-
-		it("should render error page when export fails", async () => {
+	});		it("should render error page when export fails", async () => {
 			const consoleSpy = vi
 				.spyOn(console, "error")
 				.mockImplementation(() => {});
