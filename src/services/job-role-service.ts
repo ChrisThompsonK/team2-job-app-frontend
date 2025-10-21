@@ -81,4 +81,10 @@ export interface JobRoleService {
 	 * @returns Promise<JobRoleFilterOptions> Available filter options for dropdowns
 	 */
 	getFilterOptions(): Promise<JobRoleFilterOptions>;
+
+	/**
+	 * Fetches all job roles for export (no pagination limit)
+	 * @returns Promise<JobRoleResponse[]> Complete list of all job roles
+	 */
+	getAllJobRolesForExport(): Promise<JobRoleResponse[]>;
 }
