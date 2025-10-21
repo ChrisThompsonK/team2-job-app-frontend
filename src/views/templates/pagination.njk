@@ -1,4 +1,4 @@
-{% macro paginationControls(pagination, baseUrl, limit = pagination.limit) %}
+{% macro paginationControls(pagination, paginationUrls) %}
   {% if pagination.totalPages > 1 %}
     <style>
       .pagination-custom {
@@ -49,7 +49,7 @@
       <div class="flex flex-wrap gap-1 justify-center">
         <!-- First Page -->
         {% if pagination.currentPage > 1 %}
-          <a href="{{ baseUrl }}?page=1&limit={{ limit }}" 
+          <a href="{{ paginationUrls.first }}" 
              class="pagination-custom" 
              aria-label="First page">
             «
@@ -57,72 +57,55 @@
         {% endif %}
 
         <!-- Previous Page -->
-        {% if pagination.hasPrevious %}
-          <a href="{{ baseUrl }}?page={{ pagination.currentPage - 1 }}&limit={{ limit }}" 
+        {% if paginationUrls.previous %}
+          <a href="{{ paginationUrls.previous }}" 
              class="pagination-custom" 
              aria-label="Previous page">
             ‹
           </a>
         {% endif %}
 
-        <!-- Calculate visible page range -->
-        {% set startPage = 1 %}
-        {% set endPage = pagination.totalPages %}
-        {% set showStartEllipsis = false %}
-        {% set showEndEllipsis = false %}
-
-        {% if pagination.totalPages > 7 %}
-          {% if pagination.currentPage <= 4 %}
-            {% set endPage = 5 %}
-            {% set showEndEllipsis = true %}
-          {% elif pagination.currentPage >= pagination.totalPages - 3 %}
-            {% set startPage = pagination.totalPages - 4 %}
-            {% set showStartEllipsis = true %}
-          {% else %}
-            {% set startPage = pagination.currentPage - 2 %}
-            {% set endPage = pagination.currentPage + 2 %}
-            {% set showStartEllipsis = true %}
-            {% set showEndEllipsis = true %}
-          {% endif %}
-        {% endif %}
+        <!-- Calculate visible page range for ellipsis display -->
+        {% set showStartEllipsis = paginationUrls.pages[0].page > 1 %}
+        {% set showEndEllipsis = paginationUrls.pages[paginationUrls.pages.length - 1].page < pagination.totalPages %}
 
         <!-- First page (if not in range) -->
         {% if showStartEllipsis %}
-          <a href="{{ baseUrl }}?page=1&limit={{ limit }}" 
+          <a href="{{ paginationUrls.first }}" 
              class="pagination-custom">
             1
           </a>
-          {% if startPage > 2 %}
+          {% if paginationUrls.pages[0].page > 2 %}
             <span class="pagination-disabled">...</span>
           {% endif %}
         {% endif %}
 
-        <!-- Page number range -->
-        {% for pageNum in range(startPage, endPage + 1) %}
-          {% if pageNum == pagination.currentPage %}
-            <span class="pagination-custom active">{{ pageNum }}</span>
+        <!-- Page number range from prebuilt URLs -->
+        {% for pageData in paginationUrls.pages %}
+          {% if pageData.isCurrent %}
+            <span class="pagination-custom active">{{ pageData.page }}</span>
           {% else %}
-            <a href="{{ baseUrl }}?page={{ pageNum }}&limit={{ limit }}" 
+            <a href="{{ pageData.url }}" 
                class="pagination-custom">
-              {{ pageNum }}
+              {{ pageData.page }}
             </a>
           {% endif %}
         {% endfor %}
 
         <!-- Last page (if not in range) -->
         {% if showEndEllipsis %}
-          {% if endPage < pagination.totalPages - 1 %}
+          {% if paginationUrls.pages[paginationUrls.pages.length - 1].page < pagination.totalPages - 1 %}
             <span class="pagination-disabled">...</span>
           {% endif %}
-          <a href="{{ baseUrl }}?page={{ pagination.totalPages }}&limit={{ limit }}" 
+          <a href="{{ paginationUrls.last }}" 
              class="pagination-custom">
             {{ pagination.totalPages }}
           </a>
         {% endif %}
 
         <!-- Next Page -->
-        {% if pagination.hasNext %}
-          <a href="{{ baseUrl }}?page={{ pagination.currentPage + 1 }}&limit={{ limit }}" 
+        {% if paginationUrls.next %}
+          <a href="{{ paginationUrls.next }}" 
              class="pagination-custom" 
              aria-label="Next page">
             ›
@@ -131,7 +114,7 @@
 
         <!-- Last Page -->
         {% if pagination.currentPage < pagination.totalPages %}
-          <a href="{{ baseUrl }}?page={{ pagination.totalPages }}&limit={{ limit }}" 
+          <a href="{{ paginationUrls.last }}" 
              class="pagination-custom" 
              aria-label="Last page">
             »
