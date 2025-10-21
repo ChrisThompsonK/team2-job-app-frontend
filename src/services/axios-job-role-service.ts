@@ -476,4 +476,79 @@ export class AxiosJobRoleService implements JobRoleService {
 			};
 		}
 	}
+
+	/**
+	 * Fetches all job roles for export (no pagination limit)
+	 * Uses a high limit to retrieve all records
+	 * @returns Promise<JobRoleResponse[]> Complete list of all job roles
+	 */
+	/**
+	 * Fetches all job roles for export (no pagination limit)
+	 * Uses multiple paginated requests to retrieve all records
+	 * Note: Backend limits max to 100 per request, so we paginate
+	 * @returns Promise<JobRoleResponse[]> Complete list of all job roles
+	 */
+	async getAllJobRolesForExport(): Promise<JobRoleResponse[]> {
+		try {
+			const allJobRoles: JobRoleResponse[] = [];
+			let currentPage = 1;
+			let hasMorePages = true;
+			const limit = 100; // Backend maximum
+
+			// Keep fetching pages until we get all data
+			while (hasMorePages) {
+				const response = await this.axiosInstance.get<{
+					success: boolean;
+					data: BackendPaginatedResponse;
+				}>(`/api/job-roles?page=${currentPage}&limit=${limit}`);
+
+				// Map backend format to frontend format and add to array
+				const jobRoles = response.data.data.jobRoles.map((role) => ({
+					jobRoleId: role.id,
+					roleName: role.jobRoleName,
+					location: role.location,
+					capability: role.capability,
+					band: role.band,
+					closingDate: role.closingDate,
+					status:
+						typeof role.status === "string" &&
+						role.status.toLowerCase() === "open"
+							? "Open"
+							: "Closed",
+				}));
+
+				allJobRoles.push(...jobRoles);
+
+				// Check if there are more pages
+				hasMorePages = response.data.data.pagination.hasNext;
+				currentPage++;
+
+				// Safety check to prevent infinite loops
+				if (currentPage > 1000) {
+					console.warn(
+						"Reached maximum page limit (1000) while fetching job roles for export"
+					);
+					break;
+				}
+			}
+
+			return allJobRoles;
+		} catch (error) {
+			console.error(
+				"Error fetching all job roles for export, trying standard limit:",
+				error
+			);
+			// If high limit fails, try with standard limit as fallback
+			try {
+				return await this.getJobRoles();
+			} catch (fallbackError) {
+				console.error(
+					"Fallback also failed, returning empty array:",
+					fallbackError
+				);
+				// Return empty array instead of throwing to match getJobRoles behavior
+				return [];
+			}
+		}
+	}
 }

@@ -16,6 +16,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - **Applicant Management** - View and manage job applicants with responsive table, pagination, and filtering
 - **Pagination System** - Efficient browsing with page controls, ellipsis navigation, and loading states
 - **Admin job role creation** - Full CRUD functionality to create and save job roles to database
+- **CSV Export** - Generate comprehensive reports of all job roles in CSV format for stakeholder distribution
 - Backend API integration via Axios for data persistence
 - Kainos brand theme, unified logo system
 - Dark mode (opt-in, dual toggles, persistent via localStorage; light theme is default) with a minimal header/link override (`public/css/overrides.css`)
@@ -30,6 +31,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── job-role-controller.ts        # Public job role operations (read-only)
 │   │   ├── admin-controller.ts           # Admin operations (create, update, delete)
 │   │   ├── application-controller.ts     # Job application submission and applicant viewing
+│   │   ├── user-controller.ts            # Authentication - login, logout, session management
 │   │   └── *.test.ts                     # Controller unit tests
 │   ├── services/
 │   │   ├── job-role-service.ts           # JobRoleService interface
@@ -42,11 +44,15 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── job-role-create.ts            # Create request model
 │   │   ├── job-role-detailed-response.ts # Detailed response model
 │   │   ├── application-request.ts        # Application submission models
-│   │   └── applicant-display.ts          # Applicant listing and pagination models
+│   │   ├── applicant-display.ts          # Applicant listing and pagination models
+│   │   └── user.ts                       # User and authentication models
+│   ├── types/
+│   │   └── session.ts                    # Express session type extensions
 │   ├── utils/
 │   │   ├── job-role-validator.ts         # Comprehensive validation logic
 │   │   ├── job-role-validation-constants.ts  # Valid options for dropdowns
 │   │   ├── application-validator.ts      # Application form validation
+│   │   ├── csv-export.ts                 # CSV generation and export utilities
 │   │   └── validation.ts                 # General validation helpers
 │   ├── data/
 │   │   └── job-roles.json                # Sample data (fallback)
@@ -61,6 +67,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │       ├── application-success.njk       # Application confirmation page
 │       ├── about.njk                     # About us page
 │       ├── contact.njk                   # Contact page
+│       ├── login.njk                     # User login form
 │       ├── index.njk                     # Homepage
 │       ├── error.njk                     # Error page
 │       └── templates/                    # Layout & partials
@@ -115,6 +122,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - **Node.js**: Runtime environment
 - **TypeScript**: Type-safe JavaScript
 - **Express**: Fast web framework for Node.js
+- **Express Session**: Secure session middleware for persistent authentication
 - **Nunjucks**: Rich templating engine with inheritance, async, and more
 - **Tailwind CSS 4**: Utility-first CSS framework (latest version)
 - **daisyUI 5.1.26**: Semantic component classes for Tailwind CSS
@@ -227,6 +235,11 @@ The application includes a comprehensive job roles management system with separa
 - **Job Role Creation**: Full form with validation for creating new job roles
 - **Job Role Editing**: Update existing roles with pre-filled forms, orange edit buttons with 📝 emoji
 - **Status Management**: Admins can change job status between "Open" and "Closed"
+- **CSV Export**: Generate comprehensive reports of all job roles in CSV format for stakeholder distribution
+  - One-click "Generate Report" button on job roles list page
+  - Downloads timestamped CSV file with all job role information
+  - Proper CSV escaping for special characters (commas, quotes, newlines)
+  - Comprehensive test coverage for CSV generation and export functionality
 - **Smart Validation**: Date validation allows past dates for edits, requires future dates for creation
 - **Input Validation**: Client-side and server-side validation with clear error messages
 - **Form Persistence**: Field values retained on validation errors

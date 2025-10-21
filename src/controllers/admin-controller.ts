@@ -262,4 +262,53 @@ export class AdminController {
 			});
 		}
 	};
+
+	/**
+	 * GET /admin/job-roles/export
+	 * Exports all job roles to a CSV file
+	 * Downloads CSV file with all job role information for stakeholder reporting
+	 */
+	public exportJobRoles = async (
+		_req: Request,
+		res: Response
+	): Promise<void> => {
+		try {
+			// Fetch all job roles for export
+			const jobRoles = await this.jobRoleService.getAllJobRolesForExport();
+
+			// Check if we have data to export
+			if (!jobRoles || jobRoles.length === 0) {
+				res.status(404).render("error.njk", {
+					message:
+						"No job roles available to export. Please ensure the backend is running and has data.",
+				});
+				return;
+			}
+
+			console.log(`Exporting ${jobRoles.length} job role(s) to CSV`);
+
+			// Convert to CSV format
+			const { jobRolesToCsv, generateCsvFilename } = await import(
+				"../utils/csv-export.js"
+			);
+			const csvContent = jobRolesToCsv(jobRoles);
+			const filename = generateCsvFilename("job-roles-export");
+
+			// Set headers for CSV download
+			res.setHeader("Content-Type", "text/csv");
+			res.setHeader(
+				"Content-Disposition",
+				`attachment; filename="${filename}"`
+			);
+
+			// Send CSV content
+			res.send(csvContent);
+		} catch (error) {
+			console.error("Error in AdminController.exportJobRoles:", error);
+			res.status(500).render("error.njk", {
+				message:
+					"Sorry, we couldn't generate the report at this time. Please try again later.",
+			});
+		}
+	};
 }
