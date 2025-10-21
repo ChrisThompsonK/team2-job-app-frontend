@@ -542,7 +542,10 @@ export class AxiosJobRoleService implements JobRoleService {
 			try {
 				return await this.getJobRoles();
 			} catch (fallbackError) {
-				console.error("Fallback also failed, returning empty array:", fallbackError);
+				console.error(
+					"Fallback also failed, returning empty array:",
+					fallbackError
+				);
 				// Return empty array instead of throwing to match getJobRoles behavior
 				return [];
 			}
