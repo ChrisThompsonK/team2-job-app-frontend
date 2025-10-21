@@ -302,6 +302,11 @@ class App {
 			"/admin/job-roles/new",
 			this.adminController.getCreateJobRole
 		);
+		// Export endpoint (must come before :id routes)
+		this.server.get(
+			"/admin/job-roles/export",
+			this.adminController.exportJobRoles
+		);
 		this.server.post("/admin/job-roles", this.adminController.createJobRole);
 		this.server.get(
 			"/admin/job-roles/:id/edit",

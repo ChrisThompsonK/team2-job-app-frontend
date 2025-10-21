@@ -743,4 +743,140 @@ describe("AdminController", () => {
 			);
 		});
 	});
+
+	describe("exportJobRoles", () => {
+		it("should fetch all job roles and send CSV file", async () => {
+			const mockJobRoles = [
+				{
+					jobRoleId: 1,
+					roleName: "Software Engineer",
+					location: "Belfast, Northern Ireland",
+					capability: "Engineering",
+					band: "Senior",
+					closingDate: "2025-12-31",
+					status: "Open",
+				},
+				{
+					jobRoleId: 2,
+					roleName: "Product Manager",
+					location: "Dublin, Ireland",
+					capability: "Product",
+					band: "Mid",
+					closingDate: "2025-11-30",
+					status: "Closed",
+				},
+			];
+
+			mockJobRoleService.getAllJobRolesForExport = vi
+				.fn()
+				.mockResolvedValue(mockJobRoles);
+
+			mockRes.setHeader = vi.fn();
+			mockRes.send = vi.fn();
+
+			await adminController.exportJobRoles(
+				mockReq as Request,
+				mockRes as Response
+			);
+
+			expect(mockJobRoleService.getAllJobRolesForExport).toHaveBeenCalled();
+			expect(mockRes.setHeader).toHaveBeenCalledWith(
+				"Content-Type",
+				"text/csv"
+			);
+			expect(mockRes.setHeader).toHaveBeenCalledWith(
+				"Content-Disposition",
+				expect.stringMatching(
+					/^attachment; filename="job-roles-export-.+\.csv"$/
+				)
+			);
+			expect(mockRes.send).toHaveBeenCalledWith(
+				expect.stringContaining("Job Role ID,Role Name,Location")
+			);
+			expect(mockRes.send).toHaveBeenCalledWith(
+				expect.stringContaining("1,Software Engineer")
+			);
+			expect(mockRes.send).toHaveBeenCalledWith(
+				expect.stringContaining("2,Product Manager")
+			);
+		});
+
+		it("should handle empty job roles list", async () => {
+			mockJobRoleService.getAllJobRolesForExport = vi
+				.fn()
+				.mockResolvedValue([]);
+
+			mockRes.status = vi.fn().mockReturnThis();
+			mockRes.render = vi.fn();
+
+			await adminController.exportJobRoles(
+				mockReq as Request,
+				mockRes as Response
+			);
+
+			expect(mockJobRoleService.getAllJobRolesForExport).toHaveBeenCalled();
+			expect(mockRes.status).toHaveBeenCalledWith(404);
+			expect(mockRes.render).toHaveBeenCalledWith("error.njk", {
+				message:
+					"No job roles available to export. Please ensure the backend is running and has data.",
+			});
+		});
+		it("should render error page when export fails", async () => {
+			const consoleSpy = vi
+				.spyOn(console, "error")
+				.mockImplementation(() => {});
+
+			mockJobRoleService.getAllJobRolesForExport = vi
+				.fn()
+				.mockRejectedValue(new Error("Database connection failed"));
+
+			await adminController.exportJobRoles(
+				mockReq as Request,
+				mockRes as Response
+			);
+
+			expect(mockRes.status).toHaveBeenCalledWith(500);
+			expect(mockRes.render).toHaveBeenCalledWith("error.njk", {
+				message: expect.stringContaining(
+					"Sorry, we couldn't generate the report"
+				),
+			});
+			expect(consoleSpy).toHaveBeenCalled();
+
+			consoleSpy.mockRestore();
+		});
+
+		it("should properly escape CSV special characters", async () => {
+			const mockJobRoles = [
+				{
+					jobRoleId: 1,
+					roleName: 'Senior "Expert" Engineer',
+					location: "Belfast, Northern Ireland",
+					capability: "Engineering",
+					band: "Senior",
+					closingDate: "2025-12-31",
+					status: "Open",
+				},
+			];
+
+			mockJobRoleService.getAllJobRolesForExport = vi
+				.fn()
+				.mockResolvedValue(mockJobRoles);
+
+			mockRes.setHeader = vi.fn();
+			mockRes.send = vi.fn();
+
+			await adminController.exportJobRoles(
+				mockReq as Request,
+				mockRes as Response
+			);
+
+			expect(mockRes.send).toHaveBeenCalledWith(
+				expect.stringContaining('1,"Senior ""Expert"" Engineer"')
+			);
+			expect(mockRes.send).toHaveBeenCalledWith(
+				expect.stringContaining('"Belfast, Northern Ireland"')
+			);
+		});
+	});
 });
