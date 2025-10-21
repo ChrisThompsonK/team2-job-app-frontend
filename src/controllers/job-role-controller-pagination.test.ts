@@ -70,6 +70,13 @@ describe("JobRoleController - Pagination", () => {
 			getJobRoleById: vi.fn(),
 			createJobRole: vi.fn(),
 			deleteJobRole: vi.fn(),
+			updateJobRole: vi.fn(),
+			searchJobRoles: vi.fn(),
+			getFilterOptions: vi.fn().mockResolvedValue({
+				capabilities: ["Engineering", "Analytics"],
+				locations: ["Belfast, Northern Ireland", "London, England"],
+				bands: ["Junior", "Mid", "Senior"],
+			}),
 		};
 
 		// Create controller instance
@@ -111,6 +118,7 @@ describe("JobRoleController - Pagination", () => {
 
 			// Verify
 			expect(validatePaginationParams).toHaveBeenCalledWith("1", "12");
+			expect(mockJobRoleService.getFilterOptions).toHaveBeenCalled();
 			expect(mockJobRoleService.getJobRolesPaginated).toHaveBeenCalledWith({
 				page: 1,
 				limit: 12,
@@ -118,8 +126,21 @@ describe("JobRoleController - Pagination", () => {
 			expect(mockResponse.render).toHaveBeenCalledWith("job-role-list.njk", {
 				jobRoles: mockPaginatedResponse.data,
 				pagination: mockPaginatedResponse.pagination,
+				paginationUrls: expect.objectContaining({
+					first: expect.any(String),
+					previous: null,
+					next: expect.any(String),
+					last: expect.any(String),
+					pages: expect.any(Array),
+				}),
 				totalRoles: 50,
 				currentUrl: "/job-roles",
+				isSearchPage: false,
+				filterOptions: {
+					capabilities: ["Engineering", "Analytics"],
+					locations: ["Belfast, Northern Ireland", "London, England"],
+					bands: ["Junior", "Mid", "Senior"],
+				},
 			});
 		});
 
@@ -246,8 +267,15 @@ describe("JobRoleController - Pagination", () => {
 			expect(mockResponse.render).toHaveBeenCalledWith("job-role-list.njk", {
 				jobRoles: [],
 				pagination: null,
+				paginationUrls: null,
 				totalRoles: 0,
 				currentUrl: "/job-roles",
+				isSearchPage: false,
+				filterOptions: {
+					capabilities: ["Engineering", "Analytics"],
+					locations: ["Belfast, Northern Ireland", "London, England"],
+					bands: ["Junior", "Mid", "Senior"],
+				},
 			});
 		});
 

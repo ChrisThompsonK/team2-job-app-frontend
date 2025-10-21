@@ -249,6 +249,7 @@ class App {
 
 		// Job Roles endpoints (public, read-only)
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
+		this.server.get("/jobs/search", this.jobRoleController.searchJobRoles);
 		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
 
 		// Delete endpoints (both AJAX and form submission)
