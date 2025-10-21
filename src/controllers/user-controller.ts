@@ -3,6 +3,7 @@
  */
 
 import type { Request, Response } from "express";
+import { APP_CONFIG } from "../config/constants.js";
 import type { User } from "../models/user.js";
 
 export class UserController {
@@ -31,15 +32,28 @@ export class UserController {
 		// TODO: Implement actual authentication logic with backend
 		const { username } = req.body;
 
+		// Validate username field
+		if (
+			!username ||
+			typeof username !== "string" ||
+			username.trim().length === 0
+		) {
+			res.render("login.njk", {
+				error: "Please provide a valid username.",
+				formData: { username: "" },
+			});
+			return;
+		}
+
 		// For testing purposes: simulate successful login
 		// In production, this would call the authentication service and validate credentials
 		try {
 			// Simulate user data that would come from backend authentication
 			// In real implementation, this would validate credentials and get user_type from database
 			const user: User = {
-				username: username as string,
+				username: username.trim(),
 				user_type: "Admin", // This would come from the backend API/database
-				email: `${username}@kainos.com`, // Mock email for demo
+				email: `${username.trim()}@${APP_CONFIG.EMAIL_DOMAIN}`, // Mock email for demo
 			};
 
 			// Store user in session
@@ -75,7 +89,7 @@ export class UserController {
 				}
 
 				// Clear the session cookie
-				res.clearCookie("connect.sid");
+				res.clearCookie(APP_CONFIG.SESSION.COOKIE_NAME);
 
 				// Redirect to home page
 				res.redirect("/");

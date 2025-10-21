@@ -14,6 +14,7 @@ import session from "express-session";
 import multer from "multer";
 import nunjucks from "nunjucks";
 import "./types/session.js";
+import { APP_CONFIG, generateSessionSecret } from "./config/constants.js";
 import { AdminController } from "./controllers/admin-controller.js";
 import { ApplicationController } from "./controllers/application-controller.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
@@ -176,16 +177,28 @@ class App {
 
 	private setupMiddleware(): void {
 		// Add session middleware
+		let sessionSecret = process.env["SESSION_SECRET"];
+		if (!sessionSecret) {
+			if (process.env["NODE_ENV"] === "production") {
+				throw new Error(
+					"SESSION_SECRET environment variable is required in production"
+				);
+			}
+			sessionSecret = generateSessionSecret();
+			console.warn(
+				"Warning: Using generated session secret for development. Set SESSION_SECRET environment variable for production."
+			);
+		}
+
 		this.server.use(
 			session({
-				secret:
-					process.env["SESSION_SECRET"] || "kainos-job-app-secret-key-dev",
+				secret: sessionSecret,
 				resave: false,
 				saveUninitialized: false,
 				cookie: {
 					secure: process.env["NODE_ENV"] === "production", // HTTPS in production
 					httpOnly: true,
-					maxAge: 24 * 60 * 60 * 1000, // 24 hours
+					maxAge: APP_CONFIG.SESSION.COOKIE_MAX_AGE,
 				},
 			})
 		);
