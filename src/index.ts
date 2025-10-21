@@ -10,8 +10,11 @@ import express, {
 	type Request,
 	type Response,
 } from "express";
+import session from "express-session";
 import multer from "multer";
 import nunjucks from "nunjucks";
+import "./types/session.js";
+import { APP_CONFIG, generateSessionSecret } from "./config/constants.js";
 import { AdminController } from "./controllers/admin-controller.js";
 import { ApplicationController } from "./controllers/application-controller.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
@@ -173,11 +176,45 @@ class App {
 	}
 
 	private setupMiddleware(): void {
+		// Add session middleware
+		let sessionSecret = process.env["SESSION_SECRET"];
+		if (!sessionSecret) {
+			if (process.env["NODE_ENV"] === "production") {
+				throw new Error(
+					"SESSION_SECRET environment variable is required in production"
+				);
+			}
+			sessionSecret = generateSessionSecret();
+			console.warn(
+				"Warning: Using generated session secret for development. Set SESSION_SECRET environment variable for production."
+			);
+		}
+
+		this.server.use(
+			session({
+				secret: sessionSecret,
+				resave: false,
+				saveUninitialized: false,
+				cookie: {
+					secure: process.env["NODE_ENV"] === "production", // HTTPS in production
+					httpOnly: true,
+					maxAge: APP_CONFIG.SESSION.COOKIE_MAX_AGE,
+				},
+			})
+		);
+
 		// Add JSON parsing middleware
 		this.server.use(express.json());
 
 		// Add URL-encoded parsing middleware
 		this.server.use(express.urlencoded({ extended: true }));
+
+		// Middleware to make user session available to all views
+		this.server.use((req, res, next) => {
+			res.locals["user"] = req.session["user"] || null;
+			res.locals["isAuthenticated"] = req.session["isAuthenticated"] || false;
+			next();
+		});
 
 		// Serve static files from public directory
 		const publicPath = path.join(__dirname, "..", "public");
@@ -188,6 +225,7 @@ class App {
 		// Login routes
 		this.server.get("/login", this.userController.getLoginPage);
 		this.server.post("/login", this.userController.postLogin);
+		this.server.post("/logout", this.userController.postLogout);
 
 		// Health check endpoint to test backend connectivity
 		this.server.get("/api/health", async (_req: Request, res: Response) => {
