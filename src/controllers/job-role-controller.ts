@@ -5,6 +5,7 @@
 import type { Request, Response } from "express";
 import type { JobRoleService } from "../services/job-role-service.js";
 import { validatePaginationParams } from "../utils/pagination-validation.js";
+import { buildPaginationUrls } from "../utils/url-builder.js";
 import { validateJobRoleId } from "../utils/validation.js";
 
 export class JobRoleController {
@@ -56,6 +57,7 @@ export class JobRoleController {
 				return res.render("job-role-list.njk", {
 					jobRoles: [],
 					pagination: null,
+					paginationUrls: null,
 					totalRoles: 0,
 					currentUrl: req.path,
 					isSearchPage: false,
@@ -63,9 +65,19 @@ export class JobRoleController {
 				});
 			}
 
+			// Build pagination URLs using the utility
+			const paginationUrls = buildPaginationUrls(
+				req.path,
+				paginationValidation.page,
+				paginatedResult.pagination.totalPages,
+				paginationValidation.limit,
+				null // No search params for regular listing
+			);
+
 			res.render("job-role-list.njk", {
 				jobRoles: paginatedResult.data,
 				pagination: paginatedResult.pagination,
+				paginationUrls: paginationUrls,
 				totalRoles: paginatedResult.pagination.totalCount,
 				currentUrl: req.path,
 				isSearchPage: false,
@@ -309,6 +321,22 @@ export class JobRoleController {
 				pagination:
 					searchResult.pagination.totalCount > 0
 						? searchResult.pagination
+						: null,
+				paginationUrls:
+					searchResult.pagination.totalCount > 0
+						? buildPaginationUrls(
+								"/jobs/search",
+								paginationValidation.page,
+								searchResult.pagination.totalPages,
+								paginationValidation.limit,
+								{
+									search: searchQuery,
+									capability: capability,
+									location: location,
+									band: band,
+									status: status,
+								}
+							)
 						: null,
 				totalRoles: searchResult.pagination.totalCount,
 				currentUrl: "/jobs/search",

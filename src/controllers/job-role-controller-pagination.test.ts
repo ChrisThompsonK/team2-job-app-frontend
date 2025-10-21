@@ -126,6 +126,13 @@ describe("JobRoleController - Pagination", () => {
 			expect(mockResponse.render).toHaveBeenCalledWith("job-role-list.njk", {
 				jobRoles: mockPaginatedResponse.data,
 				pagination: mockPaginatedResponse.pagination,
+				paginationUrls: expect.objectContaining({
+					first: expect.any(String),
+					previous: null,
+					next: expect.any(String),
+					last: expect.any(String),
+					pages: expect.any(Array),
+				}),
 				totalRoles: 50,
 				currentUrl: "/job-roles",
 				isSearchPage: false,
@@ -260,6 +267,7 @@ describe("JobRoleController - Pagination", () => {
 			expect(mockResponse.render).toHaveBeenCalledWith("job-role-list.njk", {
 				jobRoles: [],
 				pagination: null,
+				paginationUrls: null,
 				totalRoles: 0,
 				currentUrl: "/job-roles",
 				isSearchPage: false,

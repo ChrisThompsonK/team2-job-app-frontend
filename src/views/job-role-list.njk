@@ -308,12 +308,8 @@
         </section>
 
         <!-- Pagination Controls -->
-        {% if pagination %}
-            {% if isSearchPage %}
-                {{ paginationControls(pagination, currentUrl, pagination.limit, searchParams) }}
-            {% else %}
-                {{ paginationControls(pagination, currentUrl) }}
-            {% endif %}
+        {% if pagination and paginationUrls %}
+            {{ paginationControls(pagination, paginationUrls) }}
         {% endif %}
     {% else %}
         <!-- No Jobs Available -->
