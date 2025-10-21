@@ -3,47 +3,87 @@
  */
 
 import type { Request, Response } from "express";
+import type { User } from "../models/user.js";
 
 export class UserController {
 	/**
 	 * GET /login
 	 * Renders the login page
-	 * @param _req - Express request object (unused)
+	 * @param req - Express request object
 	 * @param res - Express response object used to render the template
 	 * @returns void
 	 */
-	public getLoginPage = (_req: Request, res: Response): void => {
+	public getLoginPage = (req: Request, res: Response): void => {
+		// If user is already logged in, redirect to home
+		if (req.session["isAuthenticated"]) {
+			res.redirect("/");
+			return;
+		}
 		res.render("login.njk");
 	};
 
 	/**
 	 * POST /login
-	 * Handles login form submission
-	 * For testing: always succeeds and shows success page
+	 * Handles login form submission and creates user session
+	 * For testing: always succeeds and creates session
 	 */
 	public postLogin = async (req: Request, res: Response): Promise<void> => {
 		// TODO: Implement actual authentication logic with backend
 		const { username } = req.body;
 
 		// For testing purposes: simulate successful login
-		// In production, this would call the authentication service and get user_type from database
+		// In production, this would call the authentication service and validate credentials
 		try {
-			// Simulate user data that would come from backend
-			// In real implementation, user_type would come from the database
-			const mockUser = {
-				username: username,
+			// Simulate user data that would come from backend authentication
+			// In real implementation, this would validate credentials and get user_type from database
+			const user: User = {
+				username: username as string,
 				user_type: "Admin", // This would come from the backend API/database
+				email: `${username}@kainos.com`, // Mock email for demo
 			};
 
-			// Render success page with user data
-			res.render("login-success.njk", {
-				user: mockUser,
-			});
+			// Store user in session
+			req.session["user"] = user;
+			req.session["isAuthenticated"] = true;
+			req.session["loginTime"] = new Date();
+
+			// Redirect to home page after successful login
+			res.redirect("/");
 		} catch (error) {
 			console.error("Error in UserController.postLogin:", error);
 			res.render("login.njk", {
 				error: "An error occurred during login. Please try again.",
 				formData: { username },
+			});
+		}
+	};
+
+	/**
+	 * POST /logout
+	 * Handles user logout and destroys session
+	 */
+	public postLogout = (req: Request, res: Response): void => {
+		try {
+			// Destroy the session
+			req.session.destroy((error) => {
+				if (error) {
+					console.error("Error destroying session:", error);
+					res.status(500).render("error.njk", {
+						message: "Error logging out. Please try again.",
+					});
+					return;
+				}
+
+				// Clear the session cookie
+				res.clearCookie("connect.sid");
+
+				// Redirect to home page
+				res.redirect("/");
+			});
+		} catch (error) {
+			console.error("Error in UserController.postLogout:", error);
+			res.status(500).render("error.njk", {
+				message: "Error logging out. Please try again.",
 			});
 		}
 	};

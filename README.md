@@ -15,6 +15,11 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - **Applicant Management** - View and manage job applicants with responsive table, pagination, and filtering
 - **Pagination System** - Efficient browsing with page controls, ellipsis navigation, and loading states
 - **Admin job role creation** - Full CRUD functionality to create and save job roles to database
+- **User Authentication & Session Management** - Persistent login state across navigation with secure session handling
+  - **Smart Header Authentication**: Sign in/sign out buttons that adapt based on login status
+  - **Session Persistence**: User remains logged in while navigating the system (24-hour cookie lifespan)
+  - **Secure Logout**: Complete session destruction and cookie clearing
+  - **Redirect Protection**: Already authenticated users are redirected from login page
 - Backend API integration via Axios for data persistence
 - Kainos brand theme, unified logo system
 - Dark mode (opt-in, dual toggles, persistent via localStorage; light theme is default) with a minimal header/link override (`public/css/overrides.css`)
@@ -29,6 +34,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── job-role-controller.ts        # Public job role operations (read-only)
 │   │   ├── admin-controller.ts           # Admin operations (create, update, delete)
 │   │   ├── application-controller.ts     # Job application submission and applicant viewing
+│   │   ├── user-controller.ts            # Authentication - login, logout, session management
 │   │   └── *.test.ts                     # Controller unit tests
 │   ├── services/
 │   │   ├── job-role-service.ts           # JobRoleService interface
@@ -41,7 +47,10 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── job-role-create.ts            # Create request model
 │   │   ├── job-role-detailed-response.ts # Detailed response model
 │   │   ├── application-request.ts        # Application submission models
-│   │   └── applicant-display.ts          # Applicant listing and pagination models
+│   │   ├── applicant-display.ts          # Applicant listing and pagination models
+│   │   └── user.ts                       # User and authentication models
+│   ├── types/
+│   │   └── session.ts                    # Express session type extensions
 │   ├── utils/
 │   │   ├── job-role-validator.ts         # Comprehensive validation logic
 │   │   ├── job-role-validation-constants.ts  # Valid options for dropdowns
@@ -58,6 +67,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │       ├── job-application-form.njk      # Job application submission form
 │       ├── job-applicants-list.njk       # Applicants management page
 │       ├── application-success.njk       # Application confirmation page
+│       ├── login.njk                     # User login form
 │       ├── index.njk                     # Homepage
 │       ├── error.njk                     # Error page
 │       └── templates/                    # Layout & partials
@@ -112,6 +122,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - **Node.js**: Runtime environment
 - **TypeScript**: Type-safe JavaScript
 - **Express**: Fast web framework for Node.js
+- **Express Session**: Secure session middleware for persistent authentication
 - **Nunjucks**: Rich templating engine with inheritance, async, and more
 - **Tailwind CSS 4**: Utility-first CSS framework (latest version)
 - **daisyUI 5.1.26**: Semantic component classes for Tailwind CSS

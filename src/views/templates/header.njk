@@ -9,13 +9,34 @@
                 <div class="flex flex-col tagline-container">
                     <p class="text-xs landscape:text-xs md:text-sm text-slate-600 font-medium">Thinking Without Limitations</p>
                 </div>
-                <!-- Prominent Login Button -->
-                <a href="/login" class="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-4 landscape:px-4 md:px-6 py-2 rounded-full transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg hover:shadow-xl font-semibold ml-2 landscape:ml-2 md:ml-4 text-sm landscape:text-sm md:text-base">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                    </svg>
-                    <span class="whitespace-nowrap">Sign In</span>
-                </a>
+                <!-- Authentication Button - Conditional -->
+                {% if isAuthenticated and user %}
+                    <!-- User Info and Sign Out -->
+                    <div class="flex items-center space-x-2 landscape:space-x-2 md:space-x-3 ml-2 landscape:ml-2 md:ml-4">
+                        <!-- Welcome Message -->
+                        <div class="hidden landscape:block md:block text-sm text-slate-700 font-medium">
+                            Welcome, <span class="text-blue-600">{{ user.username }}</span>
+                        </div>
+                        
+                        <!-- Sign Out Button -->
+                        <form method="POST" action="/logout" class="inline">
+                            <button type="submit" class="flex items-center space-x-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 landscape:px-4 md:px-6 py-2 rounded-full transition-all duration-200 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 shadow-lg hover:shadow-xl font-semibold text-sm landscape:text-sm md:text-base">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                <span class="whitespace-nowrap">Sign Out</span>
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <!-- Sign In Button -->
+                    <a href="/login" class="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-4 landscape:px-4 md:px-6 py-2 rounded-full transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg hover:shadow-xl font-semibold ml-2 landscape:ml-2 md:ml-4 text-sm landscape:text-sm md:text-base">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                        </svg>
+                        <span class="whitespace-nowrap">Sign In</span>
+                    </a>
+                {% endif %}
             </div>
             
             <!-- Navigation -->
@@ -100,6 +121,34 @@
                 <a href="/job-roles" class="block py-3 px-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded-lg font-medium text-lg transition-all duration-200">Jobs</a>
                 <a href="#about" class="block py-3 px-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded-lg font-medium text-lg transition-all duration-200">About</a>
                 <a href="#contact" class="block py-3 px-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded-lg font-medium text-lg transition-all duration-200">Contact</a>
+                
+                <!-- Authentication Section -->
+                <hr class="my-4 border-slate-200">
+                
+                {% if isAuthenticated and user %}
+                    <!-- User Info -->
+                    <div class="block py-3 px-2 text-slate-600 text-sm">
+                        Welcome, <span class="font-semibold text-blue-600">{{ user.username }}</span>
+                    </div>
+                    
+                    <!-- Sign Out Form -->
+                    <form method="POST" action="/logout" class="block">
+                        <button type="submit" class="w-full text-left py-3 px-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg font-medium text-lg transition-all duration-200 flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            <span>Sign Out</span>
+                        </button>
+                    </form>
+                {% else %}
+                    <!-- Sign In Link -->
+                    <a href="/login" class="block py-3 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg font-medium text-lg transition-all duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013 3v1" />
+                        </svg>
+                        <span>Sign In</span>
+                    </a>
+                {% endif %}
         </div>
 </div>
 
