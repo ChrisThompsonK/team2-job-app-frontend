@@ -82,11 +82,11 @@ Applicants for {{ jobRole.roleName }}
 									{% if applicant.coverLetter %}
 										<button 
 											class="btn btn-ghost btn-xs cover-letter-btn" 
-											data-applicant-id="{{ applicant.applicationId }}"
-											data-applicant-name="{{ applicant.applicantName }}"
-											data-applicant-email="{{ applicant.applicantEmail }}"
-											data-cover-letter="{{ applicant.coverLetter }}"
-											data-resume-url="{{ applicant.resumeUrl or '' }}">
+											data-applicant-id="{{ applicant.applicationId | escape }}"
+											data-applicant-name="{{ applicant.applicantName | escape }}"
+											data-applicant-email="{{ applicant.applicantEmail | escape }}"
+											data-cover-letter="{{ applicant.coverLetter | escape }}"
+											data-resume-url="{{ (applicant.resumeUrl or '') | escape }}">
 											<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -155,11 +155,11 @@ Applicants for {{ jobRole.roleName }}
 									{% if applicant.coverLetter %}
 										<button 
 											class="btn btn-outline btn-xs cover-letter-btn"
-											data-applicant-id="{{ applicant.applicationId }}"
-											data-applicant-name="{{ applicant.applicantName }}"
-											data-applicant-email="{{ applicant.applicantEmail }}"
-											data-cover-letter="{{ applicant.coverLetter }}"
-											data-resume-url="{{ applicant.resumeUrl or '' }}">
+											data-applicant-id="{{ applicant.applicationId | escape }}"
+											data-applicant-name="{{ applicant.applicantName | escape }}"
+											data-applicant-email="{{ applicant.applicantEmail | escape }}"
+											data-cover-letter="{{ applicant.coverLetter | escape }}"
+											data-resume-url="{{ (applicant.resumeUrl or '') | escape }}">
 											Cover Letter
 										</button>
 									{% endif %}
@@ -292,6 +292,44 @@ Applicants for {{ jobRole.roleName }}
 </dialog>
 
 <script>
+	// XSS Prevention: URL sanitization function
+	function sanitizeUrl(url) {
+		if (!url || typeof url !== 'string') return '';
+		
+		// Remove any dangerous protocols
+		const dangerousProtocols = ['javascript:', 'data:', 'vbscript:', 'file:', 'about:'];
+		const lowerUrl = url.toLowerCase().trim();
+		
+		for (const protocol of dangerousProtocols) {
+			if (lowerUrl.startsWith(protocol)) {
+				console.warn('Blocked potentially dangerous URL:', url);
+				return '';
+			}
+		}
+		
+		// Only allow http, https, and relative URLs
+		if (lowerUrl.startsWith('http://') || lowerUrl.startsWith('https://') || lowerUrl.startsWith('/')) {
+			return url.trim();
+		}
+		
+		// For relative URLs without leading slash, add it
+		if (!lowerUrl.includes('://')) {
+			return '/' + url.trim();
+		}
+		
+		console.warn('URL protocol not allowed:', url);
+		return '';
+	}
+
+	// XSS Prevention: Text content sanitization
+	function sanitizeText(text) {
+		if (!text || typeof text !== 'string') return '';
+		// Create a temporary element to escape HTML entities
+		const temp = document.createElement('div');
+		temp.textContent = text;
+		return temp.innerHTML;
+	}
+
 	// Event delegation for application details buttons
 	document.addEventListener('DOMContentLoaded', function() {
 		document.addEventListener('click', function(event) {
@@ -311,35 +349,78 @@ Applicants for {{ jobRole.roleName }}
 				// Populate cover letter
 				document.getElementById('cover_letter_content').textContent = coverLetter;
 				
-				// Populate resume section
+				// Populate resume section - XSS Safe Implementation
 				const resumeSection = document.getElementById('resume_section');
-				if (resumeUrl && resumeUrl !== '') {
-					resumeSection.innerHTML = `
-						<div class="flex flex-col items-center justify-center h-full p-8 space-y-4">
-							<div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
-								<svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-								</svg>
-							</div>
-							<div class="text-center">
-								<p class="text-lg font-semibold text-gray-800 mb-2">Resume Available</p>
-								<p class="text-sm text-gray-600 mb-4">Click below to view or download the applicant's resume</p>
-							</div>
-							<a href="${resumeUrl}" target="_blank" class="btn bg-green-600 text-white hover:bg-green-700">
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-								</svg>
-								Download Resume
-							</a>
-							<a href="${resumeUrl}" target="_blank" class="btn btn-outline btn-sm">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-								</svg>
-								Open in New Tab
-							</a>
-						</div>
+				
+				// Sanitize URL to prevent XSS
+				const sanitizedResumeUrl = sanitizeUrl(resumeUrl);
+				
+				if (sanitizedResumeUrl && sanitizedResumeUrl !== '') {
+					// Clear existing content
+					resumeSection.textContent = '';
+					
+					// Create elements safely using DOM methods
+					const container = document.createElement('div');
+					container.className = 'flex flex-col items-center justify-center h-full p-8 space-y-4';
+					
+					// Icon container
+					const iconDiv = document.createElement('div');
+					iconDiv.className = 'w-20 h-20 bg-green-100 rounded-full flex items-center justify-center';
+					iconDiv.innerHTML = `
+						<svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+						</svg>
 					`;
+					
+					// Text content
+					const textDiv = document.createElement('div');
+					textDiv.className = 'text-center';
+					
+					const title = document.createElement('p');
+					title.className = 'text-lg font-semibold text-gray-800 mb-2';
+					title.textContent = 'Resume Available';
+					
+					const subtitle = document.createElement('p');
+					subtitle.className = 'text-sm text-gray-600 mb-4';
+					subtitle.textContent = 'Click below to view or download the applicant\'s resume';
+					
+					textDiv.appendChild(title);
+					textDiv.appendChild(subtitle);
+					
+					// Download button - using setAttribute to safely set href
+					const downloadBtn = document.createElement('a');
+					downloadBtn.className = 'btn bg-green-600 text-white hover:bg-green-700';
+					downloadBtn.setAttribute('href', sanitizedResumeUrl);
+					downloadBtn.setAttribute('target', '_blank');
+					downloadBtn.setAttribute('rel', 'noopener noreferrer'); // Security best practice
+					downloadBtn.innerHTML = `
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+						</svg>
+						Download Resume
+					`;
+					
+					const openBtn = document.createElement('a');
+					openBtn.className = 'btn btn-outline btn-sm';
+					openBtn.setAttribute('href', sanitizedResumeUrl);
+					openBtn.setAttribute('target', '_blank');
+					openBtn.setAttribute('rel', 'noopener noreferrer');
+					openBtn.innerHTML = `
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+						</svg>
+						Open in New Tab
+					`;
+					
+					// Assemble the structure
+					container.appendChild(iconDiv);
+					container.appendChild(textDiv);
+					container.appendChild(downloadBtn);
+					container.appendChild(openBtn);
+					
+					resumeSection.appendChild(container);
 				} else {
+					// Create "no resume" state safely - no user data involved here so safer
 					resumeSection.innerHTML = `
 						<div class="flex flex-col items-center justify-center h-full p-8 text-center">
 							<div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -353,8 +434,17 @@ Applicants for {{ jobRole.roleName }}
 					`;
 				}
 				
-				// Update contact button
-				document.getElementById('contact_applicant_btn').href = `mailto:${applicantEmail}`;
+				// Update contact button - XSS Safe
+				const contactBtn = document.getElementById('contact_applicant_btn');
+				// Validate email format and sanitize - Using same regex as application-validator.ts (RFC 5322 compliant)
+				const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
+				if (applicantEmail && emailRegex.test(applicantEmail)) {
+					contactBtn.setAttribute('href', 'mailto:' + encodeURIComponent(applicantEmail));
+				} else {
+					contactBtn.removeAttribute('href');
+					contactBtn.style.opacity = '0.5';
+					contactBtn.style.cursor = 'not-allowed';
+				}
 				
 				// Show modal
 				document.getElementById('cover_letter_modal').showModal();
