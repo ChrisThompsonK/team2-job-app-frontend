@@ -1,6 +1,7 @@
 /**
  * CSV Export Utility
  * Provides functions for converting data to CSV format with proper escaping
+ * Supports special character handling and timestamped filenames
  */
 
 import type { JobRoleResponse } from "../models/job-role-response.js";
