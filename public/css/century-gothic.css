@@ -1,0 +1,47 @@
+/* Century Gothic Font Implementation */
+/* Apply Century Gothic font to all elements */
+
+html, body {
+    font-family: "Century Gothic", "CenturyGothic", "AppleGothic", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+* {
+    font-family: inherit;
+}
+
+/* Explicit font family for all common elements */
+h1, h2, h3, h4, h5, h6, 
+p, span, div, a, 
+button, input, textarea, select, label, 
+li, ul, ol, 
+td, th, table,
+.btn, .card, .modal, .navbar, .footer,
+.form-control, .input, .textarea, .select,
+.badge, .alert, .breadcrumbs,
+.menu, .dropdown, .tooltip, .collapse {
+    font-family: "Century Gothic", "CenturyGothic", "AppleGothic", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* DaisyUI component font override */
+.daisyui * {
+    font-family: "Century Gothic", "CenturyGothic", "AppleGothic", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Tailwind utility override */
+.font-sans {
+    font-family: "Century Gothic", "CenturyGothic", "AppleGothic", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Form elements specific override */
+.form-input, .form-textarea, .form-select, .form-multiselect {
+    font-family: "Century Gothic", "CenturyGothic", "AppleGothic", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Navigation and header elements */
+nav, header, .navbar {
+    font-family: "Century Gothic", "CenturyGothic", "AppleGothic", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+nav *, header *, .navbar * {
+    font-family: inherit !important;
+}

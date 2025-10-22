@@ -2,15 +2,17 @@
 @plugin "daisyui";
 
 @layer base {
-	/* Century Gothic Font Family - Global Font Setting */
+	/* Import Galano Grotesque Font */
+	@import url("/css/galano-font.css");
+
+	/* Galano Grotesque Font Family - Global Font Setting */
 	html,
 	body {
 		font-family:
-			"Century Gothic", "CenturyGothic", "AppleGothic", ui-sans-serif, system-ui,
-			sans-serif !important;
+			"Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
 	}
 
-	/* Ensure all elements inherit the Century Gothic font */
+	/* Ensure all elements inherit the Galano Grotesque font */
 	* {
 		font-family: inherit;
 	}
@@ -35,8 +37,7 @@
 	td,
 	th {
 		font-family:
-			"Century Gothic", "CenturyGothic", "AppleGothic", ui-sans-serif, system-ui,
-			sans-serif !important;
+			"Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
 	}
 }
 

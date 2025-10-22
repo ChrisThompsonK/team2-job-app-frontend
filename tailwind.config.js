@@ -15,7 +15,7 @@ export default {
         'dark-text': '#f1f5f9',
       },
       fontFamily: {
-        'sans': ['Century Gothic', 'CenturyGothic', 'AppleGothic', 'sans-serif'],
+        'sans': ['Galano Grotesque', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
     },
   },

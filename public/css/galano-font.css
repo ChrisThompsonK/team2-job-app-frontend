@@ -1,0 +1,203 @@
+/* Galano Grotesque Font Family Implementation */
+
+/* Regular Weight */
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueRegular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueItalic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Light Weight */
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueLight.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueLightItalic.otf') format('opentype');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Medium Weight */
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueMedium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueMediumItalic.otf') format('opentype');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* SemiBold Weight */
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueSemiBold.otf') format('opentype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueSemiBoldItalic.otf') format('opentype');
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Bold Weight */
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueBold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueBoldItalic.otf') format('opentype');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Extra Bold Weight */
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueExtraBold.otf') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueExtraBoldItalic.otf') format('opentype');
+    font-weight: 800;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Black Weight */
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueBlack.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueBlackItalic.otf') format('opentype');
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Global Font Application */
+html,
+body {
+    font-family: "Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Ensure all elements inherit the Galano Grotesque font */
+* {
+    font-family: inherit;
+}
+
+/* Explicit font family for common elements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+div,
+a,
+button,
+input,
+textarea,
+select,
+label,
+li,
+ul,
+ol,
+td,
+th,
+table,
+.btn,
+.card,
+.modal,
+.navbar,
+.footer,
+.form-control,
+.input,
+.textarea,
+.select,
+.badge,
+.alert,
+.breadcrumbs,
+.menu,
+.dropdown,
+.tooltip,
+.collapse {
+    font-family: "Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* DaisyUI component font override */
+.daisyui * {
+    font-family: "Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Tailwind utility override */
+.font-sans {
+    font-family: "Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Form elements specific override */
+.form-input,
+.form-textarea,
+.form-select,
+.form-multiselect {
+    font-family: "Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Navigation and header elements */
+nav,
+header,
+.navbar {
+    font-family: "Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+nav *,
+header *,
+.navbar * {
+    font-family: inherit !important;
+}
