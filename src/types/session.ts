@@ -3,13 +3,16 @@
  */
 
 import "express-session";
-import type { User } from "../models/user.js";
+import type { LegacyUser } from "../models/user.js";
 
 declare module "express-session" {
 	interface SessionData {
-		user?: User;
+		user?: LegacyUser;
 		isAuthenticated?: boolean;
 		loginTime?: Date;
 		redirectUrl?: string;
+		// Enhanced auth session data
+		betterAuthSession?: Record<string, unknown>;
+		betterAuthUser?: Record<string, unknown>;
 	}
 }

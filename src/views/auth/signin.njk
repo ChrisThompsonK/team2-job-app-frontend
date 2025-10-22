@@ -1,0 +1,343 @@
+{% extends "templates/layout.njk" %}
+
+{% block title %}Sign In - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-base-200 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    <div class="text-center">
+      <h2 class="text-3xl font-extrabold text-base-content">
+        Sign in to your account
+      </h2>
+      <p class="mt-2 text-sm text-base-content/70">
+        Or 
+        <a href="/auth/signup" class="font-medium text-primary hover:text-primary-focus">
+          create a new account
+        </a>
+      </p>
+    </div>
+
+    <!-- Error Alert -->
+    {% if error %}
+    <div class="alert alert-error">
+      <div class="flex-1">
+        <svg class="w-6 h-6 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <label>{{ error }}</label>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Success Alert -->
+    <div id="success-alert" class="alert alert-success hidden">
+      <div class="flex-1">
+        <svg class="w-6 h-6 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <label id="success-message"></label>
+      </div>
+    </div>
+
+    <form id="signin-form" class="mt-8 space-y-6" method="POST">
+      <div class="space-y-4">
+        <!-- Email Field -->
+        <div class="form-control">
+          <label class="label" for="email">
+            <span class="label-text">Email address</span>
+          </label>
+          <div class="relative">
+            <input 
+              id="email" 
+              name="email" 
+              type="email" 
+              autocomplete="email" 
+              required 
+              class="input input-bordered w-full pr-10"
+              placeholder="Enter your email"
+              value="{{ formData.email if formData else '' }}"
+            />
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+              <svg id="email-loading" class="hidden animate-spin h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <svg id="email-success" class="hidden h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <svg id="email-error" class="hidden h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+          </div>
+          <label class="label">
+            <span id="email-error-text" class="label-text-alt text-error hidden"></span>
+          </label>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-control">
+          <label class="label" for="password">
+            <span class="label-text">Password</span>
+          </label>
+          <div class="relative">
+            <input 
+              id="password" 
+              name="password" 
+              type="password" 
+              autocomplete="current-password" 
+              required 
+              class="input input-bordered w-full pr-10"
+              placeholder="Enter your password"
+            />
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+              <button 
+                type="button" 
+                id="toggle-password"
+                class="text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                <svg id="eye-open" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+                <svg id="eye-closed" class="hidden h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <label class="label">
+            <span id="password-error-text" class="label-text-alt text-error hidden"></span>
+          </label>
+        </div>
+
+        <!-- Remember Me & Forgot Password -->
+        <div class="flex items-center justify-between">
+          <div class="form-control">
+            <label class="cursor-pointer label justify-start">
+              <input type="checkbox" name="remember" class="checkbox checkbox-primary" />
+              <span class="label-text ml-2">Remember me</span>
+            </label>
+          </div>
+          <div class="text-sm">
+            <a href="/auth/forgot-password" class="font-medium text-primary hover:text-primary-focus">
+              Forgot your password?
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div>
+        <button 
+          type="submit" 
+          id="signin-button"
+          class="btn btn-primary w-full"
+        >
+          <span id="signin-button-text">Sign in</span>
+          <span id="signin-loading" class="hidden loading loading-spinner loading-sm"></span>
+        </button>
+      </div>
+
+      <!-- Social Sign In -->
+      <div class="mt-6">
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-base-200 text-base-content/70">Or continue with</span>
+          </div>
+        </div>
+
+        <div class="mt-6 grid grid-cols-2 gap-3">
+          <button 
+            type="button" 
+            class="btn btn-outline btn-sm"
+            onclick="signInWithProvider('github')"
+          >
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"></path>
+            </svg>
+            GitHub
+          </button>
+
+          <button 
+            type="button" 
+            class="btn btn-outline btn-sm"
+            onclick="signInWithProvider('google')"
+          >
+            <svg class="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Google
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Enhanced authentication JavaScript
+  const signinForm = document.getElementById('signin-form');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const signinButton = document.getElementById('signin-button');
+  const signinButtonText = document.getElementById('signin-button-text');
+  const signinLoading = document.getElementById('signin-loading');
+  const successAlert = document.getElementById('success-alert');
+  const successMessage = document.getElementById('success-message');
+
+  // Password visibility toggle
+  document.getElementById('toggle-password').addEventListener('click', function() {
+    const passwordField = document.getElementById('password');
+    const eyeOpen = document.getElementById('eye-open');
+    const eyeClosed = document.getElementById('eye-closed');
+    
+    if (passwordField.type === 'password') {
+      passwordField.type = 'text';
+      eyeOpen.classList.add('hidden');
+      eyeClosed.classList.remove('hidden');
+    } else {
+      passwordField.type = 'password';
+      eyeOpen.classList.remove('hidden');
+      eyeClosed.classList.add('hidden');
+    }
+  });
+
+  // Real-time email validation
+  let emailValidationTimeout;
+  emailInput.addEventListener('input', function() {
+    clearTimeout(emailValidationTimeout);
+    const email = this.value.trim();
+    
+    if (email.length === 0) {
+      clearEmailValidation();
+      return;
+    }
+
+    showEmailLoading();
+    
+    emailValidationTimeout = setTimeout(() => {
+      validateEmail(email);
+    }, 500);
+  });
+
+  function showEmailLoading() {
+    document.getElementById('email-loading').classList.remove('hidden');
+    document.getElementById('email-success').classList.add('hidden');
+    document.getElementById('email-error').classList.add('hidden');
+    document.getElementById('email-error-text').classList.add('hidden');
+  }
+
+  function clearEmailValidation() {
+    document.getElementById('email-loading').classList.add('hidden');
+    document.getElementById('email-success').classList.add('hidden');
+    document.getElementById('email-error').classList.add('hidden');
+    document.getElementById('email-error-text').classList.add('hidden');
+  }
+
+  function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!emailRegex.test(email)) {
+      showEmailError('Please enter a valid email address.');
+      return;
+    }
+
+    // Simulate API call for email validation
+    setTimeout(() => {
+      showEmailSuccess();
+    }, 300);
+  }
+
+  function showEmailSuccess() {
+    document.getElementById('email-loading').classList.add('hidden');
+    document.getElementById('email-success').classList.remove('hidden');
+    document.getElementById('email-error').classList.add('hidden');
+    document.getElementById('email-error-text').classList.add('hidden');
+  }
+
+  function showEmailError(message) {
+    document.getElementById('email-loading').classList.add('hidden');
+    document.getElementById('email-success').classList.add('hidden');
+    document.getElementById('email-error').classList.remove('hidden');
+    document.getElementById('email-error-text').textContent = message;
+    document.getElementById('email-error-text').classList.remove('hidden');
+  }
+
+  // Form submission
+  signinForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!email || !password) {
+      showError('Please fill in all fields.');
+      return;
+    }
+
+    try {
+      // Show loading state
+      signinButtonText.classList.add('hidden');
+      signinLoading.classList.remove('hidden');
+      signinButton.disabled = true;
+
+      // Simulate API call - replace with actual better-auth integration
+      const response = await fetch('/api/auth/sign-in', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        showSuccess('Successfully signed in! Redirecting...');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1500);
+      } else {
+        const error = await response.json();
+        showError(error.message || 'Sign in failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Sign in error:', error);
+      showError('An error occurred. Please try again.');
+    } finally {
+      // Reset loading state
+      signinButtonText.classList.remove('hidden');
+      signinLoading.classList.add('hidden');
+      signinButton.disabled = false;
+    }
+  });
+
+  // Social sign in
+  async function signInWithProvider(provider) {
+    try {
+      window.location.href = `/api/auth/sign-in/${provider}`;
+    } catch (error) {
+      console.error(`${provider} sign in error:`, error);
+      showError(`Failed to sign in with ${provider}. Please try again.`);
+    }
+  }
+
+  function showSuccess(message) {
+    successMessage.textContent = message;
+    successAlert.classList.remove('hidden');
+    setTimeout(() => {
+      successAlert.classList.add('hidden');
+    }, 5000);
+  }
+
+  function showError(message) {
+    // You can implement a custom error display here
+    alert(message);
+  }
+</script>
+{% endblock %}

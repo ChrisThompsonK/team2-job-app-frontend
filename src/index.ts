@@ -17,6 +17,7 @@ import "./types/session.js";
 import { APP_CONFIG, generateSessionSecret } from "./config/constants.js";
 import { AdminController } from "./controllers/admin-controller.js";
 import { ApplicationController } from "./controllers/application-controller.js";
+import { AuthController } from "./controllers/auth-controller.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
 import { UserController } from "./controllers/user-controller.js";
 import { requireAdmin, requireAuth, requireMember } from "./middleware/auth.js";
@@ -44,7 +45,9 @@ class App {
 	private applicationService: AxiosApplicationService;
 	private applicationController: ApplicationController;
 	private userController: UserController;
+	private authController: AuthController;
 	private upload: multer.Multer;
+	private initializationPromise: Promise<void>;
 
 	constructor(config: AppConfig) {
 		this.config = config;
@@ -66,6 +69,7 @@ class App {
 			this.jobRoleService
 		);
 		this.userController = new UserController();
+		this.authController = new AuthController();
 
 		// Configure multer for file uploads
 		this.upload = multer({
@@ -92,7 +96,11 @@ class App {
 			},
 		});
 
-		this.initialize();
+		this.initializationPromise = this.initialize();
+	}
+
+	public async waitForInitialization(): Promise<void> {
+		return this.initializationPromise;
 	}
 
 	private async initialize(): Promise<void> {
@@ -105,7 +113,9 @@ class App {
 	private async setupTemplating(): Promise<void> {
 		// Configure Nunjucks - Fix the views path to point to the correct location
 		// When running with tsx, __dirname points to src/, when compiled it points to dist/
-		const viewsPath = path.join(__dirname, "views");
+		const viewsPath = __dirname.includes('dist') 
+			? path.join(__dirname, "..", "src", "views")
+			: path.join(__dirname, "views");
 		console.log(`Templates path: ${viewsPath}`);
 
 		const env = nunjucks.configure(viewsPath, {
@@ -220,7 +230,27 @@ class App {
 	}
 
 	private setupRoutes(): void {
-		// Login routes
+		// Test route
+		this.server.get("/test", (_req: Request, res: Response) => {
+			res.json({ message: "Server is working!" });
+		});
+
+		// Enhanced Authentication routes
+		this.server.get("/auth/signin", this.authController.getSignIn);
+		this.server.post("/auth/signin", this.authController.postSignIn);
+		this.server.get("/auth/signup", this.authController.getSignUp);
+		this.server.post("/auth/signup", this.authController.postSignUp);
+		this.server.get(
+			"/auth/forgot-password",
+			this.authController.getForgotPassword
+		);
+		this.server.post(
+			"/auth/forgot-password",
+			this.authController.postForgotPassword
+		);
+		this.server.post("/auth/signout", this.authController.postSignOut);
+
+		// Legacy login routes (keep for backward compatibility)
 		this.server.get("/login", this.userController.getLoginPage);
 		this.server.post("/login", this.userController.postLogin);
 		this.server.post("/logout", this.userController.postLogout);
@@ -475,7 +505,28 @@ const appConfig: AppConfig = {
 };
 
 // Initialize and start the application
-export const app = new App(appConfig);
-// Note: The start() method is called automatically after async initialization
+const initializeApp = async () => {
+	const app = new App(appConfig);
+	// Wait for initialization to complete
+	await app.waitForInitialization();
+	return app;
+};
+
+// Handle unhandled promise rejections and exceptions
+process.on('unhandledRejection', (reason, promise) => {
+	console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+	process.exit(1);
+});
+
+process.on('uncaughtException', (error) => {
+	console.error('Uncaught Exception:', error);
+	process.exit(1);
+});
+
+// Start the app
+initializeApp().catch((error) => {
+	console.error("Failed to start application:", error);
+	process.exit(1);
+});
 
 export { App, type AppConfig };

@@ -4,7 +4,7 @@
 
 import type { Request, Response } from "express";
 import { APP_CONFIG } from "../config/constants.js";
-import type { User } from "../models/user.js";
+import type { LegacyUser } from "../models/user.js";
 
 export class UserController {
 	/**
@@ -78,7 +78,7 @@ export class UserController {
 		try {
 			// Simulate user data that would come from backend authentication
 			// In real implementation, this would validate credentials and get user_type from database
-			const user: User = {
+			const user: LegacyUser = {
 				username: username.trim(),
 				user_type: "Admin", // This would come from the backend API/database
 				email: `${username.trim()}@${APP_CONFIG.EMAIL_DOMAIN}`, // Mock email for demo

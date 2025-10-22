@@ -7,7 +7,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 ## 🚀 Features
 - TypeScript, ES Modules, Express, Nunjucks templating
 - Tailwind CSS 4, DaisyUI, Biome, Vitest
-- **User Authentication System** - Complete session-based authentication with login/logout and persistent sessions
+- **Enhanced Authentication System** - Modern auth with better-auth integration, OAuth providers, password reset, and professional UI
 - **Role-Based Access Control (RBAC)** - Granular permissions system:
   - **Admin Users**: Can create, edit, delete job roles, view applicants, and export data
   - **Regular Members**: Can apply for jobs and view job listings
@@ -38,7 +38,8 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── job-role-controller.ts        # Public job role operations (read-only)
 │   │   ├── admin-controller.ts           # Admin operations (create, update, delete)
 │   │   ├── application-controller.ts     # Job application submission and applicant viewing
-│   │   ├── user-controller.ts            # Authentication - login, logout, session management
+│   │   ├── user-controller.ts            # Legacy authentication - login, logout, session management
+│   │   ├── auth-controller.ts            # Enhanced authentication with better-auth integration
 │   │   └── *.test.ts                     # Controller unit tests
 │   ├── services/
 │   │   ├── job-role-service.ts           # JobRoleService interface
@@ -53,6 +54,10 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── application-request.ts        # Application submission models
 │   │   ├── applicant-display.ts          # Applicant listing and pagination models
 │   │   └── user.ts                       # User and authentication models
+│   ├── lib/
+│   │   ├── auth.ts                       # Better-auth configuration and setup
+│   │   ├── auth-client.ts                # Client-side authentication utilities
+│   │   └── better-auth-integration.ts    # Express integration for better-auth
 │   ├── types/
 │   │   └── session.ts                    # Express session type extensions
 │   ├── middleware/
@@ -77,7 +82,11 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │       ├── application-success.njk       # Application confirmation page
 │       ├── about.njk                     # About us page
 │       ├── contact.njk                   # Contact page
-│       ├── login.njk                     # User login form
+│       ├── login.njk                     # Legacy user login form
+│       ├── auth/                         # Enhanced authentication pages
+│       │   ├── signin.njk                # Modern sign-in with real-time validation
+│       │   ├── signup.njk                # User registration with password strength
+│       │   └── forgot-password.njk       # Password recovery flow
 │       ├── index.njk                     # Homepage
 │       ├── error.njk                     # Error page
 │       └── templates/                    # Layout & partials
@@ -134,6 +143,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - **Node.js**: Runtime environment
 - **TypeScript**: Type-safe JavaScript
 - **Express**: Fast web framework for Node.js
+- **Better Auth**: Modern authentication library with OAuth, password reset, and enhanced security
 - **Express Session**: Secure session middleware for persistent authentication
 - **Nunjucks**: Rich templating engine with inheritance, async, and more
 - **Tailwind CSS 4**: Utility-first CSS framework (latest version)
@@ -147,17 +157,31 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 
 ---
 
-## 🔐 Authentication & Authorization
+## 🔐 Enhanced Authentication & Authorization
 
-### User Authentication
-The application includes a complete session-based authentication system:
+### Modern Authentication System
+The application features a comprehensive authentication system built with better-auth integration:
 
-- **Login/Logout**: Simple username/password authentication with session management
-- **Session Persistence**: 24-hour session lifespan with secure HTTP-only cookies
-- **Auto-Redirect**: Users are redirected to their originally requested page after login
+#### Sign In & Sign Up
+- **Enhanced Sign In**: Modern UI with real-time validation, password visibility toggle, and "Remember Me" option
+- **User Registration**: Full registration flow with password strength indicators and email verification
+- **Social Authentication**: GitHub and Google OAuth integration (configurable via environment variables)
+- **Forgot Password**: Complete password recovery workflow with secure token-based reset links
+
+#### Advanced Features
+- **Real-time Validation**: Client-side form validation with visual feedback and error messages
+- **Password Security**: Strength meter, complexity requirements, and secure hashing
+- **Email Verification**: Optional email verification for enhanced account security
+- **Session Management**: Secure session handling with configurable expiration and renewal
+- **Auto-Redirect**: Users are redirected to their originally requested page after authentication
+- **Responsive Design**: Mobile-first authentication forms optimized for all devices
+
+#### UI/UX Enhancements
+- **Professional Interface**: Clean, modern authentication pages with DaisyUI components
+- **Visual Feedback**: Loading states, success/error indicators, and smooth transitions
+- **Accessibility**: Full keyboard navigation, ARIA labels, and screen reader support
 - **Personalized Account Dropdown**: Top-right corner account menu with profile picture and user details
-- **Dynamic UI**: Header shows sign-in button for guests, personalized account dropdown for authenticated users
-- **Mobile Account Integration**: Responsive design with mobile-optimized account access
+- **Dynamic Header**: Smart header that shows sign-in/sign-up buttons for guests, account dropdown for authenticated users
 
 ### Role-Based Access Control (RBAC)
 
