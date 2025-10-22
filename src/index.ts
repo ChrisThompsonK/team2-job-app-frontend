@@ -225,13 +225,9 @@ class App {
 	}
 
 	private setupRoutes(): void {
-		// Authentication routes (new backend API integration)
+		// Authentication routes
 		this.server.get("/login", this.authController.getLogin);
 		this.server.get("/register", this.authController.getRegister);
-
-		// Legacy login routes (old implementation)
-		// this.server.get("/login", this.userController.getLoginPage);
-		this.server.post("/login-legacy", this.userController.postLogin);
 		this.server.post("/logout", this.userController.postLogout);
 
 		// Health check endpoint to test backend connectivity
