@@ -3,8 +3,8 @@
  */
 
 import "express-session";
-import type { User } from "../models/user.js";
 import type { AuthUser } from "../models/auth-response.js";
+import type { User } from "../models/user.js";
 
 declare module "express-session" {
 	interface SessionData {
