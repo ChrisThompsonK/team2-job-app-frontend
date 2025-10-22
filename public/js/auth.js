@@ -1,51 +1,11 @@
 /**
- * Client-side authentication handling for login and registration forms
+ * Client-side authentication UI enhancements
+ * Forms submit naturally to Express server routes
  */
 
-// API configuration
-const AUTH_API_BASE_URL = "http://localhost:8000/api/auth";
-
-/**
- * Display error messages in the UI
- */
-function displayError(formId, errors) {
-  const form = document.getElementById(formId);
-  if (!form) return;
-
-  // Remove any existing error display
-  const existingError = form.querySelector(".auth-error-display");
-  if (existingError) {
-    existingError.remove();
-  }
-
-  // Create error display element
-  const errorDiv = document.createElement("div");
-  errorDiv.className = "auth-error-display bg-red-50 border-l-4 border-red-500 p-4 rounded-lg mb-4";
-
-  if (Array.isArray(errors) && errors.length > 0) {
-    const errorList = document.createElement("ul");
-    errorList.className = "list-disc list-inside text-sm text-red-700 space-y-1";
-    errors.forEach((error) => {
-      const li = document.createElement("li");
-      li.textContent = error;
-      errorList.appendChild(li);
-    });
-    errorDiv.appendChild(errorList);
-  } else {
-    const errorText = document.createElement("p");
-    errorText.className = "text-sm text-red-700";
-    errorText.textContent = typeof errors === "string" ? errors : "An error occurred. Please try again.";
-    errorDiv.appendChild(errorText);
-  }
-
-  // Insert error before the submit button
-  const submitBtn = form.querySelector('button[type="submit"]');
-  if (submitBtn) {
-    submitBtn.parentNode.insertBefore(errorDiv, submitBtn);
-  } else {
-    form.appendChild(errorDiv);
-  }
-}
+// Note: This file only handles UI enhancements.
+// Form submission is handled by the server via regular form POST,
+// following the same pattern as other forms in the application.
 
 /**
  * Set loading state for form submission

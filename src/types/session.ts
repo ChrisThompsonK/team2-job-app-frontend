@@ -4,11 +4,13 @@
 
 import "express-session";
 import type { User } from "../models/user.js";
+import type { AuthUser } from "../models/auth-response.js";
 
 declare module "express-session" {
 	interface SessionData {
-		user?: User;
+		user?: User | AuthUser;
 		isAuthenticated?: boolean;
 		loginTime?: Date;
+		loginSuccess?: string;
 	}
 }

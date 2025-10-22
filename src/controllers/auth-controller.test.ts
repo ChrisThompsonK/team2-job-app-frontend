@@ -29,13 +29,10 @@ describe("AuthController", () => {
 	});
 
 	describe("getLogin", () => {
-		it("should render login page when user is not authenticated", async () => {
+		it("should render login page when user is not authenticated", () => {
 			mockRequest.session = {} as any;
 
-			await controller.getLogin(
-				mockRequest as Request,
-				mockResponse as Response
-			);
+			controller.getLogin(mockRequest as Request, mockResponse as Response);
 
 			expect(mockResponse.render).toHaveBeenCalledWith("login.njk", {
 				title: "Login",
@@ -43,19 +40,16 @@ describe("AuthController", () => {
 			expect(mockResponse.redirect).not.toHaveBeenCalled();
 		});
 
-		it("should redirect to home if user is already authenticated via isAuthenticated flag", async () => {
+		it("should redirect to home if user is already authenticated via isAuthenticated flag", () => {
 			mockRequest.session = { isAuthenticated: true } as any;
 
-			await controller.getLogin(
-				mockRequest as Request,
-				mockResponse as Response
-			);
+			controller.getLogin(mockRequest as Request, mockResponse as Response);
 
 			expect(mockResponse.redirect).toHaveBeenCalledWith("/");
 			expect(mockResponse.render).not.toHaveBeenCalled();
 		});
 
-		it("should redirect to home if user session exists", async () => {
+		it("should redirect to home if user session exists", () => {
 			mockRequest.session = {
 				user: {
 					userId: "123",
@@ -66,16 +60,13 @@ describe("AuthController", () => {
 				},
 			} as any;
 
-			await controller.getLogin(
-				mockRequest as Request,
-				mockResponse as Response
-			);
+			controller.getLogin(mockRequest as Request, mockResponse as Response);
 
 			expect(mockResponse.redirect).toHaveBeenCalledWith("/");
 			expect(mockResponse.render).not.toHaveBeenCalled();
 		});
 
-		it("should render error page on exception", async () => {
+		it("should render error page on exception", () => {
 			const renderError = new Error("Render error");
 			let callCount = 0;
 			mockResponse.render = vi.fn().mockImplementation(() => {
@@ -89,10 +80,7 @@ describe("AuthController", () => {
 				.spyOn(console, "error")
 				.mockImplementation(() => {});
 
-			await controller.getLogin(
-				mockRequest as Request,
-				mockResponse as Response
-			);
+			controller.getLogin(mockRequest as Request, mockResponse as Response);
 
 			expect(consoleErrorSpy).toHaveBeenCalledWith(
 				"Error in AuthController.getLogin:",
@@ -108,13 +96,10 @@ describe("AuthController", () => {
 	});
 
 	describe("getRegister", () => {
-		it("should render register page when user is not authenticated", async () => {
+		it("should render register page when user is not authenticated", () => {
 			mockRequest.session = {} as any;
 
-			await controller.getRegister(
-				mockRequest as Request,
-				mockResponse as Response
-			);
+			controller.getRegister(mockRequest as Request, mockResponse as Response);
 
 			expect(mockResponse.render).toHaveBeenCalledWith("register.njk", {
 				title: "Register",
@@ -122,19 +107,16 @@ describe("AuthController", () => {
 			expect(mockResponse.redirect).not.toHaveBeenCalled();
 		});
 
-		it("should redirect to home if user is already authenticated via isAuthenticated flag", async () => {
+		it("should redirect to home if user is already authenticated via isAuthenticated flag", () => {
 			mockRequest.session = { isAuthenticated: true } as any;
 
-			await controller.getRegister(
-				mockRequest as Request,
-				mockResponse as Response
-			);
+			controller.getRegister(mockRequest as Request, mockResponse as Response);
 
 			expect(mockResponse.redirect).toHaveBeenCalledWith("/");
 			expect(mockResponse.render).not.toHaveBeenCalled();
 		});
 
-		it("should redirect to home if user session exists", async () => {
+		it("should redirect to home if user session exists", () => {
 			mockRequest.session = {
 				user: {
 					userId: "123",
@@ -145,16 +127,13 @@ describe("AuthController", () => {
 				},
 			} as any;
 
-			await controller.getRegister(
-				mockRequest as Request,
-				mockResponse as Response
-			);
+			controller.getRegister(mockRequest as Request, mockResponse as Response);
 
 			expect(mockResponse.redirect).toHaveBeenCalledWith("/");
 			expect(mockResponse.render).not.toHaveBeenCalled();
 		});
 
-		it("should render error page on exception", async () => {
+		it("should render error page on exception", () => {
 			const renderError = new Error("Render error");
 			let callCount = 0;
 			mockResponse.render = vi.fn().mockImplementation(() => {
@@ -168,10 +147,7 @@ describe("AuthController", () => {
 				.spyOn(console, "error")
 				.mockImplementation(() => {});
 
-			await controller.getRegister(
-				mockRequest as Request,
-				mockResponse as Response
-			);
+			controller.getRegister(mockRequest as Request, mockResponse as Response);
 
 			expect(consoleErrorSpy).toHaveBeenCalledWith(
 				"Error in AuthController.getRegister:",

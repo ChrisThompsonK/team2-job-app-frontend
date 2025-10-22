@@ -227,7 +227,9 @@ class App {
 	private setupRoutes(): void {
 		// Authentication routes
 		this.server.get("/login", this.authController.getLogin);
+		this.server.post("/login", this.authController.postLogin);
 		this.server.get("/register", this.authController.getRegister);
+		this.server.post("/register", this.authController.postRegister);
 		this.server.post("/logout", this.userController.postLogout);
 
 		// Health check endpoint to test backend connectivity
