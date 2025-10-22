@@ -18,6 +18,7 @@ describe("UserController", () => {
 
 		mockRequest = {
 			body: {},
+			query: {},
 			// biome-ignore lint/suspicious/noExplicitAny: Mock object for testing
 			session: mockSession as any,
 		};
@@ -165,7 +166,9 @@ describe("UserController", () => {
 
 			controller.getLoginPage(mockRequest as Request, mockResponse as Response);
 
-			expect(mockResponse.render).toHaveBeenCalledWith("login.njk");
+			expect(mockResponse.render).toHaveBeenCalledWith("login.njk", {
+				error: undefined,
+			});
 		});
 	});
 });

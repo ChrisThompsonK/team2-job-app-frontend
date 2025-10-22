@@ -10,5 +10,6 @@ declare module "express-session" {
 		user?: User;
 		isAuthenticated?: boolean;
 		loginTime?: Date;
+		redirectUrl?: string;
 	}
 }

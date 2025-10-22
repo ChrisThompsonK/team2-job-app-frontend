@@ -35,8 +35,8 @@
                         {% endif %}
                     </div>
                     
-                    <!-- Admin Action Buttons -->
-                    <!-- TODO: Add admin role check here when backend auth is implemented -->
+                    <!-- Admin Action Buttons - Only visible for admin users -->
+                    {% if isAuthenticated and user and user.role === "Admin" %}
                     <div class="flex flex-wrap gap-3">
                         <a href="/admin/job-roles/new" class="bg-green-600 text-white font-semibold py-3 px-6 rounded-2xl hover:bg-green-700 transition-all duration-200 flex items-center gap-2 shadow-lg">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,6 +51,7 @@
                             Generate Report
                         </a>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -290,13 +291,15 @@
                                 </svg>
                                 Details
                             </a>
+                            {% if isAuthenticated and user and user.role === "Admin" %}
                             <a href="/job-roles/{{ role.jobRoleId }}/applicants" class="flex-1 bg-white border-2 border-purple-600 text-purple-600 font-medium py-2 px-3 rounded-lg hover:bg-purple-50 transition-colors duration-200 flex items-center justify-center text-sm">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
                                 Applicants
                             </a>
-                            {% if role.status and role.status | lower == 'open' %}
+                            {% endif %}
+                            {% if isAuthenticated and user and user.role === "User" and role.status and role.status | lower == 'open' %}
                                 <a href="/job-roles/{{ role.jobRoleId }}/apply" class="flex-1 bg-gradient-to-r from-blue-600 to-green-600 text-white font-medium py-2 px-3 rounded-lg hover:from-blue-700 hover:to-green-700 transition-colors duration-200 flex items-center justify-center text-sm">
                                     Apply Now
                                     <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -305,11 +308,13 @@
                                 </a>
                             {% endif %}
                         </div>
-                        <!-- Admin Edit Button (TODO: Add admin role check when backend auth is implemented) -->
+                        <!-- Admin Edit Button - Only visible for admin users -->
+                        {% if isAuthenticated and user and user.role === "Admin" %}
                         <a href="/admin/job-roles/{{ role.jobRoleId }}/edit" class="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white font-medium py-2 px-3 rounded-lg hover:from-blue-700 hover:to-green-700 transition-colors duration-200 flex items-center justify-center text-sm">
                             <span class="text-xl mr-2">📝</span>
                             Edit Job Role
                         </a>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}

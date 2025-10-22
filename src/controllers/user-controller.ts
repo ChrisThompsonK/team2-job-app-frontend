@@ -20,7 +20,16 @@ export class UserController {
 			res.redirect("/");
 			return;
 		}
-		res.render("login.njk");
+
+		// Handle authentication error messages
+		let errorMessage = "";
+		if (req.query["error"] === "auth_required") {
+			errorMessage = "Please log in to access that page.";
+		}
+
+		res.render("login.njk", {
+			error: errorMessage || undefined,
+		});
 	};
 
 	/**
@@ -80,8 +89,10 @@ export class UserController {
 			req.session["isAuthenticated"] = true;
 			req.session["loginTime"] = new Date();
 
-			// Redirect to home page after successful login
-			res.redirect("/");
+			// Redirect to original URL or home page after successful login
+			const redirectUrl = req.session["redirectUrl"] || "/";
+			delete req.session["redirectUrl"]; // Clear redirect URL
+			res.redirect(redirectUrl);
 		} catch (error) {
 			console.error("Error in UserController.postLogin:", error);
 			res.render("login.njk", {

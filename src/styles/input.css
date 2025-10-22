@@ -523,3 +523,68 @@ button:not(.text-size-btn):not(#dark-mode-toggle):not(#simple-dark-toggle) {
 }
 
 /* Custom dark mode and nav overrides moved to public/css/overrides.css to avoid Tailwind pruning */
+
+/* Account Dropdown Animations and Enhancements */
+#account-dropdown-menu {
+	opacity: 0;
+	transform: translateY(-10px) scale(0.95);
+	transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+	pointer-events: none;
+}
+
+#account-dropdown-menu:not(.hidden) {
+	opacity: 1;
+	transform: translateY(0) scale(1);
+	pointer-events: auto;
+}
+
+/* Profile Picture Gradient Animation */
+.account-profile-pic {
+	background: linear-gradient(135deg, #3b82f6, #10b981);
+	background-size: 200% 200%;
+	animation: gradientShift 3s ease-in-out infinite alternate;
+}
+
+@keyframes gradientShift {
+	0% {
+		background-position: 0% 50%;
+	}
+	100% {
+		background-position: 100% 50%;
+	}
+}
+
+/* Enhanced hover effects for dropdown items */
+#account-dropdown-menu [role="menuitem"]:hover {
+	transform: translateX(4px);
+	transition: transform 0.15s ease-out;
+}
+
+/* Mobile account button pulse animation */
+#mobile-account-btn:hover .account-profile-pic {
+	animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+	0%, 100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.05);
+	}
+}
+
+/* Dark mode support for account dropdown */
+.dark-mode #account-dropdown-menu {
+	background: #1e293b !important;
+	border-color: #334155 !important;
+	box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dark-mode #account-dropdown-menu [role="menuitem"] {
+	color: #f1f5f9 !important;
+}
+
+.dark-mode #account-dropdown-menu [role="menuitem"]:hover {
+	background: #334155 !important;
+}

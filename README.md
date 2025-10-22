@@ -7,20 +7,27 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 ## 🚀 Features
 - TypeScript, ES Modules, Express, Nunjucks templating
 - Tailwind CSS 4, DaisyUI, Biome, Vitest
+- **User Authentication System** - Complete session-based authentication with login/logout and persistent sessions
+- **Role-Based Access Control (RBAC)** - Granular permissions system:
+  - **Admin Users**: Can create, edit, delete job roles, view applicants, and export data
+  - **Regular Members**: Can apply for jobs and view job listings
+  - **Unauthenticated Users**: Read-only access to job listings
 - Modern homepage UI with animated backgrounds and stat cards
 - Job roles listing, details, and application workflow
   - **Status Badges**: Each job card now displays a badge indicating if the job is Open or Closed
-  - **Conditional Apply Button**: The "Apply Now" button is only shown for jobs with status Open
+  - **Conditional Apply Button**: The "Apply Now" button is only shown for authenticated members on Open jobs
 - **Complete Application System** - Full application submission with file upload, validation, and error handling
-- **Applicant Management** - View and manage job applicants with responsive table, pagination, and filtering
+- **Applicant Management** - View and manage job applicants with responsive table, pagination, and filtering (Admin only)
 - **Pagination System** - Efficient browsing with page controls, ellipsis navigation, and loading states
-- **Admin job role creation** - Full CRUD functionality to create and save job roles to database
-- **CSV Export** - Generate comprehensive reports of all job roles in CSV format for stakeholder distribution
+- **Admin job role creation** - Full CRUD functionality to create and save job roles to database (Admin only)
+- **CSV Export** - Generate comprehensive reports of all job roles in CSV format for stakeholder distribution (Admin only)
 - Backend API integration via Axios for data persistence
 - Kainos brand theme, unified logo system
 - Dark mode (opt-in, dual toggles, persistent via localStorage; light theme is default) with a minimal header/link override (`public/css/overrides.css`)
-- Accessibility: skip links, text size, ARIA, keyboard navigation
+- **Accessibility**: skip links, text size, ARIA, keyboard navigation
 - **Accessible Mobile Navigation**: Off‑canvas mobile menu moved outside header stacking context for reliable overlay, includes focus trapping, ESC/backdrop close, body scroll lock, proper `role="dialog"` + `aria-modal` semantics
+- **Personalized Account Dropdown**: Interactive dropdown menu with animated profile picture, role-based menu items, and smooth transitions
+- **Enhanced Mobile Experience**: Dedicated mobile account button integration with comprehensive mobile menu
 
 ## 📦 Project Structure
 ```
@@ -47,6 +54,9 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   └── user.ts                       # User and authentication models
 │   ├── types/
 │   │   └── session.ts                    # Express session type extensions
+│   ├── middleware/
+│   │   ├── auth.ts                       # Authentication and authorization middleware
+│   │   └── view-context.ts               # Global view context middleware for auth data
 │   ├── utils/
 │   │   ├── job-role-validator.ts         # Comprehensive validation logic
 │   │   ├── job-role-validation-constants.ts  # Valid options for dropdowns
@@ -73,7 +83,9 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── styles.css                    # Compiled Tailwind + DaisyUI output
 │   │   └── overrides.css                 # Post-build dark mode & nav override rules
 │   ├── js/
-│   │   └── accessibility.js              # Client-side scripts
+│   │   ├── accessibility.js              # Client-side accessibility features
+│   │   ├── pagination.js                 # Pagination interaction handling
+│   │   └── account-dropdown.js           # Account dropdown menu interactions
 │   └── *.png                             # Static assets
 ├── dist/                                  # Compiled TypeScript output
 ├── package.json
@@ -129,6 +141,49 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - **tsx**: TypeScript execution engine
 - **ES Modules**: Modern module system
 - **Biome**: Fast formatter, linter, and import organizer
+
+---
+
+## 🔐 Authentication & Authorization
+
+### User Authentication
+The application includes a complete session-based authentication system:
+
+- **Login/Logout**: Simple username/password authentication with session management
+- **Session Persistence**: 24-hour session lifespan with secure HTTP-only cookies
+- **Auto-Redirect**: Users are redirected to their originally requested page after login
+- **Personalized Account Dropdown**: Top-right corner account menu with profile picture and user details
+- **Dynamic UI**: Header shows sign-in button for guests, personalized account dropdown for authenticated users
+- **Mobile Account Integration**: Responsive design with mobile-optimized account access
+
+### Role-Based Access Control (RBAC)
+
+#### Admin Users (`user.role === "Admin"`)
+- **Full CRUD Access**: Create, edit, and delete job roles
+- **Applicant Management**: View all job applicants and their details
+- **Data Export**: Generate and download CSV reports of job roles
+- **Admin Navigation**: Access to admin-specific pages and functions
+
+#### Regular Members (`user.role === "User"`)
+- **Job Applications**: Apply to open job positions with CV upload
+- **Profile Access**: Personal application history and status tracking
+- **Read Access**: View all public job listings and details
+
+#### Unauthenticated Users
+- **Read-Only Access**: Browse job listings and view job details
+- **Application Blocked**: Must sign in to apply for positions
+- **Admin Blocked**: No access to admin functions or applicant data
+
+### Protected Routes
+- **Admin Routes**: `/admin/*`, job creation/editing, applicant viewing, CSV export
+- **Member Routes**: Job application submissions (`/job-roles/:id/apply`)
+- **Public Routes**: Job listings, job details, login/logout pages
+
+### Security Features
+- **Middleware Protection**: Route-level authentication and authorization checks
+- **Session Security**: Secure session cookies with HTTP-only flag
+- **Input Validation**: Server-side validation of all user inputs
+- **XSS Protection**: Nunjucks auto-escaping enabled by default
 
 ## 🎨 Icon System (Lucide)
 

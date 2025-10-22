@@ -19,6 +19,8 @@ import { AdminController } from "./controllers/admin-controller.js";
 import { ApplicationController } from "./controllers/application-controller.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
 import { UserController } from "./controllers/user-controller.js";
+import { requireAdmin, requireAuth, requireMember } from "./middleware/auth.js";
+import { addAuthContextToViews } from "./middleware/view-context.js";
 import { AxiosApplicationService } from "./services/axios-application-service.js";
 import { AxiosJobRoleService } from "./services/axios-job-role-service.js";
 import { JobRoleValidator } from "./utils/job-role-validator.js";
@@ -209,12 +211,8 @@ class App {
 		// Add URL-encoded parsing middleware
 		this.server.use(express.urlencoded({ extended: true }));
 
-		// Middleware to make user session available to all views
-		this.server.use((req, res, next) => {
-			res.locals["user"] = req.session["user"] || null;
-			res.locals["isAuthenticated"] = req.session["isAuthenticated"] || false;
-			next();
-		});
+		// Middleware to add authentication context to all views
+		this.server.use(addAuthContextToViews);
 
 		// Serve static files from public directory
 		const publicPath = path.join(__dirname, "..", "public");
@@ -290,47 +288,73 @@ class App {
 		this.server.get("/jobs/search", this.jobRoleController.searchJobRoles);
 		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
 
-		// Delete endpoints (both AJAX and form submission)
-		this.server.delete("/job-roles/:id", this.jobRoleController.deleteJobRole);
+		// Delete endpoints (both AJAX and form submission) - admin only
+		this.server.delete(
+			"/job-roles/:id",
+			requireAuth,
+			requireAdmin,
+			this.jobRoleController.deleteJobRole
+		);
 		this.server.post(
 			"/job-roles/:id/delete",
+			requireAuth,
+			requireAdmin,
 			this.jobRoleController.deleteJobRoleForm
 		);
 
-		// Admin endpoints (job role creation and editing)
+		// Admin endpoints (job role creation and editing) - admin only
 		this.server.get(
 			"/admin/job-roles/new",
+			requireAuth,
+			requireAdmin,
 			this.adminController.getCreateJobRole
 		);
-		// Export endpoint (must come before :id routes)
+		// Export endpoint (must come before :id routes) - admin only
 		this.server.get(
 			"/admin/job-roles/export",
+			requireAuth,
+			requireAdmin,
 			this.adminController.exportJobRoles
 		);
-		this.server.post("/admin/job-roles", this.adminController.createJobRole);
+		this.server.post(
+			"/admin/job-roles",
+			requireAuth,
+			requireAdmin,
+			this.adminController.createJobRole
+		);
 		this.server.get(
 			"/admin/job-roles/:id/edit",
+			requireAuth,
+			requireAdmin,
 			this.adminController.getEditJobRole
 		);
 		this.server.post(
 			"/admin/job-roles/:id",
+			requireAuth,
+			requireAdmin,
 			this.adminController.updateJobRole
 		);
 
-		// Application endpoints
+		// Application endpoints - members only
 		this.server.get(
 			"/job-roles/:id/apply",
+			requireAuth,
+			requireMember,
 			this.applicationController.getApplicationForm
 		);
 		this.server.post(
 			"/job-roles/:id/apply",
+			requireAuth,
+			requireMember,
 			this.upload.single("cv"),
 			this.applicationController.submitApplication
 		);
 
-		// View applicants endpoint
+		// View applicants endpoint - admin only
 		this.server.get(
 			"/job-roles/:id/applicants",
+			requireAuth,
+			requireAdmin,
 			this.applicationController.getApplicants
 		);
 

@@ -218,22 +218,31 @@
                     Back to All Roles
                 </a>
                 
-                {# Admin button to view applicants #}
+                {# Admin button to view applicants - Only visible for admin users #}
+                {% if isAuthenticated and user and user.role === "Admin" %}
                 <a href="/job-roles/{{ jobRole.jobRoleId }}/applicants" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:from-purple-700 hover:to-indigo-700 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
                     <span class="icon mr-3 text-xl">👥</span>
                     View Applicants
                 </a>
+                {% endif %}
                 
-                {# Show Apply button only if role is active and has positions available #}
-                {% if jobRole.numberOfOpenPositions > 0 and jobRole.status|lower == 'active' %}
-                <a href="/job-roles/{{ jobRole.jobRoleId }}/apply" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-green-600 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-green-700 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
-                    <span class="icon mr-3 text-xl">📧</span>
-                    Apply Now
-                </a>
-                {% else %}
-                <div class="inline-flex items-center px-8 py-4 bg-gray-300 text-gray-600 font-bold rounded-xl shadow-lg cursor-not-allowed opacity-75">
-                    <span class="icon mr-3 text-xl">🚫</span>
-                    Applications Closed
+                {# Show Apply button only for members if role is active and has positions available #}
+                {% if isAuthenticated and user and user.role === "User" %}
+                    {% if jobRole.numberOfOpenPositions > 0 and jobRole.status|lower == 'active' %}
+                    <a href="/job-roles/{{ jobRole.jobRoleId }}/apply" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-green-600 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-green-700 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+                        <span class="icon mr-3 text-xl">📧</span>
+                        Apply Now
+                    </a>
+                    {% else %}
+                    <div class="inline-flex items-center px-8 py-4 bg-gray-300 text-gray-600 font-bold rounded-xl shadow-lg cursor-not-allowed opacity-75">
+                        <span class="icon mr-3 text-xl">🚫</span>
+                        Applications Closed
+                    </div>
+                    {% endif %}
+                {% elif not isAuthenticated %}
+                <div class="inline-flex items-center px-8 py-4 bg-blue-100 text-blue-600 font-bold rounded-xl shadow-lg border border-blue-300">
+                    <span class="icon mr-3 text-xl">🔒</span>
+                    Please <a href="/login" class="underline hover:no-underline">sign in</a> to apply
                 </div>
                 {% endif %}
             </div>
