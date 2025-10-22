@@ -29,6 +29,9 @@ interface BackendApplicationResponse {
 	applicantEmail: string;
 	coverLetter?: string;
 	resumeUrl?: string;
+	hasCv?: boolean;
+	cvFileName?: string;
+	cvMimeType?: string;
 	status: string;
 	submittedAt: string;
 	updatedAt?: string;
@@ -222,6 +225,12 @@ export class AxiosApplicationService implements ApplicationService {
 					if (app.resumeUrl) {
 						applicant.resumeUrl = app.resumeUrl;
 					}
+					if (app.hasCv !== undefined) {
+						applicant.hasCv = app.hasCv;
+					}
+					if (app.cvFileName) {
+						applicant.cvFileName = app.cvFileName;
+					}
 					if (app.updatedAt) {
 						applicant.updatedAt = app.updatedAt;
 					}
@@ -297,6 +306,72 @@ export class AxiosApplicationService implements ApplicationService {
 			}
 
 			throw new Error("An unexpected error occurred while fetching applicants");
+		}
+	}
+
+	/**
+	 * Downloads a CV file for a specific application
+	 */
+	async downloadApplicationCv(applicationId: number): Promise<{
+		buffer: Buffer;
+		fileName: string;
+		mimeType: string;
+	}> {
+		try {
+			const response = await this.axiosInstance.get(
+				`/api/applications/${applicationId}/cv`,
+				{
+					responseType: "arraybuffer",
+				}
+			);
+
+			// Get file name from Content-Disposition header or use default
+			const contentDisposition = response.headers["content-disposition"];
+			let fileName = `cv-application-${applicationId}.pdf`;
+
+			if (contentDisposition) {
+				const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
+				if (fileNameMatch?.[1]) {
+					fileName = fileNameMatch[1];
+				}
+			}
+
+			const mimeType =
+				response.headers["content-type"] || "application/octet-stream";
+
+			return {
+				buffer: Buffer.from(response.data),
+				fileName,
+				mimeType,
+			};
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				console.error(
+					"Failed to download CV:",
+					error.response?.status,
+					error.response?.data || error.message,
+					error.code
+				);
+
+				if (error.response?.status === 404) {
+					throw new Error("CV not found for this application");
+				}
+
+				if (error.response?.status === 500) {
+					throw new Error("Backend server error while downloading CV");
+				}
+
+				if (error.code === "ECONNREFUSED") {
+					throw new Error(
+						"Unable to connect to the backend API for CV download"
+					);
+				}
+
+				throw new Error(
+					`Failed to download CV: ${error.response?.status || error.code || "Unknown error"}`
+				);
+			}
+			throw error;
 		}
 	}
 }

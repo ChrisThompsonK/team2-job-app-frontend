@@ -288,4 +288,52 @@ export class ApplicationController {
 			});
 		}
 	};
+
+	/**
+	 * GET /applications/:id/cv
+	 * Downloads CV file for a specific application (proxy to backend)
+	 */
+	public downloadCv = async (req: Request, res: Response): Promise<void> => {
+		try {
+			const id = req.params["id"];
+			const applicationId = validateJobRoleId(id); // Reusing validation for numeric IDs
+
+			if (applicationId === null) {
+				res.status(400).render("error.njk", {
+					message: "Invalid application ID provided.",
+				});
+				return;
+			}
+
+			// Download CV from backend
+			const cvData =
+				await this.applicationService.downloadApplicationCv(applicationId);
+
+			// Set response headers for file download
+			res.setHeader("Content-Type", cvData.mimeType);
+			res.setHeader(
+				"Content-Disposition",
+				`attachment; filename="${cvData.fileName}"`
+			);
+			res.setHeader("Content-Length", cvData.buffer.length);
+
+			// Send the file buffer
+			res.send(cvData.buffer);
+		} catch (error) {
+			console.error("Error in ApplicationController.downloadCv:", error);
+
+			let errorMessage =
+				"Sorry, we couldn't download the CV at this time. Please try again later.";
+
+			if (error instanceof Error) {
+				if (error.message.includes("CV not found")) {
+					res.status(404).send("CV not found for this application");
+					return;
+				}
+				errorMessage = error.message;
+			}
+
+			res.status(500).send(errorMessage);
+		}
+	};
 }

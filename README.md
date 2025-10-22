@@ -8,6 +8,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - TypeScript, ES Modules, Express, Nunjucks templating
 - Tailwind CSS 4, DaisyUI, Biome, Vitest
 - Modern homepage UI with animated backgrounds and stat cards
+- **About & Contact Pages** - Professional informational pages with company mission, values, team stats, and contact information
 - Job roles listing, details, and application workflow
   - **Status Badges**: Each job card now displays a badge indicating if the job is Open or Closed
   - **Conditional Apply Button**: The "Apply Now" button is only shown for jobs with status Open
@@ -64,6 +65,8 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │       ├── job-application-form.njk      # Job application submission form
 │       ├── job-applicants-list.njk       # Applicants management page
 │       ├── application-success.njk       # Application confirmation page
+│       ├── about.njk                     # About us page
+│       ├── contact.njk                   # Contact page
 │       ├── login.njk                     # User login form
 │       ├── index.njk                     # Homepage
 │       ├── error.njk                     # Error page
@@ -190,6 +193,8 @@ The application includes a comprehensive job roles management system with separa
 
 ### Public Routes
 - **`/`**: Enhanced home page with premium animations, hero section, and interactive stat cards
+- **`/about`**: About us page with company mission, values, statistics, and services overview
+- **`/contact`**: Contact page with contact information, form, social media links, and office locations
 - **`/job-roles`**: Premium job listings with smooth card animations and enhanced visual effects
 - **`/job-roles/{id}`**: Individual job role details accessible via "View Details" button with comprehensive role information
 
