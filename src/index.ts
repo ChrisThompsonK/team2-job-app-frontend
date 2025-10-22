@@ -220,9 +220,19 @@ class App {
 	}
 
 	private setupRoutes(): void {
-		// Login routes
+		// Authentication routes
 		this.server.get("/login", this.userController.getLoginPage);
 		this.server.post("/login", this.userController.postLogin);
+		this.server.get("/register", this.userController.getRegisterPage);
+		this.server.post("/register", this.userController.postRegister);
+		this.server.get(
+			"/forgot-password",
+			this.userController.getForgotPasswordPage
+		);
+		this.server.post(
+			"/forgot-password",
+			this.userController.postForgotPassword
+		);
 		this.server.post("/logout", this.userController.postLogout);
 
 		// Health check endpoint to test backend connectivity

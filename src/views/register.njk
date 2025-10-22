@@ -1,0 +1,606 @@
+{% extends "templates/layout.njk" %}
+
+{% block applicationTitle %}Register - Kainos Job Application{% endblock %}
+
+{% block content %}
+<main id="main-content" class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-green-50">
+    <div class="max-w-lg w-full space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+            <img src="/KainosLogoNoBackground.png" alt="Kainos Logo" class="mx-auto h-16 w-auto mb-6">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Create Your Account</h2>
+            <p class="text-gray-600">Join our team and start your career journey</p>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            <form id="registerForm" action="/register" method="POST" class="space-y-6" novalidate>
+                <!-- Username Field -->
+                <div>
+                    <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Username <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            required 
+                            value="{{ formData.username if formData else '' }}"
+                            placeholder="Choose a unique username"
+                            class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-all duration-200 text-gray-900 bg-white placeholder-gray-400 {{ 'border-red-500 focus:border-red-500' if fieldErrors.username else '' }}"
+                            autocomplete="username"
+                            data-field="username"
+                        >
+                        <!-- Success/Error Icons -->
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2">
+                            <svg id="username-success" class="w-5 h-5 text-green-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <svg id="username-error" class="w-5 h-5 text-red-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <svg id="username-loading" class="w-5 h-5 text-blue-500 animate-spin hidden" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- Username Error/Help Message -->
+                    <div id="username-error-msg" class="mt-1 text-sm text-red-600 {{ 'block' if fieldErrors.username else 'hidden' }}">
+                        {{ fieldErrors.username if fieldErrors.username }}
+                    </div>
+                    <div id="username-help" class="mt-1 text-xs text-gray-500">
+                        3-50 characters, letters, numbers, dots, hyphens, and underscores only
+                    </div>
+                </div>
+
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Email Address <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            required 
+                            value="{{ formData.email if formData else '' }}"
+                            placeholder="Enter your email address"
+                            class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-all duration-200 text-gray-900 bg-white placeholder-gray-400 {{ 'border-red-500 focus:border-red-500' if fieldErrors.email else '' }}"
+                            autocomplete="email"
+                            data-field="email"
+                        >
+                        <!-- Success/Error Icons -->
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2">
+                            <svg id="email-success" class="w-5 h-5 text-green-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <svg id="email-error" class="w-5 h-5 text-red-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- Email Error Message -->
+                    <div id="email-error-msg" class="mt-1 text-sm text-red-600 {{ 'block' if fieldErrors.email else 'hidden' }}">
+                        {{ fieldErrors.email if fieldErrors.email }}
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Password <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required 
+                            placeholder="Create a strong password"
+                            class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-all duration-200 text-gray-900 bg-white placeholder-gray-400 {{ 'border-red-500 focus:border-red-500' if fieldErrors.password else '' }}"
+                            autocomplete="new-password"
+                            data-field="password"
+                        >
+                        <!-- Password Toggle and Status Icons -->
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-2">
+                            <!-- Success/Error Icons -->
+                            <svg id="password-success" class="w-4 h-4 text-green-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <svg id="password-error" class="w-4 h-4 text-red-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            
+                            <!-- Password Toggle -->
+                            <button 
+                                type="button" 
+                                id="togglePassword"
+                                class="text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700 transition-colors"
+                                aria-label="Toggle password visibility"
+                                tabindex="-1"
+                            >
+                                <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <svg id="eyeOffIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Password Error Message -->
+                    <div id="password-error-msg" class="mt-1 text-sm text-red-600 {{ 'block' if fieldErrors.password else 'hidden' }}">
+                        {{ fieldErrors.password if fieldErrors.password }}
+                    </div>
+                    
+                    <!-- Password Strength Indicator -->
+                    <div id="password-strength" class="mt-2 hidden">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xs text-gray-600">Password Strength</span>
+                            <span id="strength-text" class="text-xs font-medium"></span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                            <div id="strength-bar" class="h-1.5 rounded-full transition-all duration-300"></div>
+                        </div>
+                        <ul id="strength-feedback" class="mt-2 text-xs text-gray-600 space-y-1"></ul>
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div>
+                    <label for="confirmPassword" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Confirm Password <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword" 
+                            required 
+                            placeholder="Confirm your password"
+                            class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-all duration-200 text-gray-900 bg-white placeholder-gray-400 {{ 'border-red-500 focus:border-red-500' if fieldErrors.confirmPassword else '' }}"
+                            autocomplete="new-password"
+                            data-field="confirmPassword"
+                        >
+                        <!-- Success/Error Icons -->
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2">
+                            <svg id="confirmPassword-success" class="w-5 h-5 text-green-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <svg id="confirmPassword-error" class="w-5 h-5 text-red-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- Confirm Password Error Message -->
+                    <div id="confirmPassword-error-msg" class="mt-1 text-sm text-red-600 {{ 'block' if fieldErrors.confirmPassword else 'hidden' }}">
+                        {{ fieldErrors.confirmPassword if fieldErrors.confirmPassword }}
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="flex items-start">
+                    <div class="flex items-center h-5">
+                        <input 
+                            id="terms" 
+                            name="terms" 
+                            type="checkbox" 
+                            required
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 transition-colors"
+                        >
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="terms" class="text-gray-700 cursor-pointer">
+                            I agree to the 
+                            <a href="/terms" class="text-blue-600 hover:text-blue-700 font-medium" target="_blank">Terms of Service</a> 
+                            and 
+                            <a href="/privacy" class="text-blue-600 hover:text-blue-700 font-medium" target="_blank">Privacy Policy</a>
+                            <span class="text-red-500 ml-1">*</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                {% if error %}
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="text-sm text-red-700">{{ error }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    id="submitBtn"
+                    class="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-green-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                    </svg>
+                    Create Account
+                </button>
+            </form>
+        </div>
+
+        <!-- Sign In Link -->
+        <div class="text-center">
+            <p class="text-gray-600">
+                Already have an account? 
+                <a href="/login" class="text-blue-600 hover:text-blue-700 font-semibold transition-colors">Sign in</a>
+            </p>
+        </div>
+
+        <!-- Back to Home -->
+        <div class="text-center">
+            <a href="/" class="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Home
+            </a>
+        </div>
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced Registration Form with Real-time Validation
+    const form = document.getElementById('registerForm');
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const termsCheckbox = document.getElementById('terms');
+    const submitBtn = document.getElementById('submitBtn');
+    const togglePassword = document.getElementById('togglePassword');
+    const eyeIcon = document.getElementById('eyeIcon');
+    const eyeOffIcon = document.getElementById('eyeOffIcon');
+    
+    // Validation state
+    let validation = {
+        username: false,
+        email: false,
+        password: false,
+        confirmPassword: false,
+        terms: false
+    };
+    
+    // Username availability check cache
+    let usernameCheckCache = new Map();
+    let usernameCheckTimeout = null;
+    
+    // Validation functions (reuse from login with additions)
+    function validateUsername(username) {
+        if (!username || username.trim().length === 0) {
+            return { isValid: false, error: 'Username is required' };
+        }
+        
+        const trimmed = username.trim();
+        if (trimmed.length < 3) {
+            return { isValid: false, error: 'Username must be at least 3 characters long' };
+        }
+        
+        if (trimmed.length > 50) {
+            return { isValid: false, error: 'Username must be less than 50 characters' };
+        }
+        
+        if (!/^[a-zA-Z0-9._-]+$/.test(trimmed)) {
+            return { isValid: false, error: 'Username can only contain letters, numbers, dots, hyphens, and underscores' };
+        }
+        
+        return { isValid: true };
+    }
+    
+    function validateEmail(email) {
+        if (!email || email.trim().length === 0) {
+            return { isValid: false, error: 'Email is required' };
+        }
+        
+        const trimmed = email.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (!emailRegex.test(trimmed)) {
+            return { isValid: false, error: 'Please enter a valid email address' };
+        }
+        
+        return { isValid: true };
+    }
+    
+    function validatePassword(password) {
+        if (!password || password.trim().length === 0) {
+            return { isValid: false, error: 'Password is required' };
+        }
+        
+        const trimmed = password.trim();
+        if (trimmed.length < 8) {
+            return { isValid: false, error: 'Password must be at least 8 characters long' };
+        }
+        
+        if (trimmed.length > 100) {
+            return { isValid: false, error: 'Password must be less than 100 characters' };
+        }
+        
+        return { isValid: true };
+    }
+    
+    function validateConfirmPassword(password, confirmPassword) {
+        if (!confirmPassword || confirmPassword.trim().length === 0) {
+            return { isValid: false, error: 'Please confirm your password' };
+        }
+        
+        if (password !== confirmPassword) {
+            return { isValid: false, error: 'Passwords do not match' };
+        }
+        
+        return { isValid: true };
+    }
+    
+    // Password strength checker
+    function checkPasswordStrength(password) {
+        const feedback = [];
+        let score = 0;
+        
+        if (password.length >= 8) {
+            score += 1;
+        } else {
+            feedback.push('Use at least 8 characters');
+        }
+        
+        if (/[a-z]/.test(password) && /[A-Z]/.test(password)) {
+            score += 1;
+        } else {
+            feedback.push('Use both uppercase and lowercase letters');
+        }
+        
+        if (/\d/.test(password)) {
+            score += 1;
+        } else {
+            feedback.push('Include at least one number');
+        }
+        
+        if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>?]/.test(password)) {
+            score += 1;
+        } else {
+            feedback.push('Include at least one special character');
+        }
+        
+        if (password.length >= 12) {
+            score = Math.min(score + 1, 4);
+        }
+        
+        return { score, feedback };
+    }
+    
+    // Show field validation state
+    function showFieldState(field, isValid, error = '', isLoading = false) {
+        const input = document.getElementById(field);
+        const errorMsg = document.getElementById(`${field}-error-msg`);
+        const successIcon = document.getElementById(`${field}-success`);
+        const errorIcon = document.getElementById(`${field}-error`);
+        const loadingIcon = document.getElementById(`${field}-loading`);
+        
+        // Reset all states
+        input.classList.remove('border-red-500', 'focus:border-red-500', 'border-green-500', 'focus:border-green-500', 'border-blue-500', 'focus:border-blue-500');
+        if (successIcon) successIcon.classList.add('hidden');
+        if (errorIcon) errorIcon.classList.add('hidden');
+        if (loadingIcon) loadingIcon.classList.add('hidden');
+        
+        if (isLoading) {
+            input.classList.add('border-blue-500', 'focus:border-blue-500');
+            if (loadingIcon) loadingIcon.classList.remove('hidden');
+        } else if (isValid) {
+            input.classList.add('border-green-500', 'focus:border-green-500');
+            errorMsg.classList.add('hidden');
+            errorMsg.textContent = '';
+            if (successIcon) successIcon.classList.remove('hidden');
+        } else {
+            input.classList.add('border-red-500', 'focus:border-red-500');
+            errorMsg.classList.remove('hidden');
+            errorMsg.textContent = error;
+            if (errorIcon) errorIcon.classList.remove('hidden');
+        }
+        
+        validation[field] = isValid && !isLoading;
+        updateSubmitButton();
+    }
+    
+    // Update password strength indicator
+    function updatePasswordStrength(password) {
+        const strengthContainer = document.getElementById('password-strength');
+        const strengthBar = document.getElementById('strength-bar');
+        const strengthText = document.getElementById('strength-text');
+        const strengthFeedback = document.getElementById('strength-feedback');
+        
+        if (!password) {
+            strengthContainer.classList.add('hidden');
+            return;
+        }
+        
+        strengthContainer.classList.remove('hidden');
+        const { score, feedback } = checkPasswordStrength(password);
+        
+        const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-blue-500', 'bg-green-500'];
+        const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+        const widths = ['w-1/5', 'w-2/5', 'w-3/5', 'w-4/5', 'w-full'];
+        
+        // Update bar
+        strengthBar.className = `h-1.5 rounded-full transition-all duration-300 ${colors[score]} ${widths[score]}`;
+        strengthText.textContent = labels[score];
+        strengthText.className = `text-xs font-medium ${score < 2 ? 'text-red-600' : score < 4 ? 'text-yellow-600' : 'text-green-600'}`;
+        
+        // Update feedback
+        strengthFeedback.innerHTML = '';
+        feedback.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `• ${item}`;
+            li.className = 'text-gray-600';
+            strengthFeedback.appendChild(li);
+        });
+    }
+    
+    // Check username availability (simulated)
+    async function checkUsernameAvailability(username) {
+        if (usernameCheckCache.has(username)) {
+            return usernameCheckCache.get(username);
+        }
+        
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Simulate some usernames being taken
+        const takenUsernames = ['admin', 'test', 'user', 'demo', 'kainos'];
+        const isAvailable = !takenUsernames.includes(username.toLowerCase());
+        
+        usernameCheckCache.set(username, isAvailable);
+        return isAvailable;
+    }
+    
+    // Update submit button state
+    function updateSubmitButton() {
+        const isFormValid = Object.values(validation).every(Boolean);
+        submitBtn.disabled = !isFormValid;
+        
+        if (isFormValid) {
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            submitBtn.classList.add('hover:from-blue-700', 'hover:to-green-700');
+        } else {
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            submitBtn.classList.remove('hover:from-blue-700', 'hover:to-green-700');
+        }
+    }
+    
+    // Real-time validation on input
+    usernameInput.addEventListener('input', function() {
+        const result = validateUsername(this.value);
+        
+        if (result.isValid && this.value.trim().length >= 3) {
+            showFieldState('username', false, '', true); // Show loading
+            
+            // Debounce username availability check
+            if (usernameCheckTimeout) clearTimeout(usernameCheckTimeout);
+            usernameCheckTimeout = setTimeout(async () => {
+                const isAvailable = await checkUsernameAvailability(this.value.trim());
+                if (isAvailable) {
+                    showFieldState('username', true);
+                } else {
+                    showFieldState('username', false, 'Username is already taken');
+                }
+            }, 300);
+        } else {
+            if (usernameCheckTimeout) clearTimeout(usernameCheckTimeout);
+            showFieldState('username', result.isValid, result.error);
+        }
+    });
+    
+    emailInput.addEventListener('input', function() {
+        const result = validateEmail(this.value);
+        showFieldState('email', result.isValid, result.error);
+    });
+    
+    passwordInput.addEventListener('input', function() {
+        const result = validatePassword(this.value);
+        showFieldState('password', result.isValid, result.error);
+        updatePasswordStrength(this.value);
+        
+        // Re-validate confirm password if it has a value
+        if (confirmPasswordInput.value) {
+            const confirmResult = validateConfirmPassword(this.value, confirmPasswordInput.value);
+            showFieldState('confirmPassword', confirmResult.isValid, confirmResult.error);
+        }
+    });
+    
+    confirmPasswordInput.addEventListener('input', function() {
+        const result = validateConfirmPassword(passwordInput.value, this.value);
+        showFieldState('confirmPassword', result.isValid, result.error);
+    });
+    
+    termsCheckbox.addEventListener('change', function() {
+        validation.terms = this.checked;
+        updateSubmitButton();
+    });
+    
+    // Password visibility toggle
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            
+            eyeIcon.classList.toggle('hidden');
+            eyeOffIcon.classList.toggle('hidden');
+            
+            passwordInput.focus();
+        });
+    }
+    
+    // Enhanced form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Final validation
+        const usernameResult = validateUsername(usernameInput.value);
+        const emailResult = validateEmail(emailInput.value);
+        const passwordResult = validatePassword(passwordInput.value);
+        const confirmPasswordResult = validateConfirmPassword(passwordInput.value, confirmPasswordInput.value);
+        
+        let hasErrors = false;
+        
+        if (!usernameResult.isValid) {
+            showFieldState('username', false, usernameResult.error);
+            hasErrors = true;
+        }
+        
+        if (!emailResult.isValid) {
+            showFieldState('email', false, emailResult.error);
+            hasErrors = true;
+        }
+        
+        if (!passwordResult.isValid) {
+            showFieldState('password', false, passwordResult.error);
+            hasErrors = true;
+        }
+        
+        if (!confirmPasswordResult.isValid) {
+            showFieldState('confirmPassword', false, confirmPasswordResult.error);
+            hasErrors = true;
+        }
+        
+        if (!termsCheckbox.checked) {
+            termsCheckbox.focus();
+            hasErrors = true;
+        }
+        
+        if (hasErrors) {
+            return;
+        }
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = `
+            <svg class="animate-spin w-5 h-5 inline-block mr-2" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Creating Account...
+        `;
+        
+        // Submit form
+        this.submit();
+    });
+    
+    // Initialize
+    updateSubmitButton();
+    usernameInput.focus();
+});
+</script>
+
+{% endblock %}
