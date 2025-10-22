@@ -1,25 +1,36 @@
 /**
- * Unit tests for FetchAuthService
+ * Unit tests for AxiosAuthService
  */
 
 /// <reference types="vitest/globals" />
 
+import axios, { AxiosError } from "axios";
 import type {
 	AuthErrorResponse,
 	AuthSuccessResponse,
 } from "../models/auth-response.js";
-import { FetchAuthService } from "./auth-service.js";
+import { AxiosAuthService } from "./auth-service.js";
+
+// Mock axios
+vi.mock("axios");
 
 // biome-ignore lint/suspicious/noExplicitAny: Mock objects require any type for testing
 
-describe("FetchAuthService", () => {
-	let service: FetchAuthService;
+describe("AxiosAuthService", () => {
+	let service: AxiosAuthService;
 	const mockBaseUrl = "http://localhost:8000/api/auth";
+	const mockedAxios = vi.mocked(axios, true);
 
 	beforeEach(() => {
-		service = new FetchAuthService(mockBaseUrl);
-		// Reset fetch mock before each test
-		global.fetch = vi.fn();
+		// Reset mocks before each test
+		vi.clearAllMocks();
+
+		// Mock axios.create to return a mock instance
+		mockedAxios.create = vi.fn().mockReturnValue({
+			post: vi.fn(),
+		});
+
+		service = new AxiosAuthService(mockBaseUrl);
 	});
 
 	afterEach(() => {
@@ -44,22 +55,17 @@ describe("FetchAuthService", () => {
 				},
 			};
 
-			(global.fetch as any).mockResolvedValueOnce({
-				ok: true,
-				json: async () => mockResponse,
+			const mockAxiosInstance = (service as any).axiosInstance;
+			mockAxiosInstance.post = vi.fn().mockResolvedValueOnce({
+				data: mockResponse,
 			});
 
 			const result = await service.login(credentials);
 
-			expect(global.fetch).toHaveBeenCalledWith(`${mockBaseUrl}/login`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				credentials: "include",
-				body: JSON.stringify(credentials),
-			});
-
+			expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+				"/login",
+				credentials
+			);
 			expect(result).toEqual(mockResponse);
 		});
 
@@ -69,16 +75,22 @@ describe("FetchAuthService", () => {
 				message: "Invalid email or password",
 			};
 
-			(global.fetch as any).mockResolvedValueOnce({
-				ok: false,
-				json: async () => mockError,
-			});
+			const mockAxiosInstance = (service as any).axiosInstance;
+			const axiosError = new AxiosError("Request failed");
+			axiosError.response = {
+				data: mockError,
+			} as any;
+
+			mockAxiosInstance.post = vi.fn().mockRejectedValueOnce(axiosError);
 
 			await expect(service.login(credentials)).rejects.toEqual(mockError);
 		});
 
-		it("should throw network error when fetch fails", async () => {
-			(global.fetch as any).mockRejectedValueOnce(new Error("Network failure"));
+		it("should throw network error when axios fails", async () => {
+			const mockAxiosInstance = (service as any).axiosInstance;
+			mockAxiosInstance.post = vi
+				.fn()
+				.mockRejectedValueOnce(new Error("Network failure"));
 
 			await expect(service.login(credentials)).rejects.toEqual({
 				error: "Network Error",
@@ -94,10 +106,13 @@ describe("FetchAuthService", () => {
 				details: ["Email is required", "Password is too short"],
 			};
 
-			(global.fetch as any).mockResolvedValueOnce({
-				ok: false,
-				json: async () => mockError,
-			});
+			const mockAxiosInstance = (service as any).axiosInstance;
+			const axiosError = new AxiosError("Request failed");
+			axiosError.response = {
+				data: mockError,
+			} as any;
+
+			mockAxiosInstance.post = vi.fn().mockRejectedValueOnce(axiosError);
 
 			await expect(service.login(credentials)).rejects.toEqual(mockError);
 		});
@@ -123,22 +138,17 @@ describe("FetchAuthService", () => {
 				},
 			};
 
-			(global.fetch as any).mockResolvedValueOnce({
-				ok: true,
-				json: async () => mockResponse,
+			const mockAxiosInstance = (service as any).axiosInstance;
+			mockAxiosInstance.post = vi.fn().mockResolvedValueOnce({
+				data: mockResponse,
 			});
 
 			const result = await service.register(userData);
 
-			expect(global.fetch).toHaveBeenCalledWith(`${mockBaseUrl}/register`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				credentials: "include",
-				body: JSON.stringify(userData),
-			});
-
+			expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+				"/register",
+				userData
+			);
 			expect(result).toEqual(mockResponse);
 		});
 
@@ -148,16 +158,22 @@ describe("FetchAuthService", () => {
 				message: "Email already exists",
 			};
 
-			(global.fetch as any).mockResolvedValueOnce({
-				ok: false,
-				json: async () => mockError,
-			});
+			const mockAxiosInstance = (service as any).axiosInstance;
+			const axiosError = new AxiosError("Request failed");
+			axiosError.response = {
+				data: mockError,
+			} as any;
+
+			mockAxiosInstance.post = vi.fn().mockRejectedValueOnce(axiosError);
 
 			await expect(service.register(userData)).rejects.toEqual(mockError);
 		});
 
-		it("should throw network error when fetch fails", async () => {
-			(global.fetch as any).mockRejectedValueOnce(new Error("Network failure"));
+		it("should throw network error when axios fails", async () => {
+			const mockAxiosInstance = (service as any).axiosInstance;
+			mockAxiosInstance.post = vi
+				.fn()
+				.mockRejectedValueOnce(new Error("Network failure"));
 
 			await expect(service.register(userData)).rejects.toEqual({
 				error: "Network Error",
@@ -177,10 +193,13 @@ describe("FetchAuthService", () => {
 				],
 			};
 
-			(global.fetch as any).mockResolvedValueOnce({
-				ok: false,
-				json: async () => mockError,
-			});
+			const mockAxiosInstance = (service as any).axiosInstance;
+			const axiosError = new AxiosError("Request failed");
+			axiosError.response = {
+				data: mockError,
+			} as any;
+
+			mockAxiosInstance.post = vi.fn().mockRejectedValueOnce(axiosError);
 
 			await expect(service.register(userData)).rejects.toEqual(mockError);
 		});
@@ -188,13 +207,13 @@ describe("FetchAuthService", () => {
 
 	describe("constructor", () => {
 		it("should use default base URL if not provided", () => {
-			const defaultService = new FetchAuthService();
+			const defaultService = new AxiosAuthService();
 			expect(defaultService).toBeDefined();
 		});
 
 		it("should use custom base URL when provided", () => {
 			const customUrl = "http://custom-api.com/auth";
-			const customService = new FetchAuthService(customUrl);
+			const customService = new AxiosAuthService(customUrl);
 			expect(customService).toBeDefined();
 		});
 	});

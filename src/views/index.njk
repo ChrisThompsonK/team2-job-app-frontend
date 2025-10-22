@@ -95,4 +95,57 @@
     </section>
 </div>
 </main>
+
+<script>
+// Display login success message if present
+document.addEventListener('DOMContentLoaded', function() {
+    const loginSuccess = sessionStorage.getItem('loginSuccess');
+    
+    if (loginSuccess) {
+        // Remove the message from session storage
+        sessionStorage.removeItem('loginSuccess');
+        
+        // Create success alert
+        const alert = document.createElement('div');
+        alert.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-2xl z-50 flex items-center space-x-3 animate-slide-in';
+        alert.innerHTML = `
+            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="font-semibold">${loginSuccess}</span>
+            <button onclick="this.parentElement.remove()" class="ml-4 hover:bg-green-600 rounded-full p-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        `;
+        
+        document.body.appendChild(alert);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            alert.style.opacity = '0';
+            alert.style.transition = 'opacity 0.5s ease-out';
+            setTimeout(() => alert.remove(), 500);
+        }, 5000);
+    }
+});
+</script>
+
+<style>
+@keyframes slide-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+}
+</style>
 {% endblock %}

@@ -2,6 +2,7 @@
  * Authentication service for handling login and registration
  */
 
+import axios, { AxiosError, type AxiosInstance } from "axios";
 import type { LoginRequest, RegisterRequest } from "../models/auth-request.js";
 import type {
 	AuthErrorResponse,
@@ -15,11 +16,17 @@ export interface AuthService {
 	register(userData: RegisterRequest): Promise<AuthSuccessResponse>;
 }
 
-export class FetchAuthService implements AuthService {
-	private baseUrl: string;
+export class AxiosAuthService implements AuthService {
+	private axiosInstance: AxiosInstance;
 
 	constructor(baseUrl: string = AUTH_API_BASE_URL) {
-		this.baseUrl = baseUrl;
+		this.axiosInstance = axios.create({
+			baseURL: baseUrl,
+			headers: {
+				"Content-Type": "application/json",
+			},
+			withCredentials: true,
+		});
 	}
 
 	/**
@@ -28,25 +35,14 @@ export class FetchAuthService implements AuthService {
 	 */
 	public async login(credentials: LoginRequest): Promise<AuthSuccessResponse> {
 		try {
-			const response = await fetch(`${this.baseUrl}/login`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				credentials: "include",
-				body: JSON.stringify(credentials),
-			});
-
-			const data = await response.json();
-
-			if (!response.ok) {
-				throw data as AuthErrorResponse;
-			}
-
-			return data as AuthSuccessResponse;
+			const response = await this.axiosInstance.post<AuthSuccessResponse>(
+				"/login",
+				credentials
+			);
+			return response.data;
 		} catch (error) {
-			if (error && typeof error === "object" && "error" in error) {
-				throw error as AuthErrorResponse;
+			if (error instanceof AxiosError && error.response?.data) {
+				throw error.response.data as AuthErrorResponse;
 			}
 			throw {
 				error: "Network Error",
@@ -64,25 +60,14 @@ export class FetchAuthService implements AuthService {
 		userData: RegisterRequest
 	): Promise<AuthSuccessResponse> {
 		try {
-			const response = await fetch(`${this.baseUrl}/register`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				credentials: "include",
-				body: JSON.stringify(userData),
-			});
-
-			const data = await response.json();
-
-			if (!response.ok) {
-				throw data as AuthErrorResponse;
-			}
-
-			return data as AuthSuccessResponse;
+			const response = await this.axiosInstance.post<AuthSuccessResponse>(
+				"/register",
+				userData
+			);
+			return response.data;
 		} catch (error) {
-			if (error && typeof error === "object" && "error" in error) {
-				throw error as AuthErrorResponse;
+			if (error instanceof AxiosError && error.response?.data) {
+				throw error.response.data as AuthErrorResponse;
 			}
 			throw {
 				error: "Network Error",

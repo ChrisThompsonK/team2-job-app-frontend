@@ -113,7 +113,12 @@ async function handleLogin(event) {
       return;
     }
 
-    // Success - redirect to homepage
+    // Success - store success message and redirect to homepage
+    if (data.user && data.user.forename && data.user.surname) {
+      sessionStorage.setItem("loginSuccess", `Logged in successfully as: ${data.user.forename} ${data.user.surname}`);
+    } else {
+      sessionStorage.setItem("loginSuccess", "Logged in successfully!");
+    }
     window.location.href = "/";
   } catch (error) {
     console.error("Login error:", error);
@@ -174,7 +179,12 @@ async function handleRegister(event) {
       return;
     }
 
-    // Success - redirect to homepage
+    // Success - store success message and redirect to homepage
+    if (data.user && data.user.forename && data.user.surname) {
+      sessionStorage.setItem("loginSuccess", `Registered and logged in successfully as: ${data.user.forename} ${data.user.surname}`);
+    } else {
+      sessionStorage.setItem("loginSuccess", "Registration successful!");
+    }
     window.location.href = "/";
   } catch (error) {
     console.error("Registration error:", error);
