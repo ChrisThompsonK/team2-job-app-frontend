@@ -14,6 +14,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
   - Secure session management with Express Session
   - Client-side and server-side validation
   - Password visibility toggle and strength requirements
+- **Galano Grotesque Typography**: Modern, clean Galano Grotesque font family applied system-wide for professional consistency and optimal readability
 - Modern homepage UI with animated backgrounds and stat cards
 - **About & Contact Pages** - Professional informational pages with company mission, values, team stats, and contact information
 - Job roles listing, details, and application workflow

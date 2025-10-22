@@ -1,0 +1,118 @@
+/* Galano Grotesque Font Family Implementation */
+
+/* Regular Weight (400) */
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueRegular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueItalic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Bold Weight (700) */
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueBold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Galano Grotesque';
+    src: url('../fonts/GalanoGrotesqueBoldItalic.otf') format('opentype');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Global Font Application */
+html,
+body {
+    font-family: "Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Ensure all elements inherit the Galano Grotesque font */
+* {
+    font-family: inherit;
+}
+
+/* Explicit font family for common elements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+div,
+a,
+button,
+input,
+textarea,
+select,
+label,
+li,
+ul,
+ol,
+td,
+th,
+table,
+.btn,
+.card,
+.modal,
+.navbar,
+.footer,
+.form-control,
+.input,
+.textarea,
+.select,
+.badge,
+.alert,
+.breadcrumbs,
+.menu,
+.dropdown,
+.tooltip,
+.collapse {
+    font-family: "Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* DaisyUI component font override */
+.daisyui * {
+    font-family: "Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Tailwind utility override */
+.font-sans {
+    font-family: "Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Form elements specific override */
+.form-input,
+.form-textarea,
+.form-select,
+.form-multiselect {
+    font-family: "Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Navigation and header elements */
+nav,
+header,
+.navbar {
+    font-family: "Galano Grotesque", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+nav *,
+header *,
+.navbar * {
+    font-family: inherit !important;
+}
