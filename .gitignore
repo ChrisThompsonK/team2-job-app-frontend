@@ -85,7 +85,9 @@ dist
 
 # Gatsby files
 .cache/
-public/css
+
+# Generated CSS files (but keep custom font CSS files)
+public/css/styles.css
 
 # vuepress build output
 .vuepress/dist
@@ -147,3 +149,10 @@ Icon?
 
 # Project spec files
 src/spec/
+
+# Font cache files
+*.fntcache
+
+# Temporary font files
+*.tmp
+*.temp
