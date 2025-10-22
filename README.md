@@ -7,6 +7,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 ## 🚀 Features
 - TypeScript, ES Modules, Express, Nunjucks templating
 - Tailwind CSS 4, DaisyUI, Biome, Vitest
+- **Century Gothic Typography**: Modern, clean Century Gothic font family applied system-wide for professional consistency
 - Modern homepage UI with animated backgrounds and stat cards
 - **About & Contact Pages** - Professional informational pages with company mission, values, team stats, and contact information
 - Job roles listing, details, and application workflow

@@ -14,6 +14,9 @@ export default {
         'dark-border': '#334155',
         'dark-text': '#f1f5f9',
       },
+      fontFamily: {
+        'sans': ['Century Gothic', 'CenturyGothic', 'AppleGothic', 'sans-serif'],
+      },
     },
   },
   plugins: [],
