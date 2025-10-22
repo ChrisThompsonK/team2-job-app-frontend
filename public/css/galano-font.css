@@ -1,6 +1,6 @@
 /* Galano Grotesque Font Family Implementation */
 
-/* Regular Weight */
+/* Regular Weight (400) */
 @font-face {
     font-family: 'Galano Grotesque';
     src: url('../fonts/GalanoGrotesqueRegular.otf') format('opentype');
@@ -17,58 +17,7 @@
     font-display: swap;
 }
 
-/* Light Weight */
-@font-face {
-    font-family: 'Galano Grotesque';
-    src: url('../fonts/GalanoGrotesqueLight.otf') format('opentype');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Galano Grotesque';
-    src: url('../fonts/GalanoGrotesqueLightItalic.otf') format('opentype');
-    font-weight: 300;
-    font-style: italic;
-    font-display: swap;
-}
-
-/* Medium Weight */
-@font-face {
-    font-family: 'Galano Grotesque';
-    src: url('../fonts/GalanoGrotesqueMedium.otf') format('opentype');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Galano Grotesque';
-    src: url('../fonts/GalanoGrotesqueMediumItalic.otf') format('opentype');
-    font-weight: 500;
-    font-style: italic;
-    font-display: swap;
-}
-
-/* SemiBold Weight */
-@font-face {
-    font-family: 'Galano Grotesque';
-    src: url('../fonts/GalanoGrotesqueSemiBold.otf') format('opentype');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Galano Grotesque';
-    src: url('../fonts/GalanoGrotesqueSemiBoldItalic.otf') format('opentype');
-    font-weight: 600;
-    font-style: italic;
-    font-display: swap;
-}
-
-/* Bold Weight */
+/* Bold Weight (700) */
 @font-face {
     font-family: 'Galano Grotesque';
     src: url('../fonts/GalanoGrotesqueBold.otf') format('opentype');
@@ -81,40 +30,6 @@
     font-family: 'Galano Grotesque';
     src: url('../fonts/GalanoGrotesqueBoldItalic.otf') format('opentype');
     font-weight: 700;
-    font-style: italic;
-    font-display: swap;
-}
-
-/* Extra Bold Weight */
-@font-face {
-    font-family: 'Galano Grotesque';
-    src: url('../fonts/GalanoGrotesqueExtraBold.otf') format('opentype');
-    font-weight: 800;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Galano Grotesque';
-    src: url('../fonts/GalanoGrotesqueExtraBoldItalic.otf') format('opentype');
-    font-weight: 800;
-    font-style: italic;
-    font-display: swap;
-}
-
-/* Black Weight */
-@font-face {
-    font-family: 'Galano Grotesque';
-    src: url('../fonts/GalanoGrotesqueBlack.otf') format('opentype');
-    font-weight: 900;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Galano Grotesque';
-    src: url('../fonts/GalanoGrotesqueBlackItalic.otf') format('opentype');
-    font-weight: 900;
     font-style: italic;
     font-display: swap;
 }
