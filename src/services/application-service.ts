@@ -39,4 +39,15 @@ export interface ApplicationService {
 		page?: number,
 		limit?: number
 	): Promise<ApplicantsPageResponse>;
+
+	/**
+	 * Downloads a CV file for a specific application
+	 * @param applicationId The ID of the application
+	 * @returns Promise<{ buffer: Buffer; fileName: string; mimeType: string }> The CV file data
+	 */
+	downloadApplicationCv(applicationId: number): Promise<{
+		buffer: Buffer;
+		fileName: string;
+		mimeType: string;
+	}>;
 }

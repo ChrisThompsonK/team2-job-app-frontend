@@ -1,0 +1,220 @@
+{% extends "templates/layout.njk" %}
+
+{% block applicationTitle %}About Us - Kainos Job Application{% endblock %}
+
+{% block content %}
+<main id="main-content" class="container mx-auto px-4 landscape:px-6 md:px-8 py-8 landscape:py-10 md:py-12">
+    <!-- Hero Section -->
+    <div class="text-center mb-12 bg-gradient-to-r from-blue-600 to-green-600 rounded-xl py-12 px-6 shadow-xl">
+        <h1 class="text-4xl landscape:text-5xl md:text-6xl font-bold text-white mb-4">
+            About Kainos
+        </h1>
+        <p class="text-lg landscape:text-xl md:text-2xl text-white/90 max-w-3xl mx-auto">
+            Thinking Without Limitations
+        </p>
+    </div>
+
+    <!-- Mission Statement -->
+    <div class="card bg-white shadow-xl mb-8 border border-slate-200">
+        <div class="card-body">
+            <h2 class="card-title text-2xl landscape:text-3xl md:text-3xl text-blue-600 mb-4">
+                <i data-lucide="target" class="w-8 h-8"></i>
+                Our Mission
+            </h2>
+            <p class="text-slate-800 text-base landscape:text-lg md:text-lg leading-relaxed">
+                At Kainos, we're on a mission to transform the way organizations work through innovative digital solutions. 
+                We believe in thinking without limitations, combining cutting-edge technology with deep industry expertise 
+                to deliver exceptional outcomes for our clients and their customers.
+            </p>
+        </div>
+    </div>
+
+    <!-- Values Grid -->
+    <div class="grid grid-cols-1 landscape:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Innovation -->
+        <div class="card bg-white border border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div class="card-body">
+                <div class="flex items-center mb-4">
+                    <div class="p-3 rounded-lg">
+                        <i data-lucide="lightbulb" class="w-6 h-6 text-blue-600" style="stroke-width: 2.5;"></i>
+                    </div>
+                    <h3 class="card-title text-xl ml-3 text-slate-900">Innovation</h3>
+                </div>
+                <p class="text-slate-800">
+                    We embrace new technologies and creative approaches to solve complex challenges and drive digital transformation.
+                </p>
+            </div>
+        </div>
+
+        <!-- Excellence -->
+        <div class="card bg-white border border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div class="card-body">
+                <div class="flex items-center mb-4">
+                    <div class="p-3 rounded-lg">
+                        <i data-lucide="award" class="w-6 h-6 text-green-600" style="stroke-width: 2.5;"></i>
+                    </div>
+                    <h3 class="card-title text-xl ml-3 text-slate-900">Excellence</h3>
+                </div>
+                <p class="text-slate-800">
+                    We strive for excellence in everything we do, delivering high-quality solutions that exceed expectations.
+                </p>
+            </div>
+        </div>
+
+        <!-- Collaboration -->
+        <div class="card bg-white border border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div class="card-body">
+                <div class="flex items-center mb-4">
+                    <div class="p-3 rounded-lg">
+                        <i data-lucide="users" class="w-6 h-6 text-purple-600" style="stroke-width: 2.5;"></i>
+                    </div>
+                    <h3 class="card-title text-xl ml-3 text-slate-900">Collaboration</h3>
+                </div>
+                <p class="text-slate-800">
+                    We work together with our clients and partners, fostering strong relationships built on trust and mutual respect.
+                </p>
+            </div>
+        </div>
+
+        <!-- Integrity -->
+        <div class="card bg-white border border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div class="card-body">
+                <div class="flex items-center mb-4">
+                    <div class="p-3 rounded-lg">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-orange-600" style="stroke-width: 2.5;"></i>
+                    </div>
+                    <h3 class="card-title text-xl ml-3 text-slate-900">Integrity</h3>
+                </div>
+                <p class="text-slate-800">
+                    We operate with honesty and transparency, maintaining the highest ethical standards in all our interactions.
+                </p>
+            </div>
+        </div>
+
+        <!-- Growth -->
+        <div class="card bg-white border border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div class="card-body">
+                <div class="flex items-center mb-4">
+                    <div class="p-3 rounded-lg">
+                        <i data-lucide="trending-up" class="w-6 h-6 text-red-600" style="stroke-width: 2.5;"></i>
+                    </div>
+                    <h3 class="card-title text-xl ml-3 text-slate-900">Growth</h3>
+                </div>
+                <p class="text-slate-800">
+                    We invest in our people's development, creating opportunities for continuous learning and career advancement.
+                </p>
+            </div>
+        </div>
+
+        <!-- Impact -->
+        <div class="card bg-white border border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div class="card-body">
+                <div class="flex items-center mb-4">
+                    <div class="p-3 rounded-lg">
+                        <i data-lucide="heart" class="w-6 h-6 text-slate-900" style="stroke-width: 2.5;"></i>
+                    </div>
+                    <h3 class="card-title text-xl ml-3 text-slate-900">Impact</h3>
+                </div>
+                <p class="text-slate-800">
+                    We're committed to making a positive difference in society through our work and community initiatives.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="bg-gradient-to-r from-blue-600 to-green-600 rounded-xl shadow-2xl p-8 text-white mb-8">
+        <div class="grid grid-cols-2 landscape:grid-cols-4 md:grid-cols-4 gap-6 text-center">
+            <div class="flex flex-col items-center">
+                <i data-lucide="users" class="w-10 h-10 mb-3 opacity-90"></i>
+                <div class="text-4xl landscape:text-5xl md:text-5xl font-bold mb-2">2,500+</div>
+                <div class="text-sm landscape:text-base md:text-base opacity-90">Employees</div>
+            </div>
+            <div class="flex flex-col items-center">
+                <i data-lucide="calendar" class="w-10 h-10 mb-3 opacity-90"></i>
+                <div class="text-4xl landscape:text-5xl md:text-5xl font-bold mb-2">25+</div>
+                <div class="text-sm landscape:text-base md:text-base opacity-90">Years Experience</div>
+            </div>
+            <div class="flex flex-col items-center">
+                <i data-lucide="building-2" class="w-10 h-10 mb-3 opacity-90"></i>
+                <div class="text-4xl landscape:text-5xl md:text-5xl font-bold mb-2">500+</div>
+                <div class="text-sm landscape:text-base md:text-base opacity-90">Clients</div>
+            </div>
+            <div class="flex flex-col items-center">
+                <i data-lucide="globe" class="w-10 h-10 mb-3 opacity-90"></i>
+                <div class="text-4xl landscape:text-5xl md:text-5xl font-bold mb-2">15+</div>
+                <div class="text-sm landscape:text-base md:text-base opacity-90">Countries</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- What We Do -->
+    <div class="card bg-white shadow-xl mb-8 border border-slate-200">
+        <div class="card-body">
+            <h2 class="card-title text-2xl landscape:text-3xl md:text-3xl text-green-600 mb-6">
+                <i data-lucide="briefcase" class="w-8 h-8"></i>
+                What We Do
+            </h2>
+            <div class="grid grid-cols-1 landscape:grid-cols-2 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-xl font-semibold text-slate-800 mb-3 flex items-center">
+                        <i data-lucide="code" class="w-5 h-5 mr-2 text-blue-600"></i>
+                        Digital Services
+                    </h3>
+                    <p class="text-slate-800">
+                        Custom software development, cloud solutions, and digital transformation services that modernize operations and enhance user experiences.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-slate-800 mb-3 flex items-center">
+                        <i data-lucide="database" class="w-5 h-5 mr-2 text-green-600"></i>
+                        Data & AI
+                    </h3>
+                    <p class="text-slate-800">
+                        Advanced analytics, machine learning, and AI solutions that unlock insights and drive intelligent decision-making.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-slate-800 mb-3 flex items-center">
+                        <i data-lucide="users-round" class="w-5 h-5 mr-2 text-purple-600"></i>
+                        Consulting
+                    </h3>
+                    <p class="text-slate-800">
+                        Strategic guidance and expert consultation to help organizations navigate digital transformation challenges.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-slate-800 mb-3 flex items-center">
+                        <i data-lucide="shield" class="w-5 h-5 mr-2 text-orange-600"></i>
+                        Cyber Security
+                    </h3>
+                    <p class="text-slate-800">
+                        Comprehensive security solutions to protect digital assets and ensure compliance with industry standards.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="text-center bg-slate-100 rounded-xl p-8 shadow-lg border border-slate-200">
+        <h2 class="text-3xl landscape:text-4xl md:text-4xl font-bold text-slate-800 mb-4">
+            Join Our Team
+        </h2>
+        <p class="text-lg text-slate-700 mb-6 max-w-2xl mx-auto">
+            We're always looking for talented individuals who share our passion for innovation and excellence.
+        </p>
+        <a href="/job-roles" class="btn btn-lg bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white border-0 shadow-lg">
+            <i data-lucide="briefcase" class="w-5 h-5"></i>
+            View Open Positions
+        </a>
+    </div>
+</main>
+
+<script>
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+{% endblock %}

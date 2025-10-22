@@ -11,6 +11,8 @@ export interface ApplicantDisplay {
 	applicantEmail: string;
 	coverLetter?: string;
 	resumeUrl?: string;
+	hasCv?: boolean;
+	cvFileName?: string;
 	status: string;
 	submittedAt: string;
 	updatedAt?: string;
