@@ -15,6 +15,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
   - Client-side and server-side validation
   - Password visibility toggle and strength requirements
 - Modern homepage UI with animated backgrounds and stat cards
+- **About & Contact Pages** - Professional informational pages with company mission, values, team stats, and contact information
 - Job roles listing, details, and application workflow
   - **Status Badges**: Each job card now displays a badge indicating if the job is Open or Closed
   - **Conditional Apply Button**: The "Apply Now" button is only shown for jobs with status Open
@@ -76,6 +77,8 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │       ├── job-application-form.njk      # Job application submission form
 │       ├── job-applicants-list.njk       # Applicants management page
 │       ├── application-success.njk       # Application confirmation page
+│       ├── about.njk                     # About us page
+│       ├── contact.njk                   # Contact page
 │       ├── login.njk                     # User login form
 │       ├── register.njk                  # User registration form
 │       ├── index.njk                     # Homepage with login success toast
@@ -255,6 +258,8 @@ The application includes a comprehensive job roles management system with separa
 - **`/`**: Enhanced home page with premium animations, hero section, interactive stat cards, and login success toast notifications
 - **`/login`**: User login page with email/password authentication
 - **`/register`**: User registration page with form validation and password strength requirements
+- **`/about`**: About us page with company mission, values, statistics, and services overview
+- **`/contact`**: Contact page with contact information, form, social media links, and office locations
 - **`/job-roles`**: Premium job listings with smooth card animations and enhanced visual effects
 - **`/job-roles/{id}`**: Individual job role details accessible via "View Details" button with comprehensive role information
 

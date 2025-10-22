@@ -288,6 +288,16 @@ class App {
 			});
 		});
 
+		// About page
+		this.server.get("/about", (_req: Request, res: Response) => {
+			res.render("about.njk");
+		});
+
+		// Contact page
+		this.server.get("/contact", (_req: Request, res: Response) => {
+			res.render("contact.njk");
+		});
+
 		// Job Roles endpoints (public, read-only)
 		this.server.get("/job-roles", this.jobRoleController.getJobRoles);
 		this.server.get("/jobs/search", this.jobRoleController.searchJobRoles);
@@ -335,6 +345,12 @@ class App {
 		this.server.get(
 			"/job-roles/:id/applicants",
 			this.applicationController.getApplicants
+		);
+
+		// CV download endpoint (proxy to backend)
+		this.server.get(
+			"/applications/:id/cv",
+			this.applicationController.downloadCv
 		);
 
 		// Error handling middleware - must be last
