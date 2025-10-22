@@ -528,7 +528,9 @@ button:not(.text-size-btn):not(#dark-mode-toggle):not(#simple-dark-toggle) {
 #account-dropdown-menu {
 	opacity: 0;
 	transform: translateY(-10px) scale(0.95);
-	transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+	transition:
+		opacity 0.2s ease-out,
+		transform 0.2s ease-out;
 	pointer-events: none;
 }
 
@@ -566,7 +568,8 @@ button:not(.text-size-btn):not(#dark-mode-toggle):not(#simple-dark-toggle) {
 }
 
 @keyframes pulse {
-	0%, 100% {
+	0%,
+	100% {
 		transform: scale(1);
 	}
 	50% {
@@ -578,7 +581,9 @@ button:not(.text-size-btn):not(#dark-mode-toggle):not(#simple-dark-toggle) {
 .dark-mode #account-dropdown-menu {
 	background: #1e293b !important;
 	border-color: #334155 !important;
-	box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
+	box-shadow:
+		0 20px 25px -5px rgba(0, 0, 0, 0.3),
+		0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
 }
 
 .dark-mode #account-dropdown-menu [role="menuitem"] {

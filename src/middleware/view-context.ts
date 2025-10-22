@@ -6,23 +6,23 @@ import type { NextFunction, Request, Response } from "express";
 function getUserProfileColor(username: string): string {
 	const colors = [
 		"from-blue-500 to-purple-600",
-		"from-green-500 to-blue-600", 
+		"from-green-500 to-blue-600",
 		"from-purple-500 to-pink-600",
 		"from-yellow-500 to-orange-600",
 		"from-red-500 to-pink-600",
 		"from-indigo-500 to-blue-600",
 		"from-teal-500 to-green-600",
-		"from-orange-500 to-red-600"
+		"from-orange-500 to-red-600",
 	];
-	
+
 	// Generate a simple hash from username
 	let hash = 0;
 	for (let i = 0; i < username.length; i++) {
 		const char = username.charCodeAt(i);
-		hash = ((hash << 5) - hash) + char;
+		hash = (hash << 5) - hash + char;
 		hash = hash & hash; // Convert to 32-bit integer
 	}
-	
+
 	const colorIndex = Math.abs(hash) % colors.length;
 	return colors[colorIndex] as string;
 }
