@@ -16,6 +16,9 @@
                         <!-- Welcome Message -->
                         <div class="hidden landscape:block md:block text-sm text-slate-700 font-medium">
                             Welcome, <span class="text-blue-600">{{ user.username }}</span>
+                            {% if user.user_type == 'Admin' %}
+                            <span class="inline-block ml-2 px-3 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">👑 Admin</span>
+                            {% endif %}
                         </div>
                         
                         <!-- Sign Out Button -->
@@ -108,6 +111,9 @@
                     <!-- User Info -->
                     <div class="block py-3 px-2 text-slate-600 text-sm">
                         Welcome, <span class="font-semibold text-blue-600">{{ user.username }}</span>
+                        {% if user.user_type == 'Admin' %}
+                        <span class="inline-block ml-2 px-2 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">👑 Admin</span>
+                        {% endif %}
                     </div>
                     
                     <!-- Sign Out Form -->

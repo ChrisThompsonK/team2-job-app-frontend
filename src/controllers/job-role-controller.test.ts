@@ -28,6 +28,10 @@ const mockJobRoleService: JobRoleService = {
 	getJobRoleById: vi.fn(),
 	createJobRole: vi.fn(),
 	deleteJobRole: vi.fn(),
+	updateJobRole: vi.fn(),
+	searchJobRoles: vi.fn(),
+	getFilterOptions: vi.fn(),
+	getAllJobRolesForExport: vi.fn(),
 };
 
 // Mock JobRoleValidator (unused but keeping for potential future use)
@@ -68,6 +72,134 @@ describe("JobRoleController", () => {
 		// The pagination functionality is tested separately in job-role-controller-pagination.test.ts
 		// These tests need to be updated to mock the pagination validation properly
 
+		it("should render job-role-list-admin.njk for authenticated admins", async () => {
+			const mockReq = {
+				params: {},
+				path: "/job-roles",
+				query: {},
+				session: {
+					user: {
+						user_type: "Admin",
+					},
+				},
+			} as unknown as Request;
+
+			mockedValidatePaginationParams.mockReturnValue({
+				isValid: true,
+				page: 1,
+				limit: 12,
+			});
+
+			vi.mocked(mockJobRoleService.getJobRolesPaginated).mockResolvedValue({
+				data: [],
+				pagination: {
+					currentPage: 1,
+					totalPages: 0,
+					totalCount: 0,
+					limit: 12,
+					hasNext: false,
+					hasPrevious: false,
+				},
+			});
+
+			vi.mocked(mockJobRoleService.getFilterOptions).mockResolvedValue({
+				capabilities: [],
+				locations: [],
+				bands: [],
+			});
+
+			await controller.getJobRoles(mockReq, res);
+
+			expect(res.render).toHaveBeenCalledWith(
+				"job-role-list-admin.njk",
+				expect.any(Object)
+			);
+		});
+
+		it("should render job-role-list.njk for non-authenticated users", async () => {
+			const mockReq = {
+				params: {},
+				path: "/job-roles",
+				query: {},
+				session: undefined,
+			} as unknown as Request;
+
+			mockedValidatePaginationParams.mockReturnValue({
+				isValid: true,
+				page: 1,
+				limit: 12,
+			});
+
+			vi.mocked(mockJobRoleService.getJobRolesPaginated).mockResolvedValue({
+				data: [],
+				pagination: {
+					currentPage: 1,
+					totalPages: 0,
+					totalCount: 0,
+					limit: 12,
+					hasNext: false,
+					hasPrevious: false,
+				},
+			});
+
+			vi.mocked(mockJobRoleService.getFilterOptions).mockResolvedValue({
+				capabilities: [],
+				locations: [],
+				bands: [],
+			});
+
+			await controller.getJobRoles(mockReq, res);
+
+			expect(res.render).toHaveBeenCalledWith(
+				"job-role-list.njk",
+				expect.any(Object)
+			);
+		});
+
+		it("should render job-role-list.njk for authenticated non-admin users", async () => {
+			const mockReq = {
+				params: {},
+				path: "/job-roles",
+				query: {},
+				session: {
+					user: {
+						user_type: "Applicant",
+					},
+				},
+			} as unknown as Request;
+
+			mockedValidatePaginationParams.mockReturnValue({
+				isValid: true,
+				page: 1,
+				limit: 12,
+			});
+
+			vi.mocked(mockJobRoleService.getJobRolesPaginated).mockResolvedValue({
+				data: [],
+				pagination: {
+					currentPage: 1,
+					totalPages: 0,
+					totalCount: 0,
+					limit: 12,
+					hasNext: false,
+					hasPrevious: false,
+				},
+			});
+
+			vi.mocked(mockJobRoleService.getFilterOptions).mockResolvedValue({
+				capabilities: [],
+				locations: [],
+				bands: [],
+			});
+
+			await controller.getJobRoles(mockReq, res);
+
+			expect(res.render).toHaveBeenCalledWith(
+				"job-role-list.njk",
+				expect.any(Object)
+			);
+		});
+
 		it.skip("should render job-role-list view with job roles data", async () => {
 			const mockJobRoles: JobRoleResponse[] = [
 				{
@@ -77,6 +209,7 @@ describe("JobRoleController", () => {
 					capability: "Engineering",
 					band: "Senior",
 					closingDate: "2024-12-31",
+					status: "Open",
 				},
 				{
 					jobRoleId: 2,
@@ -85,6 +218,7 @@ describe("JobRoleController", () => {
 					capability: "Design",
 					band: "Mid-Level",
 					closingDate: "2024-11-30",
+					status: "Closed",
 				},
 			];
 
@@ -209,6 +343,7 @@ describe("JobRoleController", () => {
 					capability: "Engineering",
 					band: "Senior",
 					closingDate: "2024-12-31",
+					status: "Open",
 				})
 			);
 
@@ -273,15 +408,19 @@ describe("JobRoleController", () => {
 	});
 
 	describe("constructor", () => {
-		it("should create controller with provided service and validator", () => {
+		it("should create controller with provided service", () => {
 			const testService = {
 				getJobRoles: vi.fn(),
 				getJobRoleById: vi.fn(),
 				createJobRole: vi.fn(),
 				deleteJobRole: vi.fn(),
+				getJobRolesPaginated: vi.fn(),
+				updateJobRole: vi.fn(),
+				searchJobRoles: vi.fn(),
+				getFilterOptions: vi.fn(),
+				getAllJobRolesForExport: vi.fn(),
 			} as JobRoleService;
-			const testValidator = new JobRoleValidator();
-			const testController = new JobRoleController(testService, testValidator);
+			const testController = new JobRoleController(testService);
 
 			expect(testController).toBeInstanceOf(JobRoleController);
 		});

@@ -3,6 +3,7 @@
  */
 
 import type { Request, Response } from "express";
+import { isAdmin } from "../middleware/auth-middleware.js";
 import type { JobRoleService } from "../services/job-role-service.js";
 import { validatePaginationParams } from "../utils/pagination-validation.js";
 import { buildPaginationUrls } from "../utils/url-builder.js";
@@ -18,6 +19,7 @@ export class JobRoleController {
 	/**
 	 * GET /job-roles
 	 * Renders the job roles list view with paginated data from the API
+	 * Shows admin view for authenticated admins, public view for other users
 	 */
 	public getJobRoles = async (req: Request, res: Response): Promise<void> => {
 		try {
@@ -54,7 +56,10 @@ export class JobRoleController {
 
 			// Handle empty results gracefully
 			if (paginatedResult.pagination.totalCount === 0) {
-				return res.render("job-role-list.njk", {
+				const viewName = isAdmin(req)
+					? "job-role-list-admin.njk"
+					: "job-role-list.njk";
+				return res.render(viewName, {
 					jobRoles: [],
 					pagination: null,
 					paginationUrls: null,
@@ -74,7 +79,12 @@ export class JobRoleController {
 				null // No search params for regular listing
 			);
 
-			res.render("job-role-list.njk", {
+			// Determine which view to render based on user role
+			const viewName = isAdmin(req)
+				? "job-role-list-admin.njk"
+				: "job-role-list.njk";
+
+			res.render(viewName, {
 				jobRoles: paginatedResult.data,
 				pagination: paginatedResult.pagination,
 				paginationUrls: paginationUrls,

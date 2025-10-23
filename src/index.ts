@@ -20,6 +20,7 @@ import { ApplicationController } from "./controllers/application-controller.js";
 import { AuthController } from "./controllers/auth-controller.js";
 import { JobRoleController } from "./controllers/job-role-controller.js";
 import { UserController } from "./controllers/user-controller.js";
+import { requireAdmin } from "./middleware/auth-middleware.js";
 import { AxiosApplicationService } from "./services/axios-application-service.js";
 import { AxiosJobRoleService } from "./services/axios-job-role-service.js";
 import { JobRoleValidator } from "./utils/job-role-validator.js";
@@ -306,29 +307,42 @@ class App {
 		this.server.get("/job-roles/:id", this.jobRoleController.getJobRoleById);
 
 		// Delete endpoints (both AJAX and form submission)
-		this.server.delete("/job-roles/:id", this.jobRoleController.deleteJobRole);
+		this.server.delete(
+			"/job-roles/:id",
+			requireAdmin,
+			this.jobRoleController.deleteJobRole
+		);
 		this.server.post(
 			"/job-roles/:id/delete",
+			requireAdmin,
 			this.jobRoleController.deleteJobRoleForm
 		);
 
 		// Admin endpoints (job role creation and editing)
 		this.server.get(
 			"/admin/job-roles/new",
+			requireAdmin,
 			this.adminController.getCreateJobRole
 		);
 		// Export endpoint (must come before :id routes)
 		this.server.get(
 			"/admin/job-roles/export",
+			requireAdmin,
 			this.adminController.exportJobRoles
 		);
-		this.server.post("/admin/job-roles", this.adminController.createJobRole);
+		this.server.post(
+			"/admin/job-roles",
+			requireAdmin,
+			this.adminController.createJobRole
+		);
 		this.server.get(
 			"/admin/job-roles/:id/edit",
+			requireAdmin,
 			this.adminController.getEditJobRole
 		);
 		this.server.post(
 			"/admin/job-roles/:id",
+			requireAdmin,
 			this.adminController.updateJobRole
 		);
 
@@ -346,6 +360,7 @@ class App {
 		// View applicants endpoint
 		this.server.get(
 			"/job-roles/:id/applicants",
+			requireAdmin,
 			this.applicationController.getApplicants
 		);
 
