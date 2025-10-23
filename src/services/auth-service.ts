@@ -9,7 +9,9 @@ import type {
 	AuthSuccessResponse,
 } from "../models/auth-response.js";
 
-const AUTH_API_BASE_URL = "http://localhost:8000/api/auth";
+// Load API base URL from environment variables with fallback for development
+const AUTH_API_BASE_URL =
+	process.env["AUTH_API_BASE_URL"] || "http://localhost:8000/api/auth";
 
 export interface AuthService {
 	login(credentials: LoginRequest): Promise<AuthSuccessResponse>;
