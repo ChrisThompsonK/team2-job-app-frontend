@@ -90,8 +90,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── styles.css                    # Compiled Tailwind + DaisyUI output
 │   │   └── overrides.css                 # Post-build dark mode & nav override rules
 │   ├── js/
-│   │   ├── accessibility.js              # Accessibility features (text size, keyboard nav)
-│   │   └── auth.js                       # Authentication handling (login, register forms)
+│   │   └── accessibility.js              # Accessibility features (text size, keyboard nav)
 │   └── *.png                             # Static assets
 ├── dist/                                  # Compiled TypeScript output
 ├── package.json
@@ -230,8 +229,8 @@ The application features a complete user authentication system with login and re
 - **AuthController**: Renders login and register pages, handles authentication state
 - **AxiosAuthService**: Communicates with backend authentication API
 - **AuthValidator**: Comprehensive validation for email, password, and name fields
-- **Client-Side Handler** (`public/js/auth.js`): Form submission, validation, loading states
-- **Session Storage**: Uses sessionStorage for success message persistence across redirect
+- **Server-Side Form Handling**: Forms submit naturally via POST, following MVC pattern
+- **Session Storage**: Express session for authentication state and success messages
 - **Type Safety**: Full TypeScript models for LoginRequest, RegisterRequest, AuthSuccessResponse
 
 ### Security Features
