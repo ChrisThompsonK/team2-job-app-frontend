@@ -1,0 +1,16 @@
+/* Minimal dark mode header/link overrides (pruned) */
+.dark-mode .site-header { background: transparent; border: none; box-shadow: none; }
+.dark-mode nav[role="navigation"] a { color: #e2e8f0; background: transparent; }
+.dark-mode nav[role="navigation"] a:hover { color: #60a5fa; }
+.dark-mode nav[role="navigation"] a:focus { outline: none; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: #60a5fa; }
+
+/* Mobile menu visibility fix - ensure it appears when not hidden */
+#mobileMenuDropdown:not(.hidden) {
+  display: block !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 1000 !important;
+}
