@@ -113,7 +113,7 @@ export class ApplicationController {
 				existingApplication,
 				isEditMode: !!existingApplication,
 			});
-			
+
 			if (existingApplication) {
 				console.log("Rendering edit form with application:", {
 					id: existingApplication.applicationId,
@@ -237,7 +237,7 @@ export class ApplicationController {
 			}
 
 			// Submit or update the application
-			let application;
+			let application: ApplicationResponse;
 			if (isEditMode && applicationId) {
 				application = await this.applicationService.updateApplication(
 					applicationId,
