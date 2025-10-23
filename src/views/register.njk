@@ -1,6 +1,6 @@
 {% extends "templates/layout.njk" %}
 
-{% block applicationTitle %}Login - Kainos Job Application{% endblock %}
+{% block applicationTitle %}Register - Kainos Job Application{% endblock %}
 
 {% block content %}
 <main id="main-content" class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -8,8 +8,8 @@
         <!-- Header -->
         <div class="text-center">
             <img src="/KainosLogoNoBackground.png" alt="Kainos Logo" class="mx-auto h-16 w-auto mb-6">
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-            <p class="text-gray-600">Sign in to access your account</p>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
+            <p class="text-gray-600">Sign up to get started</p>
         </div>
 
         <!-- Validation Errors -->
@@ -33,9 +33,45 @@
         </div>
         {% endif %}
 
-        <!-- Login Form -->
+        <!-- Registration Form -->
         <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-            <form id="loginForm" method="POST" action="/login" class="space-y-6">
+            <form id="registerForm" method="POST" action="/register" class="space-y-6">
+                <!-- First Name Field -->
+                <div>
+                    <label for="forename" class="block text-sm font-semibold text-gray-700 mb-2">
+                        First Name <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="forename" 
+                        name="forename" 
+                        required 
+                        maxlength="50"
+                        placeholder="Enter your first name"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400"
+                        autocomplete="given-name"
+                        value="{{ formData.forename if formData else '' }}"
+                    >
+                </div>
+
+                <!-- Last Name Field -->
+                <div>
+                    <label for="surname" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Last Name <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="surname" 
+                        name="surname" 
+                        required 
+                        maxlength="50"
+                        placeholder="Enter your last name"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400"
+                        autocomplete="family-name"
+                        value="{{ formData.surname if formData else '' }}"
+                    >
+                </div>
+
                 <!-- Email Field -->
                 <div>
                     <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
@@ -64,9 +100,10 @@
                             id="password" 
                             name="password" 
                             required 
-                            placeholder="Enter your password"
+                            minlength="8"
+                            placeholder="Create a secure password"
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400"
-                            autocomplete="current-password"
+                            autocomplete="new-password"
                         >
                         <button 
                             type="button" 
@@ -83,6 +120,18 @@
                             </svg>
                         </button>
                     </div>
+                    
+                    <!-- Password Requirements -->
+                    <div class="mt-2 text-xs text-gray-600 space-y-1">
+                        <p class="font-semibold">Password must contain:</p>
+                        <ul class="list-disc list-inside pl-2 space-y-0.5">
+                            <li>At least 8 characters</li>
+                            <li>At least one uppercase letter</li>
+                            <li>At least one lowercase letter</li>
+                            <li>At least one number</li>
+                            <li>At least one special character (!@#$%^&*(),.?":{}|<>)</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- Submit Button -->
@@ -91,18 +140,18 @@
                     class="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-green-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
-                    Sign In
+                    Create Account
                 </button>
             </form>
         </div>
 
-        <!-- Sign Up Link -->
+        <!-- Sign In Link -->
         <div class="text-center">
             <p class="text-gray-600">
-                Don't have an account? 
-                <a href="/register" class="text-blue-600 hover:text-blue-700 font-semibold">Sign up</a>
+                Already have an account? 
+                <a href="/login" class="text-blue-600 hover:text-blue-700 font-semibold">Sign in</a>
             </p>
         </div>
 

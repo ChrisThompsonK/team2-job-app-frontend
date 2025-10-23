@@ -7,6 +7,13 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 ## 🚀 Features
 - TypeScript, ES Modules, Express, Nunjucks templating
 - Tailwind CSS 4, DaisyUI, Biome, Vitest
+- **User Authentication System** - Complete login and registration with session management
+  - Login with email/password authentication
+  - User registration with validation (name, email, password strength)
+  - Personalized success messages showing user's full name
+  - Secure session management with Express Session
+  - Client-side and server-side validation
+  - Password visibility toggle and strength requirements
 - **Galano Grotesque Typography**: Modern, clean Galano Grotesque font family applied system-wide for professional consistency and optimal readability
 - Modern homepage UI with animated backgrounds and stat cards
 - **About & Contact Pages** - Professional informational pages with company mission, values, team stats, and contact information
@@ -18,7 +25,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 - **Pagination System** - Efficient browsing with page controls, ellipsis navigation, and loading states
 - **Admin job role creation** - Full CRUD functionality to create and save job roles to database
 - **CSV Export** - Generate comprehensive reports of all job roles in CSV format for stakeholder distribution
-- Backend API integration via Axios for data persistence
+- Backend API integration via Axios for all services (job roles, applications, authentication)
 - Kainos brand theme, unified logo system
 - Dark mode (opt-in, dual toggles, persistent via localStorage; light theme is default) with a minimal header/link override (`public/css/overrides.css`)
 - Accessibility: skip links, text size, ARIA, keyboard navigation
@@ -32,13 +39,15 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── job-role-controller.ts        # Public job role operations (read-only)
 │   │   ├── admin-controller.ts           # Admin operations (create, update, delete)
 │   │   ├── application-controller.ts     # Job application submission and applicant viewing
-│   │   ├── user-controller.ts            # Authentication - login, logout, session management
+│   │   ├── auth-controller.ts            # Authentication page rendering (login, register)
+│   │   ├── user-controller.ts            # User session management (logout)
 │   │   └── *.test.ts                     # Controller unit tests
 │   ├── services/
 │   │   ├── job-role-service.ts           # JobRoleService interface
 │   │   ├── axios-job-role-service.ts     # API implementation with Axios
 │   │   ├── application-service.ts        # ApplicationService interface
 │   │   ├── axios-application-service.ts  # Application API implementation with Axios
+│   │   ├── auth-service.ts               # Authentication service with Axios
 │   │   └── interfaces.ts                 # Service interfaces
 │   ├── models/
 │   │   ├── job-role-response.ts          # TypeScript data models
@@ -46,6 +55,8 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── job-role-detailed-response.ts # Detailed response model
 │   │   ├── application-request.ts        # Application submission models
 │   │   ├── applicant-display.ts          # Applicant listing and pagination models
+│   │   ├── auth-request.ts               # Authentication request models (login, register)
+│   │   ├── auth-response.ts              # Authentication response models
 │   │   └── user.ts                       # User and authentication models
 │   ├── types/
 │   │   └── session.ts                    # Express session type extensions
@@ -53,6 +64,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── job-role-validator.ts         # Comprehensive validation logic
 │   │   ├── job-role-validation-constants.ts  # Valid options for dropdowns
 │   │   ├── application-validator.ts      # Application form validation
+│   │   ├── auth-validator.ts             # Authentication form validation (email, password)
 │   │   ├── csv-export.ts                 # CSV generation and export utilities
 │   │   └── validation.ts                 # General validation helpers
 │   ├── data/
@@ -69,7 +81,8 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │       ├── about.njk                     # About us page
 │       ├── contact.njk                   # Contact page
 │       ├── login.njk                     # User login form
-│       ├── index.njk                     # Homepage
+│       ├── register.njk                  # User registration form
+│       ├── index.njk                     # Homepage with login success toast
 │       ├── error.njk                     # Error page
 │       └── templates/                    # Layout & partials
 ├── public/
@@ -77,7 +90,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── styles.css                    # Compiled Tailwind + DaisyUI output
 │   │   └── overrides.css                 # Post-build dark mode & nav override rules
 │   ├── js/
-│   │   └── accessibility.js              # Client-side scripts
+│   │   └── accessibility.js              # Accessibility features (text size, keyboard nav)
 │   └── *.png                             # Static assets
 ├── dist/                                  # Compiled TypeScript output
 ├── package.json
@@ -121,15 +134,15 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 ## 🏗️ Tech Stack
 
 - **Node.js**: Runtime environment
-- **TypeScript**: Type-safe JavaScript
+- **TypeScript**: Type-safe JavaScript with strict mode enabled
 - **Express**: Fast web framework for Node.js
 - **Express Session**: Secure session middleware for persistent authentication
 - **Nunjucks**: Rich templating engine with inheritance, async, and more
 - **Tailwind CSS 4**: Utility-first CSS framework (latest version)
 - **daisyUI 5.1.26**: Semantic component classes for Tailwind CSS
 - **Lucide**: Beautiful & consistent SVG icon library with 1000+ icons
-- **Axios**: Promise-based HTTP client for API calls
-- **Vitest**: Next generation testing framework with coverage
+- **Axios 1.12.2**: Promise-based HTTP client for all API calls (job roles, applications, authentication)
+- **Vitest**: Next generation testing framework with 242 tests and coverage
 - **tsx**: TypeScript execution engine
 - **ES Modules**: Modern module system
 - **Biome**: Fast formatter, linter, and import organizer
@@ -188,12 +201,63 @@ The application uses [Lucide](https://lucide.dev/) for beautiful, consistent SVG
 - **Type Safety**: Full TypeScript support with proper type definitions
 - **Fallback Handling**: Graceful degradation for missing icons
 
+## 🔐 Authentication System
+
+The application features a complete user authentication system with login and registration capabilities:
+
+### Features
+- **User Registration**: Create new accounts with email, password, and name validation
+- **User Login**: Authenticate with email and password
+- **Session Management**: Secure session handling with Express Session and HTTP-only cookies
+- **Password Security**: Client-side and server-side password strength validation
+  - Minimum 8 characters
+  - Uppercase and lowercase letters required
+  - Numbers and special characters required
+- **Success Notifications**: Personalized toast messages showing "Logged in successfully as: [Name]"
+- **Form Validation**: Real-time client-side validation with server-side backup
+- **Error Handling**: Clear error messages for invalid credentials, network issues, and validation failures
+- **Secure Redirects**: Prevents authenticated users from accessing login/register pages
+
+### Authentication Flow
+1. User visits `/login` or `/register`
+2. Fills out form with validation feedback
+3. Credentials sent to backend API (`http://localhost:8000/api/auth`)
+4. On success: Session created, user redirected to homepage with success message
+5. On error: Detailed error message displayed with suggestions
+
+### Technical Implementation
+- **AuthController**: Renders login and register pages, handles authentication state
+- **AxiosAuthService**: Communicates with backend authentication API
+- **AuthValidator**: Comprehensive validation for email, password, and name fields
+- **Server-Side Form Handling**: Forms submit naturally via POST, following MVC pattern
+- **Session Storage**: Express session for authentication state and success messages
+- **Type Safety**: Full TypeScript models for LoginRequest, RegisterRequest, AuthSuccessResponse
+
+### Security Features
+- HTTP-only session cookies
+- Secure flag in production (HTTPS)
+- XSS prevention with Nunjucks autoescape
+- Input sanitization on both client and server
+- Password visibility toggle for better UX
+- CSRF protection ready (future implementation)
+
+### User Experience
+- Beautiful gradient UI with Kainos branding
+- Responsive design for mobile and desktop
+- Loading spinners during authentication
+- Auto-dismissible success notifications (5 seconds)
+- Password visibility toggle
+- Clear navigation between login and registration
+- "Back to Home" link on both pages
+
 ## 🎯 Job Roles Feature
 
 The application includes a comprehensive job roles management system with separate admin and public interfaces:
 
 ### Public Routes
-- **`/`**: Enhanced home page with premium animations, hero section, and interactive stat cards
+- **`/`**: Enhanced home page with premium animations, hero section, interactive stat cards, and login success toast notifications
+- **`/login`**: User login page with email/password authentication
+- **`/register`**: User registration page with form validation and password strength requirements
 - **`/about`**: About us page with company mission, values, statistics, and services overview
 - **`/contact`**: Contact page with contact information, form, social media links, and office locations
 - **`/job-roles`**: Premium job listings with smooth card animations and enhanced visual effects
@@ -370,6 +434,25 @@ const paginatedResult = await this.jobRoleService.getJobRolesPaginated({
 - **Validation Tests**: Tests for all edge cases and invalid inputs
 - **Controller Tests**: Mock-based testing for all pagination scenarios
 - **Integration Ready**: Prepared for E2E tests with Playwright/Cypress
+
+## 📊 Testing Coverage
+
+The application maintains high test coverage with comprehensive unit tests:
+
+### Test Statistics
+- **Total Tests**: 242 (238 passing, 4 skipped)
+- **Test Files**: 17 files with full coverage
+- **Controller Tests**: AuthController (8 tests), UserController (3 tests), ApplicationController (18 tests), AdminController (30 tests), JobRoleController (16 tests)
+- **Service Tests**: AxiosAuthService (10 tests), AxiosJobRoleService (18 tests)
+- **Utility Tests**: Validation, pagination, CSV export, URL builder utilities
+
+### Key Test Areas
+- **Authentication**: Login/register page rendering, session management, error handling
+- **Authorization**: Redirect logic for authenticated users
+- **Form Validation**: Email format, password strength, name validation
+- **API Integration**: Axios error handling, network failures, timeout scenarios
+- **Service Layer**: Mock-based testing with proper error propagation
+- **Edge Cases**: Invalid inputs, missing data, boundary conditions
 
 ## 🏁 Development Checklist
 
