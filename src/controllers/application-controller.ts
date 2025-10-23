@@ -24,6 +24,7 @@ export class ApplicationController {
 	/**
 	 * GET /job-roles/:id/apply
 	 * Renders the application form for a specific job role
+	 * Supports edit mode via ?edit=applicationId query parameter
 	 */
 	public getApplicationForm = async (
 		req: Request,
@@ -52,10 +53,53 @@ export class ApplicationController {
 				return;
 			}
 
-			// Check if the role is open for applications
+			// Check for edit mode
+			const editId = req.query["edit"];
+			let existingApplication = null;
+
+			if (editId) {
+				const applicationId =
+					typeof editId === "string" ? Number.parseInt(editId, 10) : null;
+
+				if (applicationId && !Number.isNaN(applicationId)) {
+					try {
+						existingApplication =
+							await this.applicationService.getApplicationById(applicationId);
+
+						// Verify the application belongs to this job role
+						if (existingApplication.jobRoleId !== jobRoleId) {
+							res.status(400).render("error.njk", {
+								message: "This application does not belong to this job role.",
+							});
+							return;
+						}
+
+						// Verify the application belongs to the current user
+						if (req.session["user"]) {
+							const userEmail = req.session["user"].email;
+							if (existingApplication.applicantEmail !== userEmail) {
+								res.status(403).render("error.njk", {
+									message:
+										"You do not have permission to edit this application.",
+								});
+								return;
+							}
+						}
+					} catch (error) {
+						console.error("Error fetching application for edit:", error);
+						res.status(404).render("error.njk", {
+							message: "Application not found or could not be loaded.",
+						});
+						return;
+					}
+				}
+			}
+
+			// Check if the role is open for applications (skip check for edit mode)
 			if (
-				jobRole.numberOfOpenPositions <= 0 ||
-				jobRole.status.toLowerCase() !== "open"
+				!existingApplication &&
+				(jobRole.numberOfOpenPositions <= 0 ||
+					jobRole.status.toLowerCase() !== "open")
 			) {
 				res.status(400).render("error.njk", {
 					message:
@@ -66,7 +110,17 @@ export class ApplicationController {
 
 			res.render("job-application-form.njk", {
 				jobRole,
+				existingApplication,
+				isEditMode: !!existingApplication,
 			});
+			
+			if (existingApplication) {
+				console.log("Rendering edit form with application:", {
+					id: existingApplication.applicationId,
+					cvFileName: existingApplication.cvFileName,
+					hasCv: existingApplication.hasCv,
+				});
+			}
 		} catch (error) {
 			console.error(
 				"Error in ApplicationController.getApplicationForm:",
@@ -81,7 +135,7 @@ export class ApplicationController {
 
 	/**
 	 * POST /job-roles/:id/apply
-	 * Handles the submission of a job application
+	 * Handles the submission of a job application (create or update)
 	 */
 	public submitApplication = async (
 		req: Request,
@@ -97,6 +151,22 @@ export class ApplicationController {
 						"Invalid job role ID provided. Please provide a valid numeric ID.",
 				});
 				return;
+			}
+
+			// Check if this is an update (edit mode)
+			const editId = req.body["editApplicationId"] as string | undefined;
+			const isEditMode = !!editId;
+			let applicationId: number | null = null;
+
+			if (isEditMode) {
+				applicationId =
+					typeof editId === "string" ? Number.parseInt(editId, 10) : null;
+				if (!applicationId || Number.isNaN(applicationId)) {
+					res.status(400).render("error.njk", {
+						message: "Invalid application ID for edit.",
+					});
+					return;
+				}
 			}
 
 			// Extract form data
@@ -123,7 +193,7 @@ export class ApplicationController {
 				return;
 			}
 
-			// Verify job role exists and is open
+			// Verify job role exists and is open (skip open check for edit mode)
 			const jobRole = await this.jobRoleService.getJobRoleById(jobRoleId);
 
 			if (!jobRole) {
@@ -140,11 +210,14 @@ export class ApplicationController {
 				status: jobRole.status,
 				numberOfOpenPositions: jobRole.numberOfOpenPositions,
 				closingDate: jobRole.closingDate,
+				isEditMode,
 			});
 
+			// Only check eligibility for new applications, not edits
 			if (
-				jobRole.numberOfOpenPositions <= 0 ||
-				jobRole.status.toLowerCase() !== "open"
+				!isEditMode &&
+				(jobRole.numberOfOpenPositions <= 0 ||
+					jobRole.status.toLowerCase() !== "open")
 			) {
 				console.warn(
 					"[ApplicationController] Rejected application due to eligibility check",
@@ -163,19 +236,29 @@ export class ApplicationController {
 				return;
 			}
 
-			// Submit the application
-			const application = await this.applicationService.submitApplication(
-				jobRoleId,
-				applicantName as string,
-				applicantEmail as string,
-				coverLetter,
-				cvFile
-			);
+			// Submit or update the application
+			let application;
+			if (isEditMode && applicationId) {
+				application = await this.applicationService.updateApplication(
+					applicationId,
+					coverLetter,
+					cvFile
+				);
+			} else {
+				application = await this.applicationService.submitApplication(
+					jobRoleId,
+					applicantName as string,
+					applicantEmail as string,
+					coverLetter,
+					cvFile
+				);
+			}
 
 			// Render success page
 			res.render("application-success.njk", {
 				application,
 				jobRole,
+				isEdit: isEditMode,
 			});
 		} catch (error) {
 			console.error("Error in ApplicationController.submitApplication:", error);

@@ -96,11 +96,10 @@
             <!-- Desktop Table View -->
             <div class="hidden md:block bg-white rounded-lg shadow-md overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="table table-zebra w-full">
+                    <table class="table w-full">
                         <thead class="bg-slate-100">
                             <tr>
-                                <th class="font-semibold" style="color: #000000;">Application ID</th>
-                                <th class="font-semibold" style="color: #000000;">Job Role ID</th>
+                                <th class="font-semibold" style="color: #000000;">Job Name</th>
                                 <th class="font-semibold" style="color: #000000;">Status</th>
                                 <th class="font-semibold" style="color: #000000;">Submitted Date</th>
                                 <th class="font-semibold" style="color: #000000;">Actions</th>
@@ -108,11 +107,14 @@
                         </thead>
                         <tbody>
                             {% for app in applications %}
-                            <tr class="hover">
-                                <td class="font-semibold text-blue-600 text-base">#{{ app.applicationId }}</td>
+                            <tr class="hover border-b border-gray-200 {% if loop.index % 2 == 0 %}bg-gray-100{% else %}bg-white{% endif %}">
                                 <td>
                                     <a href="/job-roles/{{ app.jobRoleId }}" class="link link-hover text-blue-600 font-medium text-base">
-                                        Job #{{ app.jobRoleId }}
+                                        {% if app.jobRole and app.jobRole.jobRoleName %}
+                                            {{ app.jobRole.jobRoleName }}
+                                        {% else %}
+                                            Job #{{ app.jobRoleId }}
+                                        {% endif %}
                                     </a>
                                 </td>
                                 <td>
@@ -123,35 +125,20 @@
                                 <td class="text-base font-medium" style="color: #000000;">{{ app.submittedAt | date('DD MMM YYYY, HH:mm') }}</td>
                                 <td>
                                     <div class="flex gap-2">
-                                        <!-- View Details Button -->
-                                        <button 
-                                            class="btn btn-sm btn-ghost tooltip action-btn" 
-                                            data-tip="View Details"
-                                            onclick="viewApplicationDetails({{ app.applicationId | tojson }})"
-                                            style="color: #000000; border: 1px solid #d1d5db;"
-                                            onmouseover="this.style.backgroundColor='#000000'; this.style.color='#ffffff'; this.style.borderColor='#000000';"
-                                            onmouseout="this.style.backgroundColor=''; this.style.color='#000000'; this.style.borderColor='#d1d5db';"
-                                        >
-                                            <i data-lucide="eye" class="w-4 h-4"></i>
-                                        </button>
-                                        
-                                        <!-- Download CV Button -->
-                                        {% if app.resumeUrl %}
+                                        <!-- Edit Application Button -->
                                         <a 
-                                            href="/applications/{{ app.applicationId }}/cv" 
-                                            target="_blank"
+                                            href="/job-roles/{{ app.jobRoleId }}/apply?edit={{ app.applicationId }}"
                                             class="btn btn-sm btn-ghost tooltip action-btn" 
-                                            data-tip="Download CV"
+                                            data-tip="Edit Application"
                                             style="color: #000000; border: 1px solid #d1d5db;"
                                             onmouseover="this.style.backgroundColor='#000000'; this.style.color='#ffffff'; this.style.borderColor='#000000';"
                                             onmouseout="this.style.backgroundColor=''; this.style.color='#000000'; this.style.borderColor='#d1d5db';"
                                         >
-                                            <i data-lucide="download" class="w-4 h-4"></i>
+                                            <i data-lucide="pencil" class="w-4 h-4"></i>
                                         </a>
-                                        {% endif %}
                                         
                                         <!-- Withdraw Button (only for pending applications) -->
-                                        {% if app.status == 'pending' or app.status == 'under_review' %}
+                                        {% if app.status == 'pending' or app.status == 'under_review' or app.status == 'in progress' %}
                                         <button 
                                             class="btn btn-sm btn-error btn-ghost tooltip action-btn" 
                                             data-tip="Withdraw Application"
@@ -179,20 +166,20 @@
                     <div class="card-body">
                         <div class="flex justify-between items-start mb-3">
                             <h3 class="card-title text-lg">
-                                Application #{{ app.applicationId }}
+                                <a href="/job-roles/{{ app.jobRoleId }}" class="link link-hover text-blue-600">
+                                    {% if app.jobRole and app.jobRole.jobRoleName %}
+                                        {{ app.jobRole.jobRoleName }}
+                                    {% else %}
+                                        Job #{{ app.jobRoleId }}
+                                    {% endif %}
+                                </a>
                             </h3>
-                            <span class="badge {% if app.status == 'accepted' %}badge-success{% elif app.status == 'rejected' %}badge-error{% elif app.status == 'under_review' %}badge-warning{% else %}badge-info{% endif %}">
+                            <span class="badge {% if app.status == 'accepted' %}badge-success{% elif app.status == 'rejected' %}badge-error{% elif app.status == 'under_review' or app.status == 'in progress' %}badge-warning{% else %}badge-info{% endif %}">
                                 {{ app.status | replace("_", " ") | title }}
                             </span>
                         </div>
                         
                         <div class="space-y-2 text-sm">
-                            <div class="flex items-center" style="color: #000000;">
-                                <i data-lucide="briefcase" class="w-4 h-4 mr-2"></i>
-                                <a href="/job-roles/{{ app.jobRoleId }}" class="link link-hover text-blue-600 font-medium">
-                                    Job Role #{{ app.jobRoleId }}
-                                </a>
-                            </div>
                             <div class="flex items-center" style="color: #000000;">
                                 <i data-lucide="calendar" class="w-4 h-4 mr-2"></i>
                                 {{ app.submittedAt | date('DD MMM YYYY, HH:mm') }}
@@ -200,36 +187,22 @@
                         </div>
 
                         <div class="card-actions justify-end mt-4">
-                            <button 
-                                class="btn btn-sm btn-ghost" 
-                                onclick="viewApplicationDetails({{ app.applicationId | tojson }})"
-                                style="color: #000000; border: 1px solid #d1d5db;"
-                                onmouseover="this.style.backgroundColor='#000000'; this.style.color='#ffffff'; this.style.borderColor='#000000';"
-                                onmouseout="this.style.backgroundColor=''; this.style.color='#000000'; this.style.borderColor='#d1d5db';"
-                            >
-                                <i data-lucide="eye" class="w-4 h-4 mr-1"></i>
-                                Details
-                            </button>
-                            
-                            {% if app.resumeUrl %}
                             <a 
-                                href="/applications/{{ app.applicationId }}/cv" 
-                                target="_blank"
-                                class="btn btn-sm btn-ghost"
+                                href="/job-roles/{{ app.jobRoleId }}/apply?edit={{ app.applicationId }}"
+                                class="btn btn-sm btn-ghost" 
                                 style="color: #000000; border: 1px solid #d1d5db;"
                                 onmouseover="this.style.backgroundColor='#000000'; this.style.color='#ffffff'; this.style.borderColor='#000000';"
                                 onmouseout="this.style.backgroundColor=''; this.style.color='#000000'; this.style.borderColor='#d1d5db';"
                             >
-                                <i data-lucide="download" class="w-4 h-4 mr-1"></i>
-                                CV
+                                <i data-lucide="pencil" class="w-4 h-4 mr-1"></i>
+                                Edit
                             </a>
-                            {% endif %}
                             
-                            {% if app.status == 'pending' or app.status == 'under_review' %}
+                            {% if app.status == 'pending' or app.status == 'under_review' or app.status == 'in progress' %}
                             <button 
                                 class="btn btn-sm btn-error btn-ghost" 
                                 onclick="withdrawApplication({{ app.applicationId }})"
-                                style="color: #dc2626; border: 1px solid #d1d5db;"
+                                style="color: #dc2626; border: 1px solid #dc2626;"
                                 onmouseover="this.style.backgroundColor='#dc2626'; this.style.color='#ffffff'; this.style.borderColor='#dc2626';"
                                 onmouseout="this.style.backgroundColor=''; this.style.color='#dc2626'; this.style.borderColor='#dc2626';"
                             >

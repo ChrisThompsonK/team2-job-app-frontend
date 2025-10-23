@@ -179,6 +179,18 @@ export class AxiosApplicationService implements ApplicationService {
 		if (backend.updatedAt !== undefined) {
 			response.updatedAt = backend.updatedAt;
 		}
+		if (backend.jobRole !== undefined) {
+			response.jobRole = backend.jobRole;
+		}
+		if (backend.cvFileName !== undefined) {
+			response.cvFileName = backend.cvFileName;
+		}
+		if (backend.cvMimeType !== undefined) {
+			response.cvMimeType = backend.cvMimeType;
+		}
+		if (backend.hasCv !== undefined) {
+			response.hasCv = backend.hasCv;
+		}
 
 		return response;
 	}
@@ -442,6 +454,128 @@ export class AxiosApplicationService implements ApplicationService {
 
 			throw new Error(
 				"An unexpected error occurred while fetching applications"
+			);
+		}
+	}
+
+	async getApplicationById(
+		applicationId: number
+	): Promise<ApplicationResponse> {
+		try {
+			const response = await this.axiosInstance.get<
+				BackendResponse<BackendApplicationResponse>
+			>(`/api/applications/${applicationId}`);
+
+			if (!response.data.success) {
+				throw new Error("Failed to fetch application");
+			}
+
+			return this.mapBackendToFrontend(response.data.data);
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				console.error(
+					"Failed to fetch application:",
+					error.response?.data || error.message
+				);
+
+				if (error.code === "ECONNREFUSED") {
+					throw new Error(
+						"Unable to connect to the backend API. Please ensure the API server is running."
+					);
+				}
+
+				if (error.response?.status === 404) {
+					throw new Error("Application not found");
+				}
+
+				throw new Error(
+					error.response?.data?.message ||
+						"An error occurred while fetching application"
+				);
+			}
+
+			throw new Error(
+				"An unexpected error occurred while fetching application"
+			);
+		}
+	}
+
+	async updateApplication(
+		applicationId: number,
+		coverLetter: string | undefined,
+		cvFile: Express.Multer.File | undefined
+	): Promise<ApplicationResponse> {
+		try {
+			console.log("=== UPDATE APPLICATION ===");
+			console.log("Application ID:", applicationId);
+			console.log("Cover Letter provided:", !!coverLetter);
+			console.log("CV File provided:", !!cvFile);
+
+			const FormData = (await import("form-data")).default;
+			const formData = new FormData();
+
+			if (coverLetter !== undefined) {
+				formData.append("coverLetter", coverLetter);
+			}
+
+			if (cvFile) {
+				formData.append("cv", cvFile.buffer, {
+					filename: cvFile.originalname,
+					contentType: cvFile.mimetype,
+				});
+				console.log("CV file details:", {
+					name: cvFile.originalname,
+					type: cvFile.mimetype,
+					size: cvFile.size,
+				});
+			}
+
+			console.log(
+				"Making PUT request to:",
+				`/api/applications/${applicationId}`
+			);
+
+			const response = await this.axiosInstance.put<
+				BackendResponse<BackendApplicationResponse>
+			>(`/api/applications/${applicationId}`, formData, {
+				headers: {
+					...formData.getHeaders(),
+				},
+			});
+
+			console.log("Update response:", response.data);
+
+			if (!response.data.success) {
+				throw new Error("Failed to update application");
+			}
+
+			return this.mapBackendToFrontend(response.data.data);
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				console.error(
+					"Failed to update application:",
+					"Status:",
+					error.response?.status,
+					"Data:",
+					error.response?.data,
+					"Message:",
+					error.message
+				);
+
+				if (error.code === "ECONNREFUSED") {
+					throw new Error(
+						"Unable to connect to the backend API. Please ensure the API server is running."
+					);
+				}
+
+				throw new Error(
+					error.response?.data?.message ||
+						"An error occurred while updating application"
+				);
+			}
+
+			throw new Error(
+				"An unexpected error occurred while updating application"
 			);
 		}
 	}
