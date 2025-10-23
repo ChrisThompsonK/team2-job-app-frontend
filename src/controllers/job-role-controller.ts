@@ -20,9 +20,25 @@ export class JobRoleController {
 	 * GET /job-roles
 	 * Renders the job roles list view with paginated data from the API
 	 * Shows admin view for authenticated admins, public view for other users
+	 * Supports search and filter parameters
 	 */
 	public getJobRoles = async (req: Request, res: Response): Promise<void> => {
 		try {
+			// Extract search parameters from query string
+			const searchQuery = (req.query["search"] as string) || "";
+			const capability = (req.query["capability"] as string) || "";
+			const location = (req.query["location"] as string) || "";
+			const band = (req.query["band"] as string) || "";
+			const status = (req.query["status"] as string) || "";
+
+			// Check if any filter parameters are present
+			const hasFilters =
+				searchQuery.trim() !== "" ||
+				capability.trim() !== "" ||
+				location.trim() !== "" ||
+				band.trim() !== "" ||
+				status.trim() !== "";
+
 			// Validate pagination parameters from query string
 			const paginationValidation = validatePaginationParams(
 				req.query["page"] as string,
@@ -38,11 +54,21 @@ export class JobRoleController {
 			// Fetch filter options for search form dropdowns
 			const filterOptions = await this.jobRoleService.getFilterOptions();
 
-			// Fetch paginated job roles
-			const paginatedResult = await this.jobRoleService.getJobRolesPaginated({
-				page: paginationValidation.page,
-				limit: paginationValidation.limit,
-			});
+			// Fetch paginated job roles (with or without filters)
+			const paginatedResult = hasFilters
+				? await this.jobRoleService.searchJobRoles({
+						search: searchQuery,
+						capability: capability,
+						location: location,
+						band: band,
+						status: status,
+						page: paginationValidation.page,
+						limit: paginationValidation.limit,
+					})
+				: await this.jobRoleService.getJobRolesPaginated({
+						page: paginationValidation.page,
+						limit: paginationValidation.limit,
+					});
 
 			// Handle case where user navigates to a page beyond available data
 			if (
@@ -70,13 +96,63 @@ export class JobRoleController {
 				});
 			}
 
+			// Prepare active filters for display
+			const activeFilters: Array<{
+				type: string;
+				value: string;
+				label: string;
+			}> = [];
+			if (searchQuery.trim()) {
+				activeFilters.push({
+					type: "search",
+					value: searchQuery,
+					label: `Search: "${searchQuery}"`,
+				});
+			}
+			if (capability.trim()) {
+				activeFilters.push({
+					type: "capability",
+					value: capability,
+					label: `Capability: ${capability}`,
+				});
+			}
+			if (location.trim()) {
+				activeFilters.push({
+					type: "location",
+					value: location,
+					label: `Location: ${location}`,
+				});
+			}
+			if (band.trim()) {
+				activeFilters.push({
+					type: "band",
+					value: band,
+					label: `Band: ${band}`,
+				});
+			}
+			if (status.trim()) {
+				activeFilters.push({
+					type: "status",
+					value: status,
+					label: `Status: ${status}`,
+				});
+			}
+
 			// Build pagination URLs using the utility
 			const paginationUrls = buildPaginationUrls(
 				req.path,
 				paginationValidation.page,
 				paginatedResult.pagination.totalPages,
 				paginationValidation.limit,
-				null // No search params for regular listing
+				hasFilters
+					? {
+							search: searchQuery,
+							capability: capability,
+							location: location,
+							band: band,
+							status: status,
+						}
+					: null
 			);
 
 			// Determine which view to render based on user role
@@ -90,7 +166,17 @@ export class JobRoleController {
 				paginationUrls: paginationUrls,
 				totalRoles: paginatedResult.pagination.totalCount,
 				currentUrl: req.path,
-				isSearchPage: false,
+				isSearchPage: hasFilters,
+				searchParams: hasFilters
+					? {
+							search: searchQuery,
+							capability: capability,
+							location: location,
+							band: band,
+							status: status,
+						}
+					: undefined,
+				activeFilters: hasFilters ? activeFilters : undefined,
 				filterOptions: filterOptions,
 			});
 		} catch (error) {
