@@ -63,8 +63,22 @@ export class ApplicationController {
 				return;
 			}
 
+			// Prepare user data for auto-fill if authenticated
+			const user = req.session.user;
+			const userData = user
+				? {
+						// Support both AuthUser (forename/surname) and User (username) formats
+						name:
+							"forename" in user && "surname" in user
+								? `${user.forename} ${user.surname}`.trim()
+								: user.username || "",
+						email: user.email || "",
+					}
+				: null;
+
 			res.render("job-application-form.njk", {
 				jobRole,
+				user: userData,
 			});
 		} catch (error) {
 			console.error(

@@ -3,6 +3,7 @@
  */
 
 import type { Request, Response } from "express";
+import type { Session } from "express-session";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ApplicationResponse } from "../models/application-request.js";
 import type { JobRoleDetailedResponse } from "../models/job-role-detailed-response.js";
@@ -14,6 +15,7 @@ import { ApplicationController } from "./application-controller.js";
 const mockApplicationService: ApplicationService = {
 	submitApplication: vi.fn(),
 	getApplicantsByJobRole: vi.fn(),
+	downloadApplicationCv: vi.fn(),
 };
 
 const mockJobRoleService: JobRoleService = {
@@ -22,6 +24,10 @@ const mockJobRoleService: JobRoleService = {
 	getJobRolesPaginated: vi.fn(),
 	createJobRole: vi.fn(),
 	deleteJobRole: vi.fn(),
+	updateJobRole: vi.fn(),
+	searchJobRoles: vi.fn(),
+	getFilterOptions: vi.fn(),
+	getAllJobRolesForExport: vi.fn(),
 };
 
 // Mock Express Request and Response
@@ -29,12 +35,14 @@ const createMockRequest = (
 	params = {},
 	body = {},
 	file?: Express.Multer.File,
-	query = {}
+	query = {},
+	session = {}
 ): Partial<Request> => ({
 	params,
 	body,
 	file,
 	query,
+	session: session as Session,
 });
 
 const createMockResponse = (): Partial<Response> => {
@@ -83,6 +91,7 @@ describe("ApplicationController", () => {
 			expect(mockJobRoleService.getJobRoleById).toHaveBeenCalledWith(1);
 			expect(res.render).toHaveBeenCalledWith("job-application-form.njk", {
 				jobRole: mockJobRole,
+				user: null,
 			});
 		});
 
@@ -141,6 +150,101 @@ describe("ApplicationController", () => {
 				message: expect.stringContaining(
 					"not currently accepting applications"
 				),
+			});
+		});
+
+		it("should auto-fill user data for authenticated users with AuthUser format", async () => {
+			const mockJobRole: JobRoleDetailedResponse = {
+				jobRoleId: 1,
+				roleName: "Software Engineer",
+				description: "Test description",
+				responsibilities: "Test responsibilities",
+				jobSpecLink: "http://example.com",
+				location: "Belfast",
+				capability: "Engineering",
+				band: "Band 1",
+				closingDate: "2025-12-31",
+				status: "Open",
+				numberOfOpenPositions: 3,
+			};
+
+			vi.mocked(mockJobRoleService.getJobRoleById).mockResolvedValue(
+				mockJobRole
+			);
+
+			const req = createMockRequest(
+				{ id: "1" },
+				{},
+				undefined,
+				{},
+				{
+					user: {
+						userId: "123",
+						email: "john.doe@example.com",
+						forename: "John",
+						surname: "Doe",
+						role: "User",
+					},
+				}
+			) as Request;
+
+			const res = createMockResponse() as Response;
+
+			await controller.getApplicationForm(req, res);
+
+			expect(res.render).toHaveBeenCalledWith("job-application-form.njk", {
+				jobRole: mockJobRole,
+				user: {
+					name: "John Doe",
+					email: "john.doe@example.com",
+				},
+			});
+		});
+
+		it("should auto-fill user data for authenticated users with User format", async () => {
+			const mockJobRole: JobRoleDetailedResponse = {
+				jobRoleId: 1,
+				roleName: "Software Engineer",
+				description: "Test description",
+				responsibilities: "Test responsibilities",
+				jobSpecLink: "http://example.com",
+				location: "Belfast",
+				capability: "Engineering",
+				band: "Band 1",
+				closingDate: "2025-12-31",
+				status: "Open",
+				numberOfOpenPositions: 3,
+			};
+
+			vi.mocked(mockJobRoleService.getJobRoleById).mockResolvedValue(
+				mockJobRole
+			);
+
+			const req = createMockRequest(
+				{ id: "1" },
+				{},
+				undefined,
+				{},
+				{
+					user: {
+						id: "123",
+						username: "johndoe",
+						user_type: "User",
+						email: "john.doe@example.com",
+					},
+				}
+			) as Request;
+
+			const res = createMockResponse() as Response;
+
+			await controller.getApplicationForm(req, res);
+
+			expect(res.render).toHaveBeenCalledWith("job-application-form.njk", {
+				jobRole: mockJobRole,
+				user: {
+					name: "johndoe",
+					email: "john.doe@example.com",
+				},
 			});
 		});
 	});

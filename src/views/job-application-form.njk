@@ -115,6 +115,21 @@
                         Personal Information
                     </h3>
 
+                    {% if user %}
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-r-xl">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <span class="icon text-green-400 text-xl">✓</span>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-green-800">
+                                    <strong>Your information has been automatically filled in.</strong> You can edit it if needed.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
                     <!-- Full Name -->
                     <div>
                         <label for="applicant-name" class="block text-lg font-semibold text-gray-900 mb-3">
@@ -127,6 +142,7 @@
                             required
                             maxlength="100"
                             placeholder="Enter your full name"
+                            value="{{ user.name if user else '' }}"
                             class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                         >
                         <p class="mt-2 text-sm text-gray-600">
@@ -146,6 +162,7 @@
                             required
                             maxlength="255"
                             placeholder="your.email@example.com"
+                            value="{{ user.email if user else '' }}"
                             class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                         >
                         <p class="mt-2 text-sm text-gray-600">
