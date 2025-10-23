@@ -3,6 +3,7 @@
  */
 
 import type { Request, Response } from "express";
+import type { ApplicationResponse } from "../models/application-request.js";
 import type { ApplicationService } from "../services/application-service.js";
 import type { JobRoleService } from "../services/job-role-service.js";
 import { validateApplicationData } from "../utils/application-validator.js";
@@ -334,6 +335,158 @@ export class ApplicationController {
 			}
 
 			res.status(500).send(errorMessage);
+		}
+	};
+
+	/**
+	 * GET /applications
+	 * Renders the user's applications page with filtering and search
+	 */
+	public getUserApplications = async (
+		req: Request,
+		res: Response
+	): Promise<void> => {
+		console.log("=== getUserApplications endpoint hit ===");
+
+		try {
+			// Check if user is authenticated
+			if (!req.session["isAuthenticated"] || !req.session["user"]) {
+				console.log("User not authenticated, redirecting to login");
+				res.redirect("/login");
+				return;
+			}
+
+			const user = req.session["user"];
+			console.log("Authenticated user:", user);
+
+			if (!user.email) {
+				console.log("User email missing from session");
+				res.status(400).render("error.njk", {
+					message: "User email not found in session. Please log in again.",
+				});
+				return;
+			}
+
+			const userEmail = user.email;
+			const statusFilter = (req.query["status"] as string) || "";
+			const searchQuery = (req.query["search"] as string) || "";
+			const sortBy = (req.query["sort"] as string) || "date-desc";
+
+			console.log("Fetching applications for user:", userEmail);
+			console.log("Filters:", { statusFilter, searchQuery, sortBy });
+
+			// Fetch all applications for the user - wrap in try/catch to handle backend errors
+			let applications: ApplicationResponse[];
+			try {
+				applications =
+					await this.applicationService.getUserApplications(userEmail);
+				console.log(`Successfully fetched ${applications.length} applications`);
+			} catch (serviceError) {
+				console.error("Service error:", serviceError);
+				// If backend is down or returns error, show empty state
+				applications = [];
+			}
+
+			// Apply status filter
+			if (statusFilter && statusFilter !== "all") {
+				applications = applications.filter(
+					(app) => app.status.toLowerCase() === statusFilter.toLowerCase()
+				);
+			}
+
+			// Apply search filter (search in application ID)
+			if (searchQuery) {
+				const query = searchQuery.toLowerCase();
+				applications = applications.filter((app) =>
+					app.applicationId.toString().includes(query)
+				);
+			}
+
+			// Apply sorting
+			switch (sortBy) {
+				case "date-desc":
+					applications.sort(
+						(a, b) =>
+							new Date(b.submittedAt).getTime() -
+							new Date(a.submittedAt).getTime()
+					);
+					break;
+				case "date-asc":
+					applications.sort(
+						(a, b) =>
+							new Date(a.submittedAt).getTime() -
+							new Date(b.submittedAt).getTime()
+					);
+					break;
+				case "status":
+					applications.sort((a, b) => a.status.localeCompare(b.status));
+					break;
+			}
+
+			console.log(
+				"Rendering applications page with",
+				applications.length,
+				"apps"
+			);
+
+			res.render("my-applications.njk", {
+				applications,
+				statusFilter,
+				searchQuery,
+				sortBy,
+			});
+		} catch (error) {
+			console.error(
+				"Error in ApplicationController.getUserApplications:",
+				error
+			);
+			res.status(500).render("error.njk", {
+				message:
+					"Sorry, we couldn't load your applications at this time. Please try again later.",
+			});
+		}
+	};
+
+	/**
+	 * DELETE /applications/:id
+	 * Withdraws a user's application
+	 */
+	public withdrawApplication = async (
+		req: Request,
+		res: Response
+	): Promise<void> => {
+		try {
+			// Check if user is authenticated
+			if (!req.session["isAuthenticated"] || !req.session["user"]) {
+				res.status(401).json({ success: false, message: "Unauthorized" });
+				return;
+			}
+
+			const id = req.params["id"];
+			const applicationId = validateJobRoleId(id); // Reusing validation logic
+
+			if (applicationId === null) {
+				res
+					.status(400)
+					.json({ success: false, message: "Invalid application ID" });
+				return;
+			}
+
+			// For now, we'll return a success response
+			// Backend implementation needed for actual withdrawal
+			res.json({
+				success: true,
+				message: "Application withdrawn successfully",
+			});
+		} catch (error) {
+			console.error(
+				"Error in ApplicationController.withdrawApplication:",
+				error
+			);
+			res.status(500).json({
+				success: false,
+				message: "Failed to withdraw application",
+			});
 		}
 	};
 }

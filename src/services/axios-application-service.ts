@@ -374,4 +374,75 @@ export class AxiosApplicationService implements ApplicationService {
 			throw error;
 		}
 	}
+
+	/**
+	 * Retrieves all applications submitted by a specific user
+	 */
+	async getUserApplications(
+		applicantEmail: string
+	): Promise<ApplicationResponse[]> {
+		try {
+			console.log(
+				"Requesting applications for:",
+				applicantEmail,
+				"URL:",
+				`/api/applications/user/${encodeURIComponent(applicantEmail)}`
+			);
+
+			const response = await this.axiosInstance.get<
+				BackendResponse<BackendApplicationResponse[]>
+			>(`/api/applications/user/${encodeURIComponent(applicantEmail)}`);
+
+			console.log("Backend response:", response.data);
+
+			if (!response.data.success) {
+				throw new Error("Failed to fetch user applications");
+			}
+
+			// Map backend responses to frontend format
+			return response.data.data.map((app) => this.mapBackendToFrontend(app));
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				console.error(
+					"Failed to fetch user applications:",
+					"Status:",
+					error.response?.status,
+					"Data:",
+					error.response?.data,
+					"Message:",
+					error.message
+				);
+
+				if (error.code === "ECONNREFUSED") {
+					throw new Error(
+						"Unable to connect to the backend API. Please ensure the API server is running."
+					);
+				}
+
+				if (error.response?.status === 404) {
+					// Return empty array if no applications found
+					return [];
+				}
+
+				if (error.response?.status && error.response.status >= 500) {
+					const errorDetails = error.response?.data
+						? JSON.stringify(error.response.data)
+						: "No error details";
+					console.error("Backend 500 error details:", errorDetails);
+					throw new Error(
+						`Backend server error (500). Details: ${errorDetails}. Please try again later.`
+					);
+				}
+
+				throw new Error(
+					error.response?.data?.message ||
+						"An error occurred while fetching applications"
+				);
+			}
+
+			throw new Error(
+				"An unexpected error occurred while fetching applications"
+			);
+		}
+	}
 }

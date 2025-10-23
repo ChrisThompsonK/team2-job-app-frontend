@@ -50,4 +50,11 @@ export interface ApplicationService {
 		fileName: string;
 		mimeType: string;
 	}>;
+
+	/**
+	 * Retrieves all applications submitted by a specific user
+	 * @param applicantEmail The email address of the applicant
+	 * @returns Promise<ApplicationResponse[]> List of applications by the user
+	 */
+	getUserApplications(applicantEmail: string): Promise<ApplicationResponse[]>;
 }

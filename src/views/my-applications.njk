@@ -1,0 +1,408 @@
+{% extends "templates/layout.njk" %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 py-8">
+    <div class="container mx-auto px-4 max-w-7xl">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2 flex items-center" style="color: #000000;">
+                <i data-lucide="briefcase" class="w-10 h-10 mr-3 text-blue-600"></i>
+                My Applications
+            </h1>
+            <p style="color: #000000;">Track and manage all your job applications</p>
+        </div>
+
+        <!-- Filters and Search Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <form method="GET" action="/applications" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Search Input -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium flex items-center" style="color: #000000;">
+                                <i data-lucide="search" class="w-4 h-4 mr-2"></i>
+                                Search Application ID
+                            </span>
+                        </label>
+                        <input 
+                            type="text" 
+                            name="search" 
+                            value="{{ searchQuery }}"
+                            placeholder="Enter application ID..." 
+                            class="input input-bordered w-full"
+                            style="color: #000000; background-color: #ffffff; border-color: #000000;"
+                        >
+                    </div>
+
+                    <!-- Status Filter -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium flex items-center" style="color: #000000;">
+                                <i data-lucide="filter" class="w-4 h-4 mr-2"></i>
+                                Filter by Status
+                            </span>
+                        </label>
+                        <select name="status" class="select select-bordered w-full" style="color: #000000; background-color: #ffffff; border-color: #000000;">
+                            <option value="all" {% if statusFilter == "" or statusFilter == "all" %}selected{% endif %}>All Statuses</option>
+                            <option value="pending" {% if statusFilter == "pending" %}selected{% endif %}>Pending</option>
+                            <option value="under_review" {% if statusFilter == "under_review" %}selected{% endif %}>Under Review</option>
+                            <option value="accepted" {% if statusFilter == "accepted" %}selected{% endif %}>Accepted</option>
+                            <option value="rejected" {% if statusFilter == "rejected" %}selected{% endif %}>Rejected</option>
+                        </select>
+                    </div>
+
+                    <!-- Sort By -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium flex items-center" style="color: #000000;">
+                                <i data-lucide="arrow-up-down" class="w-4 h-4 mr-2"></i>
+                                Sort By
+                            </span>
+                        </label>
+                        <select name="sort" class="select select-bordered w-full" style="color: #000000; background-color: #ffffff; border-color: #000000;">
+                            <option value="date-desc" {% if sortBy == "date-desc" %}selected{% endif %}>Newest First</option>
+                            <option value="date-asc" {% if sortBy == "date-asc" %}selected{% endif %}>Oldest First</option>
+                            <option value="status" {% if sortBy == "status" %}selected{% endif %}>Status</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary" style="color: #ffffff; background-color: #6366f1; border-color: #6366f1;">
+                        <i data-lucide="check" class="w-4 h-4 mr-2"></i>
+                        Apply Filters
+                    </button>
+                    <a href="/applications" class="btn btn-ghost" style="color: #000000; border: 1px solid #000000;"
+                       onmouseover="this.style.backgroundColor='#000000'; this.style.color='#ffffff'; this.style.borderColor='#000000';"
+                       onmouseout="this.style.backgroundColor=''; this.style.color='#000000'; this.style.borderColor='#000000';">
+                        <i data-lucide="x" class="w-4 h-4 mr-2"></i>
+                        Clear All
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Applications Count -->
+        <div class="mb-4">
+            <p class="font-medium text-base" style="color: #000000;">
+                <span class="font-bold" style="color: #000000;">{{ applications.length }}</span> 
+                application{% if applications.length != 1 %}s{% endif %} found
+            </p>
+        </div>
+
+        <!-- Applications List -->
+        {% if applications.length > 0 %}
+            <!-- Desktop Table View -->
+            <div class="hidden md:block bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="font-semibold" style="color: #000000;">Application ID</th>
+                                <th class="font-semibold" style="color: #000000;">Job Role ID</th>
+                                <th class="font-semibold" style="color: #000000;">Status</th>
+                                <th class="font-semibold" style="color: #000000;">Submitted Date</th>
+                                <th class="font-semibold" style="color: #000000;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in applications %}
+                            <tr class="hover">
+                                <td class="font-semibold text-blue-600 text-base">#{{ app.applicationId }}</td>
+                                <td>
+                                    <a href="/job-roles/{{ app.jobRoleId }}" class="link link-hover text-blue-600 font-medium text-base">
+                                        Job #{{ app.jobRoleId }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge {% if app.status == 'accepted' %}badge-success{% elif app.status == 'rejected' %}badge-error{% elif app.status == 'under_review' %}badge-warning{% else %}badge-info{% endif %} badge-lg font-medium">
+                                        {{ app.status | replace("_", " ") | title }}
+                                    </span>
+                                </td>
+                                <td class="text-base font-medium" style="color: #000000;">{{ app.submittedAt | date('DD MMM YYYY, HH:mm') }}</td>
+                                <td>
+                                    <div class="flex gap-2">
+                                        <!-- View Details Button -->
+                                        <button 
+                                            class="btn btn-sm btn-ghost tooltip action-btn" 
+                                            data-tip="View Details"
+                                            onclick="viewApplicationDetails({{ app.applicationId | tojson }})"
+                                            style="color: #000000; border: 1px solid #d1d5db;"
+                                            onmouseover="this.style.backgroundColor='#000000'; this.style.color='#ffffff'; this.style.borderColor='#000000';"
+                                            onmouseout="this.style.backgroundColor=''; this.style.color='#000000'; this.style.borderColor='#d1d5db';"
+                                        >
+                                            <i data-lucide="eye" class="w-4 h-4"></i>
+                                        </button>
+                                        
+                                        <!-- Download CV Button -->
+                                        {% if app.resumeUrl %}
+                                        <a 
+                                            href="/applications/{{ app.applicationId }}/cv" 
+                                            target="_blank"
+                                            class="btn btn-sm btn-ghost tooltip action-btn" 
+                                            data-tip="Download CV"
+                                            style="color: #000000; border: 1px solid #d1d5db;"
+                                            onmouseover="this.style.backgroundColor='#000000'; this.style.color='#ffffff'; this.style.borderColor='#000000';"
+                                            onmouseout="this.style.backgroundColor=''; this.style.color='#000000'; this.style.borderColor='#d1d5db';"
+                                        >
+                                            <i data-lucide="download" class="w-4 h-4"></i>
+                                        </a>
+                                        {% endif %}
+                                        
+                                        <!-- Withdraw Button (only for pending applications) -->
+                                        {% if app.status == 'pending' or app.status == 'under_review' %}
+                                        <button 
+                                            class="btn btn-sm btn-error btn-ghost tooltip action-btn" 
+                                            data-tip="Withdraw Application"
+                                            onclick="withdrawApplication({{ app.applicationId }})"
+                                            style="color: #dc2626; border: 1px solid #dc2626;"
+                                            onmouseover="this.style.backgroundColor='#dc2626'; this.style.color='#ffffff'; this.style.borderColor='#dc2626';"
+                                            onmouseout="this.style.backgroundColor=''; this.style.color='#dc2626'; this.style.borderColor='#dc2626';"
+                                        >
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="md:hidden space-y-4">
+                {% for app in applications %}
+                <div class="card bg-white shadow-md">
+                    <div class="card-body">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="card-title text-lg">
+                                Application #{{ app.applicationId }}
+                            </h3>
+                            <span class="badge {% if app.status == 'accepted' %}badge-success{% elif app.status == 'rejected' %}badge-error{% elif app.status == 'under_review' %}badge-warning{% else %}badge-info{% endif %}">
+                                {{ app.status | replace("_", " ") | title }}
+                            </span>
+                        </div>
+                        
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center" style="color: #000000;">
+                                <i data-lucide="briefcase" class="w-4 h-4 mr-2"></i>
+                                <a href="/job-roles/{{ app.jobRoleId }}" class="link link-hover text-blue-600 font-medium">
+                                    Job Role #{{ app.jobRoleId }}
+                                </a>
+                            </div>
+                            <div class="flex items-center" style="color: #000000;">
+                                <i data-lucide="calendar" class="w-4 h-4 mr-2"></i>
+                                {{ app.submittedAt | date('DD MMM YYYY, HH:mm') }}
+                            </div>
+                        </div>
+
+                        <div class="card-actions justify-end mt-4">
+                            <button 
+                                class="btn btn-sm btn-ghost" 
+                                onclick="viewApplicationDetails({{ app.applicationId | tojson }})"
+                                style="color: #000000; border: 1px solid #d1d5db;"
+                                onmouseover="this.style.backgroundColor='#000000'; this.style.color='#ffffff'; this.style.borderColor='#000000';"
+                                onmouseout="this.style.backgroundColor=''; this.style.color='#000000'; this.style.borderColor='#d1d5db';"
+                            >
+                                <i data-lucide="eye" class="w-4 h-4 mr-1"></i>
+                                Details
+                            </button>
+                            
+                            {% if app.resumeUrl %}
+                            <a 
+                                href="/applications/{{ app.applicationId }}/cv" 
+                                target="_blank"
+                                class="btn btn-sm btn-ghost"
+                                style="color: #000000; border: 1px solid #d1d5db;"
+                                onmouseover="this.style.backgroundColor='#000000'; this.style.color='#ffffff'; this.style.borderColor='#000000';"
+                                onmouseout="this.style.backgroundColor=''; this.style.color='#000000'; this.style.borderColor='#d1d5db';"
+                            >
+                                <i data-lucide="download" class="w-4 h-4 mr-1"></i>
+                                CV
+                            </a>
+                            {% endif %}
+                            
+                            {% if app.status == 'pending' or app.status == 'under_review' %}
+                            <button 
+                                class="btn btn-sm btn-error btn-ghost" 
+                                onclick="withdrawApplication({{ app.applicationId }})"
+                                style="color: #dc2626; border: 1px solid #d1d5db;"
+                                onmouseover="this.style.backgroundColor='#dc2626'; this.style.color='#ffffff'; this.style.borderColor='#dc2626';"
+                                onmouseout="this.style.backgroundColor=''; this.style.color='#dc2626'; this.style.borderColor='#dc2626';"
+                            >
+                                <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i>
+                                Withdraw
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="bg-white rounded-lg shadow-md p-12 text-center">
+                <div class="flex justify-center mb-4">
+                    <i data-lucide="inbox" class="w-20 h-20 text-slate-400"></i>
+                </div>
+                <h3 class="text-2xl font-semibold mb-2" style="color: #000000;">No Applications Found</h3>
+                <p class="mb-6" style="color: #000000;">
+                    {% if statusFilter or searchQuery %}
+                        No applications match your current filters. Try adjusting your search criteria.
+                    {% else %}
+                        You haven't submitted any job applications yet. Start exploring our open positions!
+                    {% endif %}
+                </p>
+                <div class="flex gap-3 justify-center">
+                    {% if statusFilter or searchQuery %}
+                    <a href="/applications" class="btn btn-ghost">
+                        <i data-lucide="x" class="w-4 h-4 mr-2"></i>
+                        Clear Filters
+                    </a>
+                    {% endif %}
+                    <a href="/job-roles" class="btn btn-primary">
+                        <i data-lucide="search" class="w-4 h-4 mr-2"></i>
+                        Browse Jobs
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Application Details Modal -->
+<dialog id="applicationDetailsModal" class="modal">
+    <div class="modal-box max-w-2xl">
+        <h3 class="font-bold text-lg mb-4 flex items-center">
+            <i data-lucide="file-text" class="w-5 h-5 mr-2"></i>
+            Application Details
+        </h3>
+        <div id="applicationDetailsContent" class="space-y-4">
+            <!-- Content will be populated by JavaScript -->
+        </div>
+        <div class="modal-action">
+            <form method="dialog">
+                <button class="btn">Close</button>
+            </form>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
+<script>
+    // Application data for JavaScript
+    const applications = {{ applications | tojson }};
+
+    // View application details
+    function viewApplicationDetails(applicationId) {
+        const app = applications.find(a => a.applicationId === applicationId);
+        if (!app) return;
+
+        const content = document.getElementById('applicationDetailsContent');
+        const statusClass = 
+            app.status === 'accepted' ? 'badge-success' :
+            app.status === 'rejected' ? 'badge-error' :
+            app.status === 'under_review' ? 'badge-warning' : 'badge-info';
+
+        content.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="font-semibold text-slate-600">Application ID:</label>
+                    <p class="text-lg">#${app.applicationId}</p>
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-600">Status:</label>
+                    <p><span class="badge ${statusClass} badge-lg">${app.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</span></p>
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-600">Job Role ID:</label>
+                    <p><a href="/job-roles/${app.jobRoleId}" class="link link-primary">#${app.jobRoleId}</a></p>
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-600">Applicant Name:</label>
+                    <p>${app.applicantName}</p>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="font-semibold text-slate-600">Email:</label>
+                    <p>${app.applicantEmail}</p>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="font-semibold text-slate-600">Submitted:</label>
+                    <p>${new Date(app.submittedAt).toLocaleString('en-GB', { 
+                        day: 'numeric', 
+                        month: 'long', 
+                        year: 'numeric', 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    })}</p>
+                </div>
+                ${app.coverLetter ? `
+                <div class="md:col-span-2">
+                    <label class="font-semibold text-slate-600">Cover Letter:</label>
+                    <p class="mt-2 p-4 bg-slate-50 rounded-lg whitespace-pre-wrap">${app.coverLetter}</p>
+                </div>
+                ` : ''}
+                ${app.resumeUrl ? `
+                <div class="md:col-span-2">
+                    <label class="font-semibold text-slate-600">CV:</label>
+                    <p class="mt-2">
+                        <a href="/applications/${app.applicationId}/cv" target="_blank" class="btn btn-sm btn-outline">
+                            <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                            Download CV
+                        </a>
+                    </p>
+                </div>
+                ` : ''}
+            </div>
+        `;
+
+        // Re-initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        document.getElementById('applicationDetailsModal').showModal();
+    }
+
+    // Withdraw application
+    async function withdrawApplication(applicationId) {
+        if (!confirm('Are you sure you want to withdraw this application? This action cannot be undone.')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/applications/${applicationId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Application withdrawn successfully');
+                window.location.reload();
+            } else {
+                alert(result.message || 'Failed to withdraw application');
+            }
+        } catch (error) {
+            console.error('Error withdrawing application:', error);
+            alert('An error occurred while withdrawing the application. Please try again.');
+        }
+    }
+
+    // Initialize Lucide icons on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+</script>
+
+{% endblock %}
