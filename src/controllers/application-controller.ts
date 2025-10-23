@@ -69,9 +69,12 @@ export class ApplicationController {
 				? {
 						// Support both AuthUser (forename/surname) and User (username) formats
 						name:
-							"forename" in user && "surname" in user
+							"forename" in user &&
+							"surname" in user &&
+							user.forename &&
+							user.surname
 								? `${user.forename} ${user.surname}`.trim()
-								: user.username || "",
+								: ("username" in user && user.username) || "",
 						email: user.email || "",
 					}
 				: null;

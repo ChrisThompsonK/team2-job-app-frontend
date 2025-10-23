@@ -247,6 +247,81 @@ describe("ApplicationController", () => {
 				},
 			});
 		});
+
+		it("should handle users with missing or falsy name properties gracefully", async () => {
+			const mockJobRole: JobRoleDetailedResponse = {
+				jobRoleId: 1,
+				roleName: "Software Engineer",
+				description: "Test description",
+				responsibilities: "Test responsibilities",
+				jobSpecLink: "http://example.com",
+				location: "Belfast",
+				capability: "Engineering",
+				band: "Band 1",
+				closingDate: "2025-12-31",
+				status: "Open",
+				numberOfOpenPositions: 3,
+			};
+
+			vi.mocked(mockJobRoleService.getJobRoleById).mockResolvedValue(
+				mockJobRole
+			);
+
+			// Test AuthUser with empty forename
+			const reqWithEmptyForename = createMockRequest(
+				{ id: "1" },
+				{},
+				undefined,
+				{},
+				{
+					user: {
+						userId: "123",
+						email: "john.doe@example.com",
+						forename: "", // Empty string
+						surname: "Doe",
+						role: "User",
+					},
+				}
+			) as Request;
+
+			const res1 = createMockResponse() as Response;
+			await controller.getApplicationForm(reqWithEmptyForename, res1);
+
+			expect(res1.render).toHaveBeenCalledWith("job-application-form.njk", {
+				jobRole: mockJobRole,
+				user: {
+					name: "", // Should fall back to empty string, not "undefined Doe"
+					email: "john.doe@example.com",
+				},
+			});
+
+			// Test User with null username
+			const reqWithNullUsername = createMockRequest(
+				{ id: "1" },
+				{},
+				undefined,
+				{},
+				{
+					user: {
+						id: "123",
+						username: null, // Null value
+						user_type: "User",
+						email: "john.doe@example.com",
+					},
+				}
+			) as Request;
+
+			const res2 = createMockResponse() as Response;
+			await controller.getApplicationForm(reqWithNullUsername, res2);
+
+			expect(res2.render).toHaveBeenCalledWith("job-application-form.njk", {
+				jobRole: mockJobRole,
+				user: {
+					name: "", // Should fall back to empty string, not "null"
+					email: "john.doe@example.com",
+				},
+			});
+		});
 	});
 
 	describe("submitApplication", () => {
