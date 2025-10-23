@@ -75,18 +75,20 @@ describe("ApplicationController", () => {
 				mockJobRole
 			);
 
-			const req = createMockRequest({ id: "1" }) as Request;
-			const res = createMockResponse() as Response;
+		const req = createMockRequest({ id: "1" }) as Request;
+		const res = createMockResponse() as Response;
 
-			await controller.getApplicationForm(req, res);
+		await controller.getApplicationForm(req, res);
 
-			expect(mockJobRoleService.getJobRoleById).toHaveBeenCalledWith(1);
-			expect(res.render).toHaveBeenCalledWith("job-application-form.njk", {
-				jobRole: mockJobRole,
-			});
+		expect(mockJobRoleService.getJobRoleById).toHaveBeenCalledWith(1);
+		expect(res.render).toHaveBeenCalledWith("job-application-form.njk", {
+			jobRole: mockJobRole,
+			existingApplication: null,
+			isEditMode: false,
 		});
+	});
 
-		it("should return 400 for invalid job role ID", async () => {
+	it("should return 400 for invalid job role ID", async () => {
 			const req = createMockRequest({ id: "invalid" }) as Request;
 			const res = createMockResponse() as Response;
 
@@ -209,13 +211,14 @@ describe("ApplicationController", () => {
 				"I am very interested in this position...",
 				mockFile
 			);
-			expect(res.render).toHaveBeenCalledWith("application-success.njk", {
-				application: mockApplication,
-				jobRole: mockJobRole,
-			});
+		expect(res.render).toHaveBeenCalledWith("application-success.njk", {
+			application: mockApplication,
+			jobRole: mockJobRole,
+			isEdit: false,
 		});
+	});
 
-		it("should return 400 if no file uploaded", async () => {
+	it("should return 400 if no file uploaded", async () => {		it("should return 400 if no file uploaded", async () => {
 			const mockBody = {
 				applicantName: "John Doe",
 				applicantEmail: "john.doe@example.com",
@@ -344,7 +347,7 @@ describe("ApplicationController", () => {
 			);
 			expect(res.render).toHaveBeenCalledWith("application-success.njk", {
 				application: mockApplication,
-				jobRole: mockJobRole,
+			isEdit: false,
 			});
 		});
 	});
