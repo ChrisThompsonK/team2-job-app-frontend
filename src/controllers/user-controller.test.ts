@@ -7,8 +7,6 @@
 import type { Request, Response } from "express";
 import { UserController } from "./user-controller.js";
 
-// biome-ignore lint/suspicious/noExplicitAny: Mock objects require any type for testing
-
 describe("UserController", () => {
 	let controller: UserController;
 	let mockRequest: Partial<Request>;
@@ -25,6 +23,7 @@ describe("UserController", () => {
 				destroy: vi.fn((callback: (error?: Error) => void) => {
 					callback();
 				}),
+				// biome-ignore lint/suspicious/noExplicitAny: Mock session object requires any type for testing
 			} as any,
 		};
 
@@ -51,6 +50,7 @@ describe("UserController", () => {
 				destroy: vi.fn((callback: (error?: Error) => void) => {
 					callback(mockError);
 				}),
+				// biome-ignore lint/suspicious/noExplicitAny: Mock session object requires any type for testing
 			} as any;
 
 			const consoleErrorSpy = vi
@@ -76,6 +76,7 @@ describe("UserController", () => {
 				destroy: vi.fn(() => {
 					throw new Error("Unexpected error");
 				}),
+				// biome-ignore lint/suspicious/noExplicitAny: Mock session object requires any type for testing
 			} as any;
 
 			const consoleErrorSpy = vi

@@ -7,8 +7,6 @@
 import type { Request, Response } from "express";
 import { AuthController } from "./auth-controller.js";
 
-// biome-ignore lint/suspicious/noExplicitAny: Mock objects require any type for testing
-
 describe("AuthController", () => {
 	let controller: AuthController;
 	let mockRequest: Partial<Request>;
@@ -18,6 +16,7 @@ describe("AuthController", () => {
 		controller = new AuthController();
 
 		mockRequest = {
+			// biome-ignore lint/suspicious/noExplicitAny: Mock session object requires any type for testing
 			session: {} as any,
 		};
 
@@ -30,6 +29,7 @@ describe("AuthController", () => {
 
 	describe("getLogin", () => {
 		it("should render login page when user is not authenticated", () => {
+			// biome-ignore lint/suspicious/noExplicitAny: Mock session object requires any type for testing
 			mockRequest.session = {} as any;
 
 			controller.getLogin(mockRequest as Request, mockResponse as Response);
@@ -41,6 +41,7 @@ describe("AuthController", () => {
 		});
 
 		it("should redirect to home if user is already authenticated via isAuthenticated flag", () => {
+			// biome-ignore lint/suspicious/noExplicitAny: Mock session object requires any type for testing
 			mockRequest.session = { isAuthenticated: true } as any;
 
 			controller.getLogin(mockRequest as Request, mockResponse as Response);
@@ -58,6 +59,7 @@ describe("AuthController", () => {
 					surname: "Doe",
 					role: "user",
 				},
+				// biome-ignore lint/suspicious/noExplicitAny: Mock session object requires any type for testing
 			} as any;
 
 			controller.getLogin(mockRequest as Request, mockResponse as Response);
@@ -97,6 +99,7 @@ describe("AuthController", () => {
 
 	describe("getRegister", () => {
 		it("should render register page when user is not authenticated", () => {
+			// biome-ignore lint/suspicious/noExplicitAny: Mock session object requires any type for testing
 			mockRequest.session = {} as any;
 
 			controller.getRegister(mockRequest as Request, mockResponse as Response);
@@ -108,6 +111,7 @@ describe("AuthController", () => {
 		});
 
 		it("should redirect to home if user is already authenticated via isAuthenticated flag", () => {
+			// biome-ignore lint/suspicious/noExplicitAny: Mock session object requires any type for testing
 			mockRequest.session = { isAuthenticated: true } as any;
 
 			controller.getRegister(mockRequest as Request, mockResponse as Response);
@@ -125,6 +129,7 @@ describe("AuthController", () => {
 					surname: "Doe",
 					role: "user",
 				},
+				// biome-ignore lint/suspicious/noExplicitAny: Mock session object requires any type for testing
 			} as any;
 
 			controller.getRegister(mockRequest as Request, mockResponse as Response);

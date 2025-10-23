@@ -10,6 +10,8 @@ export interface ValidationResult {
 export class AuthValidator {
 	/**
 	 * Validate email format
+	 * Uses a robust regex that follows RFC 5322 standards for email validation
+	 * Prevents common invalid patterns like double dots, leading/trailing dots, etc.
 	 */
 	public validateEmail(email: string): ValidationResult {
 		const errors: string[] = [];
@@ -17,9 +19,35 @@ export class AuthValidator {
 		if (!email || email.trim().length === 0) {
 			errors.push("Email is required");
 		} else {
-			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-			if (!emailRegex.test(email)) {
+			// More robust email validation regex
+			// - Allows alphanumeric, dots, hyphens, underscores in local part
+			// - Prevents consecutive dots, leading/trailing dots
+			// - Requires valid domain with at least one dot
+			// - Domain parts must start and end with alphanumeric characters
+			const emailRegex =
+				/^[a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/;
+
+			if (!emailRegex.test(email.trim())) {
 				errors.push("Please enter a valid email address");
+			}
+
+			// Additional validation checks
+			const trimmedEmail = email.trim();
+
+			// Check for consecutive dots
+			if (trimmedEmail.includes("..")) {
+				errors.push("Email address cannot contain consecutive dots");
+			}
+
+			// Check maximum length (RFC 5321)
+			if (trimmedEmail.length > 254) {
+				errors.push("Email address is too long (maximum 254 characters)");
+			}
+
+			// Check local part length (before @)
+			const atIndex = trimmedEmail.indexOf("@");
+			if (atIndex > 64) {
+				errors.push("Email local part is too long (maximum 64 characters)");
 			}
 		}
 

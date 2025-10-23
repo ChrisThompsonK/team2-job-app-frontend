@@ -14,8 +14,6 @@ import { AxiosAuthService } from "./auth-service.js";
 // Mock axios
 vi.mock("axios");
 
-// biome-ignore lint/suspicious/noExplicitAny: Mock objects require any type for testing
-
 describe("AxiosAuthService", () => {
 	let service: AxiosAuthService;
 	const mockBaseUrl = "http://localhost:8000/api/auth";
@@ -55,6 +53,7 @@ describe("AxiosAuthService", () => {
 				},
 			};
 
+			// biome-ignore lint/suspicious/noExplicitAny: Mock requires any for private property access
 			const mockAxiosInstance = (service as any).axiosInstance;
 			mockAxiosInstance.post = vi.fn().mockResolvedValueOnce({
 				data: mockResponse,
@@ -75,10 +74,12 @@ describe("AxiosAuthService", () => {
 				message: "Invalid email or password",
 			};
 
+			// biome-ignore lint/suspicious/noExplicitAny: Mock requires any for private property access
 			const mockAxiosInstance = (service as any).axiosInstance;
 			const axiosError = new AxiosError("Request failed");
 			axiosError.response = {
 				data: mockError,
+				// biome-ignore lint/suspicious/noExplicitAny: Mock response requires any type
 			} as any;
 
 			mockAxiosInstance.post = vi.fn().mockRejectedValueOnce(axiosError);
@@ -87,6 +88,7 @@ describe("AxiosAuthService", () => {
 		});
 
 		it("should throw network error when axios fails", async () => {
+			// biome-ignore lint/suspicious/noExplicitAny: Mock requires any for private property access
 			const mockAxiosInstance = (service as any).axiosInstance;
 			mockAxiosInstance.post = vi
 				.fn()
@@ -106,10 +108,12 @@ describe("AxiosAuthService", () => {
 				details: ["Email is required", "Password is too short"],
 			};
 
+			// biome-ignore lint/suspicious/noExplicitAny: Mock requires any for private property access
 			const mockAxiosInstance = (service as any).axiosInstance;
 			const axiosError = new AxiosError("Request failed");
 			axiosError.response = {
 				data: mockError,
+				// biome-ignore lint/suspicious/noExplicitAny: Mock response requires any type
 			} as any;
 
 			mockAxiosInstance.post = vi.fn().mockRejectedValueOnce(axiosError);
@@ -138,6 +142,7 @@ describe("AxiosAuthService", () => {
 				},
 			};
 
+			// biome-ignore lint/suspicious/noExplicitAny: Mock requires any for private property access
 			const mockAxiosInstance = (service as any).axiosInstance;
 			mockAxiosInstance.post = vi.fn().mockResolvedValueOnce({
 				data: mockResponse,
@@ -158,10 +163,12 @@ describe("AxiosAuthService", () => {
 				message: "Email already exists",
 			};
 
+			// biome-ignore lint/suspicious/noExplicitAny: Mock requires any for private property access
 			const mockAxiosInstance = (service as any).axiosInstance;
 			const axiosError = new AxiosError("Request failed");
 			axiosError.response = {
 				data: mockError,
+				// biome-ignore lint/suspicious/noExplicitAny: Mock response requires any type
 			} as any;
 
 			mockAxiosInstance.post = vi.fn().mockRejectedValueOnce(axiosError);
@@ -170,6 +177,7 @@ describe("AxiosAuthService", () => {
 		});
 
 		it("should throw network error when axios fails", async () => {
+			// biome-ignore lint/suspicious/noExplicitAny: Mock requires any for private property access
 			const mockAxiosInstance = (service as any).axiosInstance;
 			mockAxiosInstance.post = vi
 				.fn()
@@ -193,10 +201,12 @@ describe("AxiosAuthService", () => {
 				],
 			};
 
+			// biome-ignore lint/suspicious/noExplicitAny: Mock requires any for private property access
 			const mockAxiosInstance = (service as any).axiosInstance;
 			const axiosError = new AxiosError("Request failed");
 			axiosError.response = {
 				data: mockError,
+				// biome-ignore lint/suspicious/noExplicitAny: Mock response requires any type
 			} as any;
 
 			mockAxiosInstance.post = vi.fn().mockRejectedValueOnce(axiosError);
