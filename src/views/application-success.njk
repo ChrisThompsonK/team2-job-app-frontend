@@ -1,6 +1,8 @@
 {% extends "templates/layout.njk" %}
 
-{% block applicationTitle %}Application Submitted | Kainos{% endblock %}
+{% block applicationTitle %}
+    {% if isEdit %}Application Updated{% else %}Application Submitted{% endif %} | Kainos
+{% endblock %}
 
 {% block content %}
 <main id="main-content" class="pt-4">
@@ -24,13 +26,25 @@
                 
                 <!-- Success Icon -->
                 <div class="mb-6">
-                    <span class="icon text-8xl">✅</span>
+                    <span class="icon text-8xl">{% if isEdit %}✏️{% else %}✅{% endif %}</span>
                 </div>
                 
-                <h1 class="text-4xl md:text-6xl font-light mb-6">Application Submitted!</h1>
+                <h1 class="text-4xl md:text-6xl font-light mb-6">
+                    {% if isEdit %}
+                        Application Updated!
+                    {% else %}
+                        Application Submitted!
+                    {% endif %}
+                </h1>
                 
                 <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6 inline-block">
-                    <p class="text-xl">Thank you for your interest in Kainos</p>
+                    <p class="text-xl">
+                        {% if isEdit %}
+                            Your changes have been saved
+                        {% else %}
+                            Thank you for your interest in Kainos
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>
@@ -41,13 +55,22 @@
         <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
             <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
                 <span class="icon text-green-600 text-2xl">🎉</span>
-                Your Application is In Progress
+                {% if isEdit %}
+                    Application Successfully Updated
+                {% else %}
+                    Your Application is In Progress
+                {% endif %}
             </h2>
             
             <div class="bg-green-50 border-l-4 border-green-600 p-6 rounded-xl mb-6">
                 <p class="text-lg text-green-900 leading-relaxed">
-                    We've received your application for the <strong>{{ jobRole.roleName }}</strong> position. 
-                    Your application status has been set to <strong>"In Progress"</strong> and our recruitment team will review it shortly.
+                    {% if isEdit %}
+                        Your application for the <strong>{{ jobRole.roleName }}</strong> position has been updated successfully. 
+                        The changes you made will be reviewed by our recruitment team.
+                    {% else %}
+                        We've received your application for the <strong>{{ jobRole.roleName }}</strong> position. 
+                        Your application status has been set to <strong>"In Progress"</strong> and our recruitment team will review it shortly.
+                    {% endif %}
                 </p>
             </div>
 

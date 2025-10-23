@@ -175,6 +175,42 @@ class App {
 			return `${band} Level`;
 		});
 
+		// Add tojson filter for converting objects to JSON strings
+		env.addFilter("tojson", (obj: unknown) => {
+			return JSON.stringify(obj);
+		});
+
+		// Add date filter with format support (simplified moment.js-like format)
+		env.addFilter("date", (dateString: string, format: string) => {
+			if (!dateString) return "";
+
+			try {
+				const date = new Date(dateString);
+
+				// Check if date is valid
+				if (Number.isNaN(date.getTime())) return dateString;
+
+				// Simple format parsing - supports common formats
+				const day = String(date.getDate()).padStart(2, "0");
+				const month = date.toLocaleString("en-GB", { month: "short" });
+				const monthLong = date.toLocaleString("en-GB", { month: "long" });
+				const year = date.getFullYear();
+				const hours = String(date.getHours()).padStart(2, "0");
+				const minutes = String(date.getMinutes()).padStart(2, "0");
+
+				// Replace format tokens with actual values
+				return format
+					.replace("DD", day)
+					.replace("MMM", month)
+					.replace("MMMM", monthLong)
+					.replace("YYYY", String(year))
+					.replace("HH", hours)
+					.replace("mm", minutes);
+			} catch {
+				return dateString;
+			}
+		});
+
 		console.log("Nunjucks filters configured successfully");
 	}
 
@@ -349,7 +385,21 @@ class App {
 			this.applicationController.getApplicants
 		);
 
-		// CV download endpoint (proxy to backend)
+		// User applications endpoints - MUST come before /applications/:id/cv
+		this.server.get("/applications/test", (_req: Request, res: Response) => {
+			res.send("Applications route is working!");
+		});
+
+		this.server.get(
+			"/applications",
+			this.applicationController.getUserApplications
+		);
+		this.server.delete(
+			"/applications/:id",
+			this.applicationController.withdrawApplication
+		);
+
+		// CV download endpoint (proxy to backend) - MUST come after /applications
 		this.server.get(
 			"/applications/:id/cv",
 			this.applicationController.downloadCv
