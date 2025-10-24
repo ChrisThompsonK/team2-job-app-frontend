@@ -200,6 +200,8 @@ describe("ApplicationController", () => {
 					name: "John Doe",
 					email: "john.doe@example.com",
 				},
+				existingApplication: null,
+				isEditMode: false,
 			});
 		});
 
@@ -247,6 +249,8 @@ describe("ApplicationController", () => {
 					name: "johndoe",
 					email: "john.doe@example.com",
 				},
+				existingApplication: null,
+				isEditMode: false,
 			});
 		});
 
@@ -295,6 +299,8 @@ describe("ApplicationController", () => {
 					name: "", // Should fall back to empty string, not "undefined Doe"
 					email: "john.doe@example.com",
 				},
+				existingApplication: null,
+				isEditMode: false,
 			});
 
 			// Test User with null username
@@ -322,6 +328,8 @@ describe("ApplicationController", () => {
 					name: "", // Should fall back to empty string, not "null"
 					email: "john.doe@example.com",
 				},
+				existingApplication: null,
+				isEditMode: false,
 			});
 		});
 	});
