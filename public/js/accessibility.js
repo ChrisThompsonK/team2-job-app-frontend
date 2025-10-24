@@ -3,6 +3,32 @@
  * Optimized version with reduced complexity and better maintainability
  */
 
+/**
+ * Switch header logo based on dark mode state
+ * Can be called before AccessibilityManager is initialized
+ */
+function switchHeaderLogo(isDark) {
+	// Only switch the header navigation logo, not logos in hero sections or footer
+	const headerLogo = document.querySelector(
+		'nav img[alt="Kainos Logo"], nav img[alt="Kainos Logo (dark)"]'
+	);
+	if (!headerLogo) return;
+
+	if (isDark) {
+		// Switch to dark logo (white version for dark backgrounds)
+		if (headerLogo.src.includes("KainosLogoNoBackground.png")) {
+			headerLogo.src = "/kainos-dark-bg.png";
+			headerLogo.alt = "Kainos Logo (dark)";
+		}
+	} else {
+		// Switch to light logo (dark version for light backgrounds)
+		if (headerLogo.src.includes("kainos-dark-bg.png")) {
+			headerLogo.src = "/KainosLogoNoBackground.png";
+			headerLogo.alt = "Kainos Logo";
+		}
+	}
+}
+
 // Apply saved preferences immediately to prevent flash (light is default)
 (() => {
 	const savedDarkMode = localStorage.getItem("darkMode") === "true"; // only true explicitly enables dark
@@ -13,12 +39,16 @@
 		document.documentElement.classList.add("dark-mode");
 		document.addEventListener("DOMContentLoaded", () => {
 			document.body.classList.add("dark-mode");
+			// Switch to dark mode logo when page loads with dark mode enabled
+			switchHeaderLogo(true);
 		});
 	} else {
 		// Ensure any stray dark-mode class is removed (in case markup was cached)
 		document.documentElement.classList.remove("dark-mode");
 		document.addEventListener("DOMContentLoaded", () => {
 			document.body.classList.remove("dark-mode");
+			// Ensure light mode logo when page loads with light mode
+			switchHeaderLogo(false);
 		});
 	}
 
@@ -209,25 +239,8 @@ class AccessibilityManager {
 	}
 
 	switchLogos(isDark) {
-		// Only switch the header navigation logo, not logos in hero sections or footer
-		const headerLogo = document.querySelector(
-			'nav img[alt="Kainos Logo"], nav img[alt="Kainos Logo (dark)"]'
-		);
-		if (!headerLogo) return;
-
-		if (isDark) {
-			// Switch to dark logo
-			if (headerLogo.src.includes("KainosLogoNoBackground.png")) {
-				headerLogo.src = "/kainos-dark-bg.png";
-				headerLogo.alt = "Kainos Logo (dark)";
-			}
-		} else {
-			// Switch to light logo
-			if (headerLogo.src.includes("kainos-dark-bg.png")) {
-				headerLogo.src = "/KainosLogoNoBackground.png";
-				headerLogo.alt = "Kainos Logo";
-			}
-		}
+		// Use the global function for consistent logo switching
+		switchHeaderLogo(isDark);
 	}
 
 	setupToggle(type, config) {

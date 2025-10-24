@@ -108,8 +108,25 @@ export class ApplicationController {
 				return;
 			}
 
+			// Prepare user data for auto-fill if authenticated
+			const user = req.session.user;
+			const userData = user
+				? {
+						// Support both AuthUser (forename/surname) and User (username) formats
+						name:
+							"forename" in user &&
+							"surname" in user &&
+							user.forename &&
+							user.surname
+								? `${user.forename} ${user.surname}`.trim()
+								: ("username" in user && user.username) || "",
+						email: user.email || "",
+					}
+				: null;
+
 			res.render("job-application-form.njk", {
 				jobRole,
+				user: userData,
 				existingApplication,
 				isEditMode: !!existingApplication,
 			});

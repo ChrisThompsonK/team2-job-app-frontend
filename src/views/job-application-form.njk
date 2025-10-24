@@ -147,6 +147,21 @@
                         Personal Information
                     </h3>
 
+                    {% if user %}
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-r-xl">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <span class="icon text-green-400 text-xl">✓</span>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-green-800">
+                                    <strong>Your information has been automatically filled in.</strong> You can edit it if needed.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
                     <!-- Full Name -->
                     <div>
                         <label for="applicant-name" class="block text-lg font-semibold text-gray-900 mb-3">
@@ -158,7 +173,7 @@
                             name="applicantName" 
                             required
                             {% if isEditMode %}readonly{% endif %}
-                            value="{% if existingApplication %}{{ existingApplication.applicantName }}{% endif %}"
+                            value="{% if existingApplication %}{{ existingApplication.applicantName }}{% elif user and user.name %}{{ user.name }}{% endif %}"
                             maxlength="100"
                             placeholder="Enter your full name"
                             class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-xl {% if isEditMode %}bg-gray-200 cursor-not-allowed{% else %}bg-gray-50{% endif %} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
@@ -183,7 +198,7 @@
                             name="applicantEmail" 
                             required
                             {% if isEditMode %}readonly{% endif %}
-                            value="{% if existingApplication %}{{ existingApplication.applicantEmail }}{% endif %}"
+                            value="{% if existingApplication %}{{ existingApplication.applicantEmail }}{% elif user and user.email %}{{ user.email }}{% endif %}"
                             maxlength="255"
                             placeholder="your.email@example.com"
                             class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-xl {% if isEditMode %}bg-gray-200 cursor-not-allowed{% else %}bg-gray-50{% endif %} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
