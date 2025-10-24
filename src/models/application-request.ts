@@ -21,7 +21,20 @@ export interface ApplicationResponse {
 	applicantEmail: string;
 	coverLetter?: string;
 	resumeUrl?: string;
+	cvFileName?: string;
+	cvMimeType?: string;
+	hasCv?: boolean;
 	status: string;
 	submittedAt: string;
 	updatedAt?: string;
+	jobRole?: {
+		id: number;
+		jobRoleName: string;
+		description?: string;
+		location?: string;
+		capability?: string;
+		band?: string;
+		closingDate?: string;
+		status?: string;
+	};
 }

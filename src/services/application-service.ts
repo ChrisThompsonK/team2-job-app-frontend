@@ -50,4 +50,31 @@ export interface ApplicationService {
 		fileName: string;
 		mimeType: string;
 	}>;
+
+	/**
+	 * Retrieves all applications submitted by a specific user
+	 * @param applicantEmail The email address of the applicant
+	 * @returns Promise<ApplicationResponse[]> List of applications by the user
+	 */
+	getUserApplications(applicantEmail: string): Promise<ApplicationResponse[]>;
+
+	/**
+	 * Retrieves a single application by ID
+	 * @param applicationId The ID of the application
+	 * @returns Promise<ApplicationResponse> The application details
+	 */
+	getApplicationById(applicationId: number): Promise<ApplicationResponse>;
+
+	/**
+	 * Updates an existing application
+	 * @param applicationId The ID of the application to update
+	 * @param coverLetter Optional updated cover letter text
+	 * @param cvFile Optional new CV file to upload
+	 * @returns Promise<ApplicationResponse> The updated application response
+	 */
+	updateApplication(
+		applicationId: number,
+		coverLetter: string | undefined,
+		cvFile: Express.Multer.File | undefined
+	): Promise<ApplicationResponse>;
 }

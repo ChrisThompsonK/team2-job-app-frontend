@@ -92,6 +92,8 @@ describe("ApplicationController", () => {
 			expect(res.render).toHaveBeenCalledWith("job-application-form.njk", {
 				jobRole: mockJobRole,
 				user: null,
+				existingApplication: null,
+				isEditMode: false,
 			});
 		});
 
@@ -391,6 +393,7 @@ describe("ApplicationController", () => {
 			expect(res.render).toHaveBeenCalledWith("application-success.njk", {
 				application: mockApplication,
 				jobRole: mockJobRole,
+				isEdit: false,
 			});
 		});
 
@@ -412,7 +415,6 @@ describe("ApplicationController", () => {
 				errors: expect.any(Object),
 			});
 		});
-
 		it("should return 500 on service error", async () => {
 			const mockBody = {
 				applicantName: "John Doe",
@@ -523,6 +525,7 @@ describe("ApplicationController", () => {
 			);
 			expect(res.render).toHaveBeenCalledWith("application-success.njk", {
 				application: mockApplication,
+				isEdit: false,
 				jobRole: mockJobRole,
 			});
 		});
