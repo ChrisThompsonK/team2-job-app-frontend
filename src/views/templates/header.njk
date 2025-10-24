@@ -9,47 +9,72 @@
                 <div class="flex flex-col tagline-container">
                     <p class="text-xs landscape:text-xs md:text-sm text-slate-600 font-medium">Thinking Without Limitations</p>
                 </div>
-                <!-- Authentication Button - Conditional -->
-                {% if isAuthenticated and user %}
-                    <!-- User Info and Sign Out -->
-                    <div class="flex items-center space-x-2 landscape:space-x-2 md:space-x-3 ml-2 landscape:ml-2 md:ml-4">
-                        <!-- Welcome Message -->
-                        <div class="hidden landscape:block md:block text-sm text-slate-700 font-medium">
-                            Welcome, <span class="text-blue-600">{{ user.username }}</span>
-                            {% if user.user_type == 'Admin' %}
-                            <span class="inline-block ml-2 px-3 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">👑 Admin</span>
-                            {% endif %}
-                        </div>
-                        
-                        <!-- Sign Out Button -->
-                        <form method="POST" action="/logout" class="inline">
-                            <button type="submit" class="flex items-center space-x-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 landscape:px-4 md:px-6 py-2 rounded-full transition-all duration-200 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 shadow-lg hover:shadow-xl font-semibold text-sm landscape:text-sm md:text-base">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                </svg>
-                                <span class="whitespace-nowrap">Sign Out</span>
-                            </button>
-                        </form>
-                    </div>
-                {% else %}
-                    <!-- Sign In Button -->
-                    <a href="/login" class="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-4 landscape:px-4 md:px-6 py-2 rounded-full transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg hover:shadow-xl font-semibold ml-2 landscape:ml-2 md:ml-4 text-sm landscape:text-sm md:text-base">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                        </svg>
-                        <span class="whitespace-nowrap">Sign In</span>
-                    </a>
-                {% endif %}
             </div>
             
             <!-- Navigation -->
             <div class="hidden landscape:flex md:flex items-center space-x-4 landscape:space-x-4 md:space-x-8">
-                <nav role="navigation" aria-label="Main navigation">
+                <nav role="navigation" aria-label="Main navigation" class="flex items-center space-x-4 landscape:space-x-4 md:space-x-8">
                     <a href="/" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 text-sm landscape:text-sm md:text-base">Home</a>
-                    <a href="/job-roles" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 ml-4 landscape:ml-4 md:ml-8 text-sm landscape:text-sm md:text-base">Jobs</a>
-                    <a href="/about" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 ml-4 landscape:ml-4 md:ml-8 text-sm landscape:text-sm md:text-base">About</a>
-                    <a href="/contact" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 ml-4 landscape:ml-4 md:ml-8 text-sm landscape:text-sm md:text-base">Contact</a>
+                    <a href="/job-roles" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 text-sm landscape:text-sm md:text-base">Jobs</a>
+                    <a href="/about" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 text-sm landscape:text-sm md:text-base">About</a>
+                    <a href="/contact" class="text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 text-sm landscape:text-sm md:text-base">Contact</a>
                 </nav>
+                
+                {% if isAuthenticated and user %}
+                <!-- Profile Dropdown Button -->
+                <div class="relative">
+                    <button 
+                        id="profileDropdownBtn"
+                        type="button"
+                        class="flex items-center space-x-2 text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 text-sm landscape:text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg px-3 py-2"
+                        aria-label="User profile menu"
+                        aria-expanded="false"
+                        aria-controls="profileDropdown"
+                    >
+                        <i data-lucide="user" class="w-5 h-5"></i>
+                        <span>Profile</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div 
+                        id="profileDropdown"
+                        class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-slate-200 py-2 z-50"
+                        role="menu"
+                        aria-labelledby="profileDropdownBtn"
+                    >
+                        <a href="/account" class="block px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200" role="menuitem">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="settings" class="w-4 h-4"></i>
+                                <span>Settings</span>
+                            </div>
+                        </a>
+                        <a href="/applications" class="block px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200" role="menuitem">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="briefcase" class="w-4 h-4"></i>
+                                <span>Applications</span>
+                            </div>
+                        </a>
+                        <hr class="my-2 border-slate-200">
+                        <form method="POST" action="/logout" class="block">
+                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-200" role="menuitem">
+                                <div class="flex items-center space-x-2">
+                                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                                    <span>Log out</span>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Sign In Button -->
+                <a href="/login" class="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-4 landscape:px-4 md:px-6 py-2 rounded-full transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg hover:shadow-xl font-semibold text-sm landscape:text-sm md:text-base">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                    </svg>
+                    <span class="whitespace-nowrap">Sign In</span>
+                </a>
+                {% endif %}
             </div>
             
             <!-- Mobile Menu Button -->
@@ -116,13 +141,21 @@
                         {% endif %}
                     </div>
                     
+                    <!-- Profile Menu Items -->
+                    <a href="/account" class="block py-3 px-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded-lg font-medium text-lg transition-all duration-200 flex items-center space-x-2">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="/applications" class="block py-3 px-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded-lg font-medium text-lg transition-all duration-200 flex items-center space-x-2">
+                        <i data-lucide="briefcase" class="w-5 h-5"></i>
+                        <span>Applications</span>
+                    </a>
+                    
                     <!-- Sign Out Form -->
-                    <form method="POST" action="/logout" class="block">
+                    <form method="POST" action="/logout" class="block mt-2">
                         <button type="submit" class="w-full text-left py-3 px-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg font-medium text-lg transition-all duration-200 flex items-center space-x-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                            <span>Sign Out</span>
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                            <span>Log out</span>
                         </button>
                     </form>
                 {% else %}
@@ -229,6 +262,57 @@ document.addEventListener('DOMContentLoaded', function() {
             hasMenuDropdown: !!menuDropdown, 
             hasCloseBtn: !!closeBtn 
         });
+    }
+
+    // Profile Dropdown Functionality
+    const profileBtn = document.getElementById('profileDropdownBtn');
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    if (profileBtn && profileDropdown) {
+        console.log('Setting up profile dropdown...');
+
+        function toggleProfileDropdown(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const isHidden = profileDropdown.classList.contains('hidden');
+            
+            if (isHidden) {
+                profileDropdown.classList.remove('hidden');
+                profileBtn.setAttribute('aria-expanded', 'true');
+                // Re-initialize Lucide icons in the dropdown
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            } else {
+                profileDropdown.classList.add('hidden');
+                profileBtn.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        function closeProfileDropdown() {
+            profileDropdown.classList.add('hidden');
+            profileBtn.setAttribute('aria-expanded', 'false');
+        }
+
+        // Toggle dropdown on button click
+        profileBtn.addEventListener('click', toggleProfileDropdown);
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+                closeProfileDropdown();
+            }
+        });
+
+        // Close dropdown on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !profileDropdown.classList.contains('hidden')) {
+                closeProfileDropdown();
+                profileBtn.focus();
+            }
+        });
+
+        console.log('Profile dropdown set up successfully');
     }
 });
 </script>
