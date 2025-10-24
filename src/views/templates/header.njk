@@ -26,13 +26,23 @@
                     <button 
                         id="profileDropdownBtn"
                         type="button"
-                        class="flex items-center space-x-2 text-slate-700 hover:text-blue-600 font-medium transition-colors duration-200 text-sm landscape:text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg px-3 py-2"
+                        class="flex items-center space-x-2 {% if user.role == 'Admin' %}text-purple-700 hover:text-purple-800{% else %}text-slate-700 hover:text-blue-600{% endif %} font-medium transition-colors duration-200 text-sm landscape:text-sm md:text-base focus:outline-none focus:ring-2 {% if user.role == 'Admin' %}focus:ring-purple-500{% else %}focus:ring-blue-500{% endif %} focus:ring-offset-2 rounded-lg px-3 py-2 {% if user.role == 'Admin' %}bg-purple-50 border border-purple-200{% endif %}"
                         aria-label="User profile menu"
                         aria-expanded="false"
                         aria-controls="profileDropdown"
                     >
+                        {% if user.role == 'Admin' %}
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        {% else %}
                         <i data-lucide="user" class="w-5 h-5"></i>
-                        <span>Profile</span>
+                        {% endif %}
+                        <span>{{ user.forename }} {{ user.surname }}</span>
+                        {% if user.role == 'Admin' %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-purple-600 text-white">
+                            <i data-lucide="crown" class="w-3 h-3 mr-1"></i>
+                            Admin
+                        </span>
+                        {% endif %}
                         <i data-lucide="chevron-down" class="w-4 h-4"></i>
                     </button>
                     
@@ -69,9 +79,7 @@
                 {% else %}
                 <!-- Sign In Button -->
                 <a href="/login" class="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-4 landscape:px-4 md:px-6 py-2 rounded-full transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg hover:shadow-xl font-semibold text-sm landscape:text-sm md:text-base">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                    </svg>
+                    <i data-lucide="log-in" class="w-5 h-5"></i>
                     <span class="whitespace-nowrap">Sign In</span>
                 </a>
                 {% endif %}
@@ -135,8 +143,8 @@
                 {% if isAuthenticated and user %}
                     <!-- User Info -->
                     <div class="block py-3 px-2 text-slate-600 text-sm">
-                        Welcome, <span class="font-semibold text-blue-600">{{ user.username }}</span>
-                        {% if user.user_type == 'Admin' %}
+                        Welcome, <span class="font-semibold {% if user.role == 'Admin' %}text-purple-600{% else %}text-blue-600{% endif %}">{{ user.forename }} {{ user.surname }}</span>
+                        {% if user.role == 'Admin' %}
                         <span class="inline-block ml-2 px-2 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">👑 Admin</span>
                         {% endif %}
                     </div>
@@ -161,9 +169,7 @@
                 {% else %}
                     <!-- Sign In Link -->
                     <a href="/login" class="block py-3 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg font-medium text-lg transition-all duration-200 flex items-center space-x-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013 3v1" />
-                        </svg>
+                        <i data-lucide="log-in" class="w-5 h-5"></i>
                         <span>Sign In</span>
                     </a>
                 {% endif %}

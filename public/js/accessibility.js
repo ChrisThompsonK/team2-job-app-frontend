@@ -37,13 +37,14 @@
  * Initialize application features including Lucide icons
  */
 function initializeApp() {
-	// Initialize Lucide icons
+	// Initialize accessibility manager
+	new AccessibilityManager();
+
+	// Initialize Lucide icons after AccessibilityManager setup
+	// This ensures all DOM elements are ready before icon creation
 	if (typeof lucide !== "undefined") {
 		lucide.createIcons();
 	}
-
-	// Initialize accessibility manager
-	new AccessibilityManager();
 }
 
 class AccessibilityManager {

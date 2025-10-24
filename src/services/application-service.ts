@@ -77,4 +77,15 @@ export interface ApplicationService {
 		coverLetter: string | undefined,
 		cvFile: Express.Multer.File | undefined
 	): Promise<ApplicationResponse>;
+
+	/**
+	 * Withdraws an application by changing its status to 'withdrawn'
+	 * @param applicationId The ID of the application to withdraw
+	 * @param applicantEmail The email of the user withdrawing the application (for authentication)
+	 * @returns Promise<ApplicationResponse> The updated application with 'withdrawn' status
+	 */
+	withdrawApplication(
+		applicationId: number,
+		applicantEmail: string
+	): Promise<ApplicationResponse>;
 }
