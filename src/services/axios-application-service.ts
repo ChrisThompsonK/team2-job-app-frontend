@@ -4,6 +4,7 @@
 
 import axios, { type AxiosInstance } from "axios";
 import FormData from "form-data";
+import type { ApplicantActionResponse } from "../models/applicant-action.js";
 import type {
 	ApplicantDisplay,
 	ApplicantsPageResponse,
@@ -369,6 +370,126 @@ export class AxiosApplicationService implements ApplicationService {
 
 				throw new Error(
 					`Failed to download CV: ${error.response?.status || error.code || "Unknown error"}`
+				);
+			}
+			throw error;
+		}
+	}
+
+	public async acceptApplicant(
+		applicationId: number,
+		jobRoleId: number,
+		reason?: string
+	): Promise<ApplicantActionResponse> {
+		try {
+			const response = await this.axiosInstance.post<
+				BackendResponse<ApplicantActionResponse>
+			>(
+				`/job-roles/${jobRoleId}/applications/${applicationId}/accept`,
+				{ reason },
+				{
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+
+			if (response.data.success && response.data.data) {
+				return response.data.data;
+			}
+
+			throw new Error("Failed to accept applicant");
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				console.error(
+					"Failed to accept applicant:",
+					error.response?.status,
+					error.response?.data || error.message,
+					error.code
+				);
+
+				if (error.response?.status === 404) {
+					throw new Error("Application or job role not found");
+				}
+
+				if (error.response?.status === 400) {
+					throw new Error(
+						error.response?.data?.message || "Invalid request parameters"
+					);
+				}
+
+				if (error.response?.status === 500) {
+					throw new Error("Backend server error while accepting applicant");
+				}
+
+				if (error.code === "ECONNREFUSED") {
+					throw new Error(
+						"Unable to connect to the backend API to accept applicant"
+					);
+				}
+
+				throw new Error(
+					`Failed to accept applicant: ${error.response?.status || error.code || "Unknown error"}`
+				);
+			}
+			throw error;
+		}
+	}
+
+	public async rejectApplicant(
+		applicationId: number,
+		jobRoleId: number,
+		reason?: string
+	): Promise<ApplicantActionResponse> {
+		try {
+			const response = await this.axiosInstance.post<
+				BackendResponse<ApplicantActionResponse>
+			>(
+				`/job-roles/${jobRoleId}/applications/${applicationId}/reject`,
+				{ reason },
+				{
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+
+			if (response.data.success && response.data.data) {
+				return response.data.data;
+			}
+
+			throw new Error("Failed to reject applicant");
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				console.error(
+					"Failed to reject applicant:",
+					error.response?.status,
+					error.response?.data || error.message,
+					error.code
+				);
+
+				if (error.response?.status === 404) {
+					throw new Error("Application or job role not found");
+				}
+
+				if (error.response?.status === 400) {
+					throw new Error(
+						error.response?.data?.message || "Invalid request parameters"
+					);
+				}
+
+				if (error.response?.status === 500) {
+					throw new Error("Backend server error while rejecting applicant");
+				}
+
+				if (error.code === "ECONNREFUSED") {
+					throw new Error(
+						"Unable to connect to the backend API to reject applicant"
+					);
+				}
+
+				throw new Error(
+					`Failed to reject applicant: ${error.response?.status || error.code || "Unknown error"}`
 				);
 			}
 			throw error;

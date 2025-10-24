@@ -336,4 +336,114 @@ export class ApplicationController {
 			res.status(500).send(errorMessage);
 		}
 	};
+
+	/**
+	 * POST /job-roles/:jobRoleId/applications/:applicationId/accept
+	 * Accepts an applicant for a job role
+	 */
+	public acceptApplicant = async (
+		req: Request,
+		res: Response
+	): Promise<void> => {
+		try {
+			const { jobRoleId, applicationId } = req.params;
+			const { reason } = req.body;
+
+			const jobRoleIdNum = validateJobRoleId(jobRoleId);
+			if (jobRoleIdNum === null) {
+				res.status(400).render("error.njk", {
+					message: "Invalid job role ID provided.",
+				});
+				return;
+			}
+
+			const appIdNum = Number.parseInt(applicationId as string, 10);
+			if (Number.isNaN(appIdNum) || appIdNum <= 0) {
+				res.status(400).render("error.njk", {
+					message: "Invalid application ID provided.",
+				});
+				return;
+			}
+
+			await this.applicationService.acceptApplicant(
+				appIdNum,
+				jobRoleIdNum,
+				reason as string | undefined
+			);
+
+			res.status(200).json({
+				success: true,
+				message: "Applicant accepted successfully",
+			});
+		} catch (error) {
+			console.error("Error in ApplicationController.acceptApplicant:", error);
+
+			let errorMessage =
+				"Sorry, we couldn't accept the applicant at this time. Please try again later.";
+
+			if (error instanceof Error) {
+				errorMessage = error.message;
+			}
+
+			res.status(500).json({
+				success: false,
+				message: errorMessage,
+			});
+		}
+	};
+
+	/**
+	 * POST /job-roles/:jobRoleId/applications/:applicationId/reject
+	 * Rejects an applicant for a job role
+	 */
+	public rejectApplicant = async (
+		req: Request,
+		res: Response
+	): Promise<void> => {
+		try {
+			const { jobRoleId, applicationId } = req.params;
+			const { reason } = req.body;
+
+			const jobRoleIdNum = validateJobRoleId(jobRoleId);
+			if (jobRoleIdNum === null) {
+				res.status(400).render("error.njk", {
+					message: "Invalid job role ID provided.",
+				});
+				return;
+			}
+
+			const appIdNum = Number.parseInt(applicationId as string, 10);
+			if (Number.isNaN(appIdNum) || appIdNum <= 0) {
+				res.status(400).render("error.njk", {
+					message: "Invalid application ID provided.",
+				});
+				return;
+			}
+
+			await this.applicationService.rejectApplicant(
+				appIdNum,
+				jobRoleIdNum,
+				reason as string | undefined
+			);
+
+			res.status(200).json({
+				success: true,
+				message: "Applicant rejected successfully",
+			});
+		} catch (error) {
+			console.error("Error in ApplicationController.rejectApplicant:", error);
+
+			let errorMessage =
+				"Sorry, we couldn't reject the applicant at this time. Please try again later.";
+
+			if (error instanceof Error) {
+				errorMessage = error.message;
+			}
+
+			res.status(500).json({
+				success: false,
+				message: errorMessage,
+			});
+		}
+	};
 }

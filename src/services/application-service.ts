@@ -3,6 +3,7 @@
  * Defines the contract for job application submission and retrieval
  */
 
+import type { ApplicantActionResponse } from "../models/applicant-action.js";
 import type { ApplicantsPageResponse } from "../models/applicant-display.js";
 import type { ApplicationResponse } from "../models/application-request.js";
 
@@ -50,4 +51,30 @@ export interface ApplicationService {
 		fileName: string;
 		mimeType: string;
 	}>;
+
+	/**
+	 * Accepts an applicant for a job role
+	 * @param applicationId The ID of the application to accept
+	 * @param jobRoleId The ID of the job role
+	 * @param reason Optional reason for acceptance
+	 * @returns Promise<ApplicantActionResponse> The action response
+	 */
+	acceptApplicant(
+		applicationId: number,
+		jobRoleId: number,
+		reason?: string
+	): Promise<ApplicantActionResponse>;
+
+	/**
+	 * Rejects an applicant for a job role
+	 * @param applicationId The ID of the application to reject
+	 * @param jobRoleId The ID of the job role
+	 * @param reason Optional reason for rejection
+	 * @returns Promise<ApplicantActionResponse> The action response
+	 */
+	rejectApplicant(
+		applicationId: number,
+		jobRoleId: number,
+		reason?: string
+	): Promise<ApplicantActionResponse>;
 }

@@ -355,6 +355,18 @@ class App {
 			this.applicationController.downloadCv
 		);
 
+		// Accept applicant endpoint
+		this.server.post(
+			"/job-roles/:jobRoleId/applications/:applicationId/accept",
+			this.applicationController.acceptApplicant
+		);
+
+		// Reject applicant endpoint
+		this.server.post(
+			"/job-roles/:jobRoleId/applications/:applicationId/reject",
+			this.applicationController.rejectApplicant
+		);
+
 		// Error handling middleware - must be last
 		this.setupErrorHandling();
 	}

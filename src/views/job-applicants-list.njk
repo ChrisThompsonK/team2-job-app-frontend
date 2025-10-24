@@ -127,6 +127,11 @@ Applicants for {{ jobRole.roleName }}
 										<ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
 											<li><a href="mailto:{{ applicant.applicantEmail }}">Contact Applicant</a></li>
 											<li><a onclick="viewApplicationDetails('{{ applicant.applicationId }}')">View Details</a></li>
+											{% set applicant_status_lower = applicant.status | lower %}
+											{% if applicant_status_lower == 'pending' or applicant_status_lower == 'in progress' %}
+												<li><a onclick="acceptApplicant('{{ applicant.applicationId }}', '{{ jobRole.id }}', '{{ applicant.applicantName | escape }}')">Accept</a></li>
+												<li><a onclick="rejectApplicant('{{ applicant.applicationId }}', '{{ jobRole.id }}', '{{ applicant.applicantName | escape }}')">Reject</a></li>
+											{% endif %}
 										</ul>
 									</div>
 								</td>
@@ -471,6 +476,58 @@ Applicants for {{ jobRole.roleName }}
 		// This could navigate to a detailed application view
 		// For now, we'll just show an alert
 		alert(`Viewing details for application ${applicationId}\n\nThis feature can be implemented to show full application details in a modal or separate page.`);
+	}
+
+	function acceptApplicant(applicationId, jobRoleId, applicantName) {
+		if (confirm(`Are you sure you want to accept ${applicantName}?`)) {
+			fetch(`/job-roles/${jobRoleId}/applications/${applicationId}/accept`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({}),
+			})
+			.then(response => response.json())
+			.then(data => {
+				if (data.success) {
+					alert(`${applicantName} has been accepted!`);
+					// Reload the page to refresh the applicants list
+					location.reload();
+				} else {
+					alert(`Error: ${data.message}`);
+				}
+			})
+			.catch(error => {
+				console.error('Error accepting applicant:', error);
+				alert('Error accepting applicant. Please try again.');
+			});
+		}
+	}
+
+	function rejectApplicant(applicationId, jobRoleId, applicantName) {
+		if (confirm(`Are you sure you want to reject ${applicantName}?`)) {
+			fetch(`/job-roles/${jobRoleId}/applications/${applicationId}/reject`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({}),
+			})
+			.then(response => response.json())
+			.then(data => {
+				if (data.success) {
+					alert(`${applicantName} has been rejected!`);
+					// Reload the page to refresh the applicants list
+					location.reload();
+				} else {
+					alert(`Error: ${data.message}`);
+				}
+			})
+			.catch(error => {
+				console.error('Error rejecting applicant:', error);
+				alert('Error rejecting applicant. Please try again.');
+			});
+		}
 	}
 </script>
 {% endblock %}

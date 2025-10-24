@@ -55,6 +55,7 @@ A modern, accessible job application portal built with Node.js, TypeScript, Expr
 │   │   ├── job-role-detailed-response.ts # Detailed response model
 │   │   ├── application-request.ts        # Application submission models
 │   │   ├── applicant-display.ts          # Applicant listing and pagination models
+│   │   ├── applicant-action.ts           # Accept/Reject applicant models
 │   │   ├── auth-request.ts               # Authentication request models (login, register)
 │   │   ├── auth-response.ts              # Authentication response models
 │   │   └── user.ts                       # User and authentication models
@@ -345,19 +346,22 @@ The application features a complete job application system with applicant manage
 
 ### Applicant Management System
 - **Applicant Viewing** (`/job-roles/{id}/applicants`): Comprehensive applicant management interface
+- **Accept/Reject Workflow**: Admins can accept or reject applicants directly from the applicants list
+- **Status-Based Actions**: Accept/Reject buttons only visible for pending applications, auto-hidden for already processed applications
 - **Responsive Design**: Desktop table view and mobile card layout for optimal viewing on all devices
 - **Pagination Support**: Efficient browsing with page controls for large applicant lists (default 10 per page, max 50)
-- **Status Tracking**: Color-coded badges for application status (submitted, reviewed, shortlisted, etc.)
+- **Status Tracking**: Color-coded badges for application status (submitted, reviewed, shortlisted, accepted, rejected, etc.)
 - **Cover Letter Modal**: In-browser viewing of applicant cover letters with responsive modal
 - **Resume Download**: Direct download links for uploaded CV files
 - **Contact Integration**: One-click email contact for applicants
 - **Navigation Integration**: "View Applicants" button added to job role cards for easy access
 
 ### Technical Features
-- **ApplicationService Interface**: Clean service layer for application submission and retrieval
-- **AxiosApplicationService**: Full backend API integration with comprehensive error handling
+- **ApplicationService Interface**: Clean service layer for application submission, retrieval, and status management
+- **AxiosApplicationService**: Full backend API integration with comprehensive error handling including accept/reject endpoints
+- **ApplicantActionResponse Models**: TypeScript interfaces for handling acceptance/rejection actions
 - **ApplicantDisplay Models**: TypeScript interfaces for type-safe applicant data handling
-- **Comprehensive Testing**: 18 test cases covering all controller methods with 100% pass rate
+- **Comprehensive Testing**: 21 test cases covering all controller methods with 100% pass rate
 - **Unicode Support**: International character support in name validation (e.g., "José García")
 - **Application Validator**: Dedicated validation utility for all application form fields
 - **Empty State Handling**: Friendly empty states when no applicants exist for a job role
