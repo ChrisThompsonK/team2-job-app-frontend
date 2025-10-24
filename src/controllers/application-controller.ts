@@ -545,6 +545,7 @@ export class ApplicationController {
 				return;
 			}
 
+			const userEmail = req.session["user"].email;
 			const id = req.params["id"];
 			const applicationId = validateJobRoleId(id); // Reusing validation logic
 
@@ -555,20 +556,80 @@ export class ApplicationController {
 				return;
 			}
 
-			// For now, we'll return a success response
-			// Backend implementation needed for actual withdrawal
+			// First, get the application to verify ownership and status
+			let existingApplication: ApplicationResponse;
+			try {
+				existingApplication =
+					await this.applicationService.getApplicationById(applicationId);
+			} catch (_error) {
+				res.status(404).json({
+					success: false,
+					message: "Application not found",
+				});
+				return;
+			}
+
+			// Verify the application belongs to the current user
+			if (existingApplication.applicantEmail !== userEmail) {
+				res.status(403).json({
+					success: false,
+					message: "You do not have permission to withdraw this application",
+				});
+				return;
+			}
+
+			// Check if the application can be withdrawn (only pending, under_review, or in progress)
+			const withdrawableStatuses = [
+				"pending",
+				"under_review",
+				"in progress",
+				"in_progress",
+			];
+			if (!withdrawableStatuses.includes(existingApplication.status)) {
+				res.status(400).json({
+					success: false,
+					message: `Cannot withdraw application with status: ${existingApplication.status}`,
+				});
+				return;
+			}
+
+			// Call service to withdraw the application
+			const updatedApplication =
+				await this.applicationService.withdrawApplication(
+					applicationId,
+					userEmail
+				);
+
 			res.json({
 				success: true,
 				message: "Application withdrawn successfully",
+				data: updatedApplication,
 			});
 		} catch (error) {
 			console.error(
 				"Error in ApplicationController.withdrawApplication:",
 				error
 			);
-			res.status(500).json({
+
+			// Handle specific error messages from the service
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: "Failed to withdraw application";
+
+			// Determine appropriate status code based on error message
+			let statusCode = 500;
+			if (errorMessage.includes("not found")) {
+				statusCode = 404;
+			} else if (errorMessage.includes("permission")) {
+				statusCode = 403;
+			} else if (errorMessage.includes("cannot be withdrawn")) {
+				statusCode = 400;
+			}
+
+			res.status(statusCode).json({
 				success: false,
-				message: "Failed to withdraw application",
+				message: errorMessage,
 			});
 		}
 	};

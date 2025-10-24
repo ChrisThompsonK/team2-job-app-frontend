@@ -579,4 +579,94 @@ export class AxiosApplicationService implements ApplicationService {
 			);
 		}
 	}
+
+	/**
+	 * Withdraws an application by changing its status to 'withdrawn'
+	 */
+	async withdrawApplication(
+		applicationId: number,
+		applicantEmail: string
+	): Promise<ApplicationResponse> {
+		try {
+			const response = await this.axiosInstance.delete<
+				BackendResponse<BackendApplicationResponse>
+			>(`/api/applications/${applicationId}`, {
+				headers: {
+					"X-User-Email": applicantEmail,
+				},
+			});
+
+			if (!response.data.success) {
+				throw new Error("Failed to withdraw application");
+			}
+
+			// Map backend response to frontend format
+			return this.mapBackendToFrontend(response.data.data);
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				console.error(
+					"Failed to withdraw application:",
+					"Status:",
+					error.response?.status,
+					"Data:",
+					error.response?.data,
+					"Message:",
+					error.message
+				);
+
+				if (error.code === "ECONNREFUSED") {
+					throw new Error(
+						"Unable to connect to the backend API. Please ensure the API server is running."
+					);
+				}
+
+				if (error.code === "ETIMEDOUT" || error.message.includes("timeout")) {
+					throw new Error(
+						"Request timed out. The backend API may be slow or unresponsive."
+					);
+				}
+
+				if (error.response) {
+					const statusCode = error.response.status;
+					const errorMessage =
+						error.response.data?.message ||
+						error.response.data?.error ||
+						"Unknown error occurred";
+
+					// Handle specific error cases
+					if (statusCode === 404) {
+						throw new Error("Application not found");
+					}
+
+					if (statusCode === 403) {
+						throw new Error(
+							"You do not have permission to withdraw this application"
+						);
+					}
+
+					if (statusCode === 400) {
+						throw new Error(
+							errorMessage || "This application cannot be withdrawn"
+						);
+					}
+
+					throw new Error(`Backend API error (${statusCode}): ${errorMessage}`);
+				}
+
+				if (error.request) {
+					throw new Error(
+						"No response from backend API. Please check if the API server is running."
+					);
+				}
+
+				throw new Error(
+					error.message || "An error occurred while withdrawing application"
+				);
+			}
+
+			throw new Error(
+				"An unexpected error occurred while withdrawing application"
+			);
+		}
+	}
 }

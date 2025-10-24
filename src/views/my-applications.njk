@@ -118,14 +118,15 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <span class="badge {% if app.status == 'accepted' %}badge-success{% elif app.status == 'rejected' %}badge-error{% elif app.status == 'under_review' %}badge-warning{% else %}badge-info{% endif %} badge-lg font-medium">
+                                    <span class="badge {% if app.status == 'accepted' %}badge-success{% elif app.status == 'rejected' %}badge-error{% elif app.status == 'withdrawn' %}badge-ghost{% elif app.status == 'under_review' %}badge-warning{% else %}badge-info{% endif %} badge-lg font-medium">
                                         {{ app.status | replace("_", " ") | title }}
                                     </span>
                                 </td>
                                 <td class="text-base font-medium" style="color: #000000;">{{ app.submittedAt | date('DD MMM YYYY, HH:mm') }}</td>
                                 <td>
                                     <div class="flex gap-2">
-                                        <!-- Edit Application Button -->
+                                        <!-- Edit Application Button (hidden for withdrawn applications) -->
+                                        {% if app.status != 'withdrawn' %}
                                         <a 
                                             href="/job-roles/{{ app.jobRoleId }}/apply?edit={{ app.applicationId }}"
                                             class="btn btn-sm btn-ghost tooltip action-btn" 
@@ -136,13 +137,14 @@
                                         >
                                             <i data-lucide="pencil" class="w-4 h-4"></i>
                                         </a>
+                                        {% endif %}
                                         
                                         <!-- Withdraw Button (only for pending applications) -->
                                         {% if app.status == 'pending' or app.status == 'under_review' or app.status == 'in progress' %}
                                         <button 
-                                            class="btn btn-sm btn-error btn-ghost tooltip action-btn" 
+                                            class="btn btn-sm btn-error btn-ghost tooltip action-btn withdraw-btn" 
                                             data-tip="Withdraw Application"
-                                            onclick="withdrawApplication({{ app.applicationId }})"
+                                            data-application-id="{{ app.applicationId }}"
                                             style="color: #dc2626; border: 1px solid #dc2626;"
                                             onmouseover="this.style.backgroundColor='#dc2626'; this.style.color='#ffffff'; this.style.borderColor='#dc2626';"
                                             onmouseout="this.style.backgroundColor=''; this.style.color='#dc2626'; this.style.borderColor='#dc2626';"
@@ -172,14 +174,12 @@
                                     {% else %}
                                         Job #{{ app.jobRoleId }}
                                     {% endif %}
-                                </a>
-                            </h3>
-                            <span class="badge {% if app.status == 'accepted' %}badge-success{% elif app.status == 'rejected' %}badge-error{% elif app.status == 'under_review' or app.status == 'in progress' %}badge-warning{% else %}badge-info{% endif %}">
-                                {{ app.status | replace("_", " ") | title }}
-                            </span>
-                        </div>
-                        
-                        <div class="space-y-2 text-sm">
+                            </a>
+                        </h3>
+                        <span class="badge {% if app.status == 'accepted' %}badge-success{% elif app.status == 'rejected' %}badge-error{% elif app.status == 'withdrawn' %}badge-ghost{% elif app.status == 'under_review' or app.status == 'in progress' %}badge-warning{% else %}badge-info{% endif %}">
+                            {{ app.status | replace("_", " ") | title }}
+                        </span>
+                    </div>                        <div class="space-y-2 text-sm">
                             <div class="flex items-center" style="color: #000000;">
                                 <i data-lucide="calendar" class="w-4 h-4 mr-2"></i>
                                 {{ app.submittedAt | date('DD MMM YYYY, HH:mm') }}
@@ -187,6 +187,7 @@
                         </div>
 
                         <div class="card-actions justify-end mt-4">
+                            {% if app.status != 'withdrawn' %}
                             <a 
                                 href="/job-roles/{{ app.jobRoleId }}/apply?edit={{ app.applicationId }}"
                                 class="btn btn-sm btn-ghost" 
@@ -197,11 +198,12 @@
                                 <i data-lucide="pencil" class="w-4 h-4 mr-1"></i>
                                 Edit
                             </a>
+                            {% endif %}
                             
                             {% if app.status == 'pending' or app.status == 'under_review' or app.status == 'in progress' %}
                             <button 
-                                class="btn btn-sm btn-error btn-ghost" 
-                                onclick="withdrawApplication({{ app.applicationId }})"
+                                class="btn btn-sm btn-error btn-ghost withdraw-btn" 
+                                data-application-id="{{ app.applicationId }}"
                                 style="color: #dc2626; border: 1px solid #dc2626;"
                                 onmouseover="this.style.backgroundColor='#dc2626'; this.style.color='#ffffff'; this.style.borderColor='#dc2626';"
                                 onmouseout="this.style.backgroundColor=''; this.style.color='#dc2626'; this.style.borderColor='#dc2626';"
@@ -268,11 +270,55 @@
 </dialog>
 
 <script>
+// Use event delegation for withdraw buttons - more reliable than onclick
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle withdraw button clicks
+    document.addEventListener('click', function(e) {
+        const withdrawBtn = e.target.closest('.withdraw-btn');
+        if (withdrawBtn) {
+            e.preventDefault();
+            const applicationId = withdrawBtn.getAttribute('data-application-id');
+            if (applicationId) {
+                withdrawApplication(applicationId);
+            }
+        }
+    });
+});
+
+// Withdraw application function
+async function withdrawApplication(applicationId) {
+    if (!confirm('Are you sure you want to withdraw this application? This action cannot be undone.')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/applications/${applicationId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('Application withdrawn successfully');
+            window.location.reload();
+        } else {
+            alert(result.message || 'Failed to withdraw application');
+        }
+    } catch (error) {
+        console.error('Error withdrawing application:', error);
+        alert('An error occurred while withdrawing the application. Please try again.');
+    }
+}
+
+(function() {
     // Application data for JavaScript
-    const applications = {{ applications | tojson }};
+    const applications = {{ applications | tojson | safe }};
 
     // View application details
-    function viewApplicationDetails(applicationId) {
+    window.viewApplicationDetails = function(applicationId) {
         const app = applications.find(a => a.applicationId === applicationId);
         if (!app) return;
 
@@ -280,6 +326,7 @@
         const statusClass = 
             app.status === 'accepted' ? 'badge-success' :
             app.status === 'rejected' ? 'badge-error' :
+            app.status === 'withdrawn' ? 'badge-ghost' :
             app.status === 'under_review' ? 'badge-warning' : 'badge-info';
 
         content.innerHTML = `
@@ -342,40 +389,13 @@
         document.getElementById('applicationDetailsModal').showModal();
     }
 
-    // Withdraw application
-    async function withdrawApplication(applicationId) {
-        if (!confirm('Are you sure you want to withdraw this application? This action cannot be undone.')) {
-            return;
-        }
-
-        try {
-            const response = await fetch(`/applications/${applicationId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                alert('Application withdrawn successfully');
-                window.location.reload();
-            } else {
-                alert(result.message || 'Failed to withdraw application');
-            }
-        } catch (error) {
-            console.error('Error withdrawing application:', error);
-            alert('An error occurred while withdrawing the application. Please try again.');
-        }
-    }
-
     // Initialize Lucide icons on page load
     document.addEventListener('DOMContentLoaded', function() {
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
     });
+})();
 </script>
 
 {% endblock %}
