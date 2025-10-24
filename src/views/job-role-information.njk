@@ -147,7 +147,8 @@
                     </div>
                 </div>
                 
-                <!-- Delete Form (works without JavaScript) -->
+                {# Delete button - Admin only #}
+                {% if isAuthenticated and user and user.user_type == 'Admin' %}
                 <div id="deleteButtonContainer" class="flex items-center">
                     <form id="deleteForm" method="POST" action="/job-roles/{{ jobRole.jobRoleId }}/delete" class="inline">
                         <input type="hidden" name="_method" value="DELETE">
@@ -168,6 +169,7 @@
                         </div>
                     </form>
                 </div>
+                {% endif %}
             </div>
         </div>
 
@@ -218,23 +220,40 @@
                     Back to All Roles
                 </a>
                 
-                {# Admin button to view applicants #}
-                <a href="/job-roles/{{ jobRole.jobRoleId }}/applicants" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:from-purple-700 hover:to-indigo-700 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
-                    <span class="icon mr-3 text-xl">👥</span>
-                    View Applicants
-                </a>
+                {# Admin View - Show admin-only buttons #}
+                {% if isAuthenticated and user and user.user_type == 'Admin' %}
+                    {# Add New Job Role button #}
+                    <a href="/admin/job-roles/new" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-cyan-700 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+                        <span class="icon mr-3 text-xl">➕</span>
+                        Add New Job Role
+                    </a>
+                    
+                    {# Edit button #}
+                    <a href="/admin/job-roles/{{ jobRole.jobRoleId }}/edit" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold rounded-xl shadow-lg hover:from-amber-700 hover:to-orange-700 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+                        <span class="icon mr-3 text-xl">✏️</span>
+                        Edit Job Role
+                    </a>
+                    
+                    {# View Applicants button #}
+                    <a href="/job-roles/{{ jobRole.jobRoleId }}/applicants" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:from-purple-700 hover:to-indigo-700 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+                        <span class="icon mr-3 text-xl">👥</span>
+                        View Applicants
+                    </a>
                 
-                {# Show Apply button only if role is active and has positions available #}
-                {% if jobRole.numberOfOpenPositions > 0 and jobRole.status|lower == 'active' %}
-                <a href="/job-roles/{{ jobRole.jobRoleId }}/apply" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-green-600 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-green-700 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
-                    <span class="icon mr-3 text-xl">📧</span>
-                    Apply Now
-                </a>
+                {# Regular Applicant View - Show Apply button only #}
                 {% else %}
-                <div class="inline-flex items-center px-8 py-4 bg-gray-300 text-gray-600 font-bold rounded-xl shadow-lg cursor-not-allowed opacity-75">
-                    <span class="icon mr-3 text-xl">🚫</span>
-                    Applications Closed
-                </div>
+                    {# Show Apply button only if role is active and has positions available #}
+                    {% if jobRole.numberOfOpenPositions > 0 and jobRole.status|lower == 'active' %}
+                    <a href="/job-roles/{{ jobRole.jobRoleId }}/apply" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-green-600 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-green-700 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+                        <span class="icon mr-3 text-xl">📧</span>
+                        Apply Now
+                    </a>
+                    {% else %}
+                    <div class="inline-flex items-center px-8 py-4 bg-gray-300 text-gray-600 font-bold rounded-xl shadow-lg cursor-not-allowed opacity-75">
+                        <span class="icon mr-3 text-xl">🚫</span>
+                        Applications Closed
+                    </div>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

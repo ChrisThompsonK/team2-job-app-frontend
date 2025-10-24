@@ -94,6 +94,7 @@ export class AxiosJobRoleService implements JobRoleService {
 				capability: role.capability,
 				band: role.band,
 				closingDate: role.closingDate,
+				numberOfOpenPositions: role.numberOfOpenPositions,
 				status:
 					typeof role.status === "string" &&
 					role.status.toLowerCase() === "open"
@@ -251,6 +252,7 @@ export class AxiosJobRoleService implements JobRoleService {
 				capability: role.capability,
 				band: role.band,
 				closingDate: role.closingDate,
+				numberOfOpenPositions: role.numberOfOpenPositions,
 				status:
 					typeof role.status === "string" &&
 					role.status.toLowerCase() === "open"
@@ -390,6 +392,7 @@ export class AxiosJobRoleService implements JobRoleService {
 				capability: role.capability,
 				band: role.band,
 				closingDate: role.closingDate,
+				numberOfOpenPositions: role.numberOfOpenPositions,
 				status:
 					typeof role.status === "string" &&
 					role.status.toLowerCase() === "open"
@@ -510,6 +513,7 @@ export class AxiosJobRoleService implements JobRoleService {
 					capability: role.capability,
 					band: role.band,
 					closingDate: role.closingDate,
+					numberOfOpenPositions: role.numberOfOpenPositions,
 					status:
 						typeof role.status === "string" &&
 						role.status.toLowerCase() === "open"

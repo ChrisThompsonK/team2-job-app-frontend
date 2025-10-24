@@ -34,23 +34,6 @@
                             </p>
                         {% endif %}
                     </div>
-                    
-                    <!-- Admin Action Buttons -->
-                    <!-- TODO: Add admin role check here when backend auth is implemented -->
-                    <div class="flex flex-wrap gap-3">
-                        <a href="/admin/job-roles/new" class="bg-green-600 text-white font-semibold py-3 px-6 rounded-2xl hover:bg-green-700 transition-all duration-200 flex items-center gap-2 shadow-lg">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                            Add New Job Role
-                        </a>
-                        <a href="/admin/job-roles/export" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-2xl hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 shadow-lg">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            Generate Report
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -285,35 +268,25 @@
                     
                     <!-- Action Buttons -->
                     <div class="flex flex-col gap-2">
-                        <!-- Primary Actions Row -->
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <a href="/job-roles/{{ role.jobRoleId }}" class="flex-1 bg-white border-2 border-blue-600 text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors duration-200 flex items-center justify-center text-sm">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                                Details
-                            </a>
-                            <a href="/job-roles/{{ role.jobRoleId }}/applicants" class="flex-1 bg-white border-2 border-purple-600 text-purple-600 font-medium py-2 px-3 rounded-lg hover:bg-purple-50 transition-colors duration-200 flex items-center justify-center text-sm">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                                Applicants
-                            </a>
-                            {% if role.status and role.status | lower == 'open' %}
-                                <a href="/job-roles/{{ role.jobRoleId }}/apply" class="flex-1 bg-gradient-to-r from-blue-600 to-green-600 text-white font-medium py-2 px-3 rounded-lg hover:from-blue-700 hover:to-green-700 transition-colors duration-200 flex items-center justify-center text-sm">
-                                    Apply Now
-                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                    </svg>
-                                </a>
-                            {% endif %}
-                        </div>
-                        <!-- Admin Edit Button (TODO: Add admin role check when backend auth is implemented) -->
-                        <a href="/admin/job-roles/{{ role.jobRoleId }}/edit" class="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white font-medium py-2 px-3 rounded-lg hover:from-blue-700 hover:to-green-700 transition-colors duration-200 flex items-center justify-center text-sm">
-                            <span class="text-xl mr-2">📝</span>
-                            Edit Job Role
+                        <a href="/job-roles/{{ role.jobRoleId }}" class="w-full bg-white border-2 border-blue-600 text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors duration-200 flex items-center justify-center text-sm">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            View Details
                         </a>
+                        {% if role.status and role.status | lower == 'open' %}
+                            <a href="/job-roles/{{ role.jobRoleId }}/apply" class="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white font-medium py-2 px-3 rounded-lg hover:from-blue-700 hover:to-green-700 transition-colors duration-200 flex items-center justify-center text-sm">
+                                Apply Now
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                            </a>
+                        {% else %}
+                            <button class="w-full bg-gray-300 text-gray-700 font-medium py-2 px-3 rounded-lg cursor-not-allowed flex items-center justify-center text-sm" disabled>
+                                Applications Closed
+                            </button>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
