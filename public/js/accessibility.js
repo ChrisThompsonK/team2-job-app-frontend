@@ -1,7 +1,85 @@
 /**
  * Consolidated Accessibility Features and App Initialization
  * Optimized version with reduced complexity and better maintainability
+ * Includes contrast checking and accessibility validation
  */
+
+/**
+ * Check color contrast ratio between two colors
+ * Returns true if contrast meets WCAG AA standards (4.5:1)
+ */
+function checkContrast(foreground, background) {
+	function getRGBValues(color) {
+		// Convert hex to RGB
+		if (color.startsWith('#')) {
+			const hex = color.slice(1);
+			return [
+				parseInt(hex.substr(0, 2), 16),
+				parseInt(hex.substr(2, 2), 16),
+				parseInt(hex.substr(4, 2), 16)
+			];
+		}
+		// Handle rgb() format
+		const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+		if (match) {
+			return [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
+		}
+		return [0, 0, 0]; // Fallback
+	}
+
+	function getLuminance(rgb) {
+		const [r, g, b] = rgb.map(c => {
+			const sRGB = c / 255;
+			return sRGB <= 0.03928 ? sRGB / 12.92 : Math.pow((sRGB + 0.055) / 1.055, 2.4);
+		});
+		return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+	}
+
+	const fgRGB = getRGBValues(foreground);
+	const bgRGB = getRGBValues(background);
+	const fgLum = getLuminance(fgRGB);
+	const bgLum = getLuminance(bgRGB);
+	const ratio = (Math.max(fgLum, bgLum) + 0.05) / (Math.min(fgLum, bgLum) + 0.05);
+	
+	return ratio >= 4.5; // WCAG AA standard
+}
+
+/**
+ * Validate accessibility and contrast for form elements
+ */
+function validateAccessibility() {
+	if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'production') {
+		const formElements = document.querySelectorAll('input, select, textarea, button');
+		
+		formElements.forEach(element => {
+			const computed = window.getComputedStyle(element);
+			const foreground = computed.color;
+			const background = computed.backgroundColor;
+			
+			// Only check elements with meaningful contrast (not transparent backgrounds)
+			if (background && background !== 'rgba(0, 0, 0, 0)' && background !== 'transparent') {
+				const hasGoodContrast = checkContrast(foreground, background);
+				
+				if (!hasGoodContrast) {
+					console.warn('Contrast issue detected:', {
+						element: element.tagName + (element.className ? '.' + element.className.split(' ').join('.') : ''),
+						foreground,
+						background,
+						suggestion: 'Consider using darker text or lighter background for better accessibility'
+					});
+				}
+			}
+			
+			// Check for missing labels
+			if (['INPUT', 'SELECT', 'TEXTAREA'].includes(element.tagName) && !element.getAttribute('aria-label') && !element.getAttribute('aria-labelledby')) {
+				const label = document.querySelector(`label[for="${element.id}"]`);
+				if (!label && !element.closest('label')) {
+					console.warn('Missing label detected:', element);
+				}
+			}
+		});
+	}
+}
 
 /**
  * Switch header logo based on dark mode state
@@ -75,6 +153,10 @@ function initializeApp() {
 	if (typeof lucide !== "undefined") {
 		lucide.createIcons();
 	}
+
+	// Run accessibility validation in development/testing
+	// Only logs issues for developers to fix
+	validateAccessibility();
 }
 
 class AccessibilityManager {

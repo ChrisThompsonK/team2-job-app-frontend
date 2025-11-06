@@ -1,8 +1,44 @@
-/* Minimal dark mode header/link overrides (pruned) */
+/* Accessibility and Contrast Improvements */
+/* Dark mode overrides with proper contrast ratios (WCAG AA compliant) */
 .dark-mode .site-header { background: transparent; border: none; box-shadow: none; }
 .dark-mode nav[role="navigation"] a { color: #e2e8f0; background: transparent; }
 .dark-mode nav[role="navigation"] a:hover { color: #60a5fa; }
 .dark-mode nav[role="navigation"] a:focus { outline: none; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: #60a5fa; }
+
+/* Accessible form elements */
+.dark-mode input, .dark-mode select, .dark-mode textarea {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+  border-color: #6b7280 !important;
+}
+
+.dark-mode input:focus, .dark-mode select:focus, .dark-mode textarea:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.dark-mode .text-gray-900 { color: #f9fafb !important; }
+.dark-mode .text-gray-700 { color: #d1d5db !important; }
+.dark-mode .text-gray-600 { color: #9ca3af !important; }
+.dark-mode .bg-white { background-color: #1f2937 !important; }
+.dark-mode .bg-gray-50 { background-color: #111827 !important; }
+
+/* High contrast focus indicators */
+input:focus, select:focus, button:focus, a:focus {
+  outline: 3px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Ensure minimum contrast for interactive elements */
+.btn {
+  min-height: 44px; /* Touch target size */
+}
+
+/* Error state styling for accessibility tools */
+input[aria-invalid="true"], select[aria-invalid="true"] {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
 
 /* Mobile menu visibility fix - ensure it appears when not hidden */
 #mobileMenuDropdown:not(.hidden) {

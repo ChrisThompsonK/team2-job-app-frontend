@@ -156,3 +156,10 @@ src/spec/
 # Temporary font files
 *.tmp
 *.temp
+
+# Playwright test artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+*.png
+!public/**/*.png

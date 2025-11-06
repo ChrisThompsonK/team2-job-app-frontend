@@ -156,5 +156,63 @@ describe("validatePaginationParams", () => {
 			expect(result.page).toBe(2);
 			expect(result.limit).toBe(15);
 		});
+
+		it("should reject scientific notation in page parameter", () => {
+			const result1 = validatePaginationParams("1e5", "10");
+			const result2 = validatePaginationParams("1E10", "10");
+
+			expect(result1.isValid).toBe(false);
+			expect(result1.error).toBe("Page must be a positive integer");
+
+			expect(result2.isValid).toBe(false);
+			expect(result2.error).toBe("Page must be a positive integer");
+		});
+
+		it("should reject scientific notation in limit parameter", () => {
+			const result = validatePaginationParams("1", "1e3");
+
+			expect(result.isValid).toBe(false);
+			expect(result.error).toBe("Limit must be a positive integer");
+		});
+
+		it("should reject special characters (potential XSS)", () => {
+			const result = validatePaginationParams(
+				"<script>alert('xss')</script>",
+				"10"
+			);
+
+			expect(result.isValid).toBe(false);
+			expect(result.error).toBe("Page must be a positive integer");
+		});
+
+		it("should reject SQL injection attempts", () => {
+			const result = validatePaginationParams("1; DROP TABLE users;", "10");
+
+			expect(result.isValid).toBe(false);
+			expect(result.error).toBe("Page must be a positive integer");
+		});
+
+		it("should reject numbers beyond MAX_SAFE_INTEGER", () => {
+			// Use a number larger than Number.MAX_SAFE_INTEGER (9007199254740991)
+			const result = validatePaginationParams("9999999999999999", "10");
+
+			expect(result.isValid).toBe(false);
+			expect(result.error).toBe("Page must be a positive integer");
+		});
+
+		it("should handle empty string after trim", () => {
+			const result = validatePaginationParams("   ", "   ");
+
+			expect(result.isValid).toBe(true);
+			expect(result.page).toBe(DEFAULT_PAGE);
+			expect(result.limit).toBe(DEFAULT_LIMIT);
+		});
+
+		it("should reject mixed alphanumeric strings", () => {
+			const result = validatePaginationParams("1abc", "10xyz");
+
+			expect(result.isValid).toBe(false);
+			expect(result.error).toBe("Page must be a positive integer");
+		});
 	});
 });

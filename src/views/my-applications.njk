@@ -5,11 +5,11 @@
     <div class="container mx-auto px-4 max-w-7xl">
         <!-- Page Header -->
         <div class="mb-8">
-            <h1 class="text-4xl font-bold mb-2 flex items-center" style="color: #000000;">
+            <h1 class="text-4xl font-bold mb-2 flex items-center text-gray-900 dark-mode:text-gray-100">
                 <i data-lucide="briefcase" class="w-10 h-10 mr-3 text-blue-600"></i>
                 My Applications
             </h1>
-            <p style="color: #000000;">Track and manage all your job applications</p>
+            <p class="text-gray-700 dark-mode:text-gray-300">Track and manage all your job applications</p>
         </div>
 
         <!-- Filters and Search Section -->
@@ -19,8 +19,8 @@
                     <!-- Search Input -->
                     <div class="form-control">
                         <label class="label">
-                            <span class="label-text font-medium flex items-center" style="color: #000000;">
-                                <i data-lucide="search" class="w-4 h-4 mr-2"></i>
+                            <span class="label-text font-medium flex items-center text-gray-900 dark-mode:text-gray-100">
+                                <i data-lucide="search" class="w-4 h-4 mr-2 text-gray-600 dark-mode:text-gray-400"></i>
                                 Search Application ID
                             </span>
                         </label>
@@ -29,53 +29,54 @@
                             name="search" 
                             value="{{ searchQuery }}"
                             placeholder="Enter application ID..." 
-                            class="input input-bordered w-full"
-                            style="color: #000000; background-color: #ffffff; border-color: #000000;"
+                            class="input input-bordered w-full bg-white dark-mode:bg-gray-800 text-gray-900 dark-mode:text-gray-100 border-gray-300 dark-mode:border-gray-600 placeholder-gray-500 dark-mode:placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
+                            aria-describedby="search-help"
                         >
+                        <div id="search-help" class="sr-only">Enter the application ID number to search for specific applications</div>
                     </div>
 
                     <!-- Status Filter -->
                     <div class="form-control">
                         <label class="label">
-                            <span class="label-text font-medium flex items-center" style="color: #000000;">
-                                <i data-lucide="filter" class="w-4 h-4 mr-2"></i>
+                            <span class="label-text font-medium flex items-center text-gray-900 dark-mode:text-gray-100">
+                                <i data-lucide="filter" class="w-4 h-4 mr-2 text-gray-600 dark-mode:text-gray-400"></i>
                                 Filter by Status
                             </span>
                         </label>
-                        <select name="status" class="select select-bordered w-full" style="color: #000000; background-color: #ffffff; border-color: #000000;">
+                        <select name="status" class="select select-bordered w-full bg-white dark-mode:bg-gray-800 text-gray-900 dark-mode:text-gray-100 border-gray-300 dark-mode:border-gray-600 focus:border-blue-500 focus:ring-blue-500" aria-describedby="status-help">
                             <option value="all" {% if statusFilter == "" or statusFilter == "all" %}selected{% endif %}>All Statuses</option>
                             <option value="pending" {% if statusFilter == "pending" %}selected{% endif %}>Pending</option>
                             <option value="under_review" {% if statusFilter == "under_review" %}selected{% endif %}>Under Review</option>
                             <option value="accepted" {% if statusFilter == "accepted" %}selected{% endif %}>Accepted</option>
                             <option value="rejected" {% if statusFilter == "rejected" %}selected{% endif %}>Rejected</option>
                         </select>
+                        <div id="status-help" class="sr-only">Filter applications by their current status</div>
                     </div>
 
                     <!-- Sort By -->
                     <div class="form-control">
                         <label class="label">
-                            <span class="label-text font-medium flex items-center" style="color: #000000;">
-                                <i data-lucide="arrow-up-down" class="w-4 h-4 mr-2"></i>
+                            <span class="label-text font-medium flex items-center text-gray-900 dark-mode:text-gray-100">
+                                <i data-lucide="arrow-up-down" class="w-4 h-4 mr-2 text-gray-600 dark-mode:text-gray-400"></i>
                                 Sort By
                             </span>
                         </label>
-                        <select name="sort" class="select select-bordered w-full" style="color: #000000; background-color: #ffffff; border-color: #000000;">
+                        <select name="sort" class="select select-bordered w-full bg-white dark-mode:bg-gray-800 text-gray-900 dark-mode:text-gray-100 border-gray-300 dark-mode:border-gray-600 focus:border-blue-500 focus:ring-blue-500" aria-describedby="sort-help">
                             <option value="date-desc" {% if sortBy == "date-desc" %}selected{% endif %}>Newest First</option>
                             <option value="date-asc" {% if sortBy == "date-asc" %}selected{% endif %}>Oldest First</option>
                             <option value="status" {% if sortBy == "status" %}selected{% endif %}>Status</option>
                         </select>
+                        <div id="sort-help" class="sr-only">Sort applications by date or status</div>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="flex gap-2">
-                    <button type="submit" class="btn btn-primary" style="color: #ffffff; background-color: #6366f1; border-color: #6366f1;">
+                    <button type="submit" class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white border-blue-600 hover:border-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                         <i data-lucide="check" class="w-4 h-4 mr-2"></i>
                         Apply Filters
                     </button>
-                    <a href="/applications" class="btn btn-ghost" style="color: #000000; border: 1px solid #000000;"
-                       onmouseover="this.style.backgroundColor='#000000'; this.style.color='#ffffff'; this.style.borderColor='#000000';"
-                       onmouseout="this.style.backgroundColor=''; this.style.color='#000000'; this.style.borderColor='#000000';">
+                    <a href="/applications" class="btn btn-outline border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark-mode:border-gray-600 dark-mode:text-gray-300 dark-mode:hover:bg-gray-800 dark-mode:hover:border-gray-500">
                         <i data-lucide="x" class="w-4 h-4 mr-2"></i>
                         Clear All
                     </a>
@@ -85,8 +86,8 @@
 
         <!-- Applications Count -->
         <div class="mb-4">
-            <p class="font-medium text-base" style="color: #000000;">
-                <span class="font-bold" style="color: #000000;">{{ applications.length }}</span> 
+            <p class="font-medium text-base text-gray-900 dark-mode:text-gray-100">
+                <span class="font-bold text-gray-900 dark-mode:text-gray-100">{{ applications.length }}</span> 
                 application{% if applications.length != 1 %}s{% endif %} found
             </p>
         </div>

@@ -31,43 +31,100 @@ export function validatePaginationParams(
 	// Parse and validate page
 	let page = DEFAULT_PAGE;
 	if (pageStr) {
-		const parsedPage = Number.parseInt(pageStr, 10);
-		if (Number.isNaN(parsedPage) || parsedPage < 1 || pageStr.includes(".")) {
-			return {
-				isValid: false,
-				page: DEFAULT_PAGE,
-				limit: DEFAULT_LIMIT,
-				error: "Page must be a positive integer",
-			};
+		// Sanitize input: remove whitespace and special characters
+		const sanitized = pageStr.trim();
+
+		// Check for empty string after trim
+		if (sanitized === "") {
+			page = DEFAULT_PAGE;
+		} else {
+			// Check for decimal points, scientific notation, or other invalid characters
+			if (
+				sanitized.includes(".") ||
+				sanitized.includes("e") ||
+				sanitized.includes("E") ||
+				/[^0-9-]/.test(sanitized)
+			) {
+				return {
+					isValid: false,
+					page: DEFAULT_PAGE,
+					limit: DEFAULT_LIMIT,
+					error: "Page must be a positive integer",
+				};
+			}
+
+			const parsedPage = Number.parseInt(sanitized, 10);
+
+			// Check for NaN, negative numbers, zero, or values that are too large
+			if (
+				Number.isNaN(parsedPage) ||
+				parsedPage < 1 ||
+				parsedPage > Number.MAX_SAFE_INTEGER
+			) {
+				return {
+					isValid: false,
+					page: DEFAULT_PAGE,
+					limit: DEFAULT_LIMIT,
+					error: "Page must be a positive integer",
+				};
+			}
+
+			page = parsedPage;
 		}
-		page = parsedPage;
 	}
 
 	// Parse and validate limit
 	let limit = DEFAULT_LIMIT;
 	if (limitStr) {
-		const parsedLimit = Number.parseInt(limitStr, 10);
-		if (
-			Number.isNaN(parsedLimit) ||
-			parsedLimit < 1 ||
-			limitStr.includes(".")
-		) {
-			return {
-				isValid: false,
-				page,
-				limit: DEFAULT_LIMIT,
-				error: "Limit must be a positive integer",
-			};
+		// Sanitize input: remove whitespace
+		const sanitized = limitStr.trim();
+
+		// Check for empty string after trim
+		if (sanitized === "") {
+			limit = DEFAULT_LIMIT;
+		} else {
+			// Check for decimal points, scientific notation, or other invalid characters
+			if (
+				sanitized.includes(".") ||
+				sanitized.includes("e") ||
+				sanitized.includes("E") ||
+				/[^0-9-]/.test(sanitized)
+			) {
+				return {
+					isValid: false,
+					page,
+					limit: DEFAULT_LIMIT,
+					error: "Limit must be a positive integer",
+				};
+			}
+
+			const parsedLimit = Number.parseInt(sanitized, 10);
+
+			// Check for NaN, negative numbers, zero, or values that are too large
+			if (
+				Number.isNaN(parsedLimit) ||
+				parsedLimit < 1 ||
+				parsedLimit > Number.MAX_SAFE_INTEGER
+			) {
+				return {
+					isValid: false,
+					page,
+					limit: DEFAULT_LIMIT,
+					error: "Limit must be a positive integer",
+				};
+			}
+
+			if (parsedLimit > MAX_LIMIT) {
+				return {
+					isValid: false,
+					page,
+					limit: DEFAULT_LIMIT,
+					error: `Limit cannot exceed ${MAX_LIMIT}`,
+				};
+			}
+
+			limit = parsedLimit;
 		}
-		if (parsedLimit > MAX_LIMIT) {
-			return {
-				isValid: false,
-				page,
-				limit: DEFAULT_LIMIT,
-				error: `Limit cannot exceed ${MAX_LIMIT}`,
-			};
-		}
-		limit = parsedLimit;
 	}
 
 	return {

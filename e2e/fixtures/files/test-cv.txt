@@ -1,0 +1,31 @@
+John Doe
+Software Engineer
+john.doe@example.com | +44 7700 900000
+
+PROFESSIONAL SUMMARY
+Experienced software engineer with 5+ years of experience in full-stack development.
+
+TECHNICAL SKILLS
+- JavaScript, TypeScript, Node.js
+- React, Vue.js
+- PostgreSQL, MongoDB
+- Git, Docker, CI/CD
+
+WORK EXPERIENCE
+Senior Software Engineer | Tech Company Ltd | 2020-Present
+- Developed and maintained web applications
+- Led team of 5 developers
+- Implemented CI/CD pipelines
+
+Software Engineer | StartUp Inc | 2018-2020
+- Built RESTful APIs
+- Collaborated with cross-functional teams
+- Improved application performance by 40%
+
+EDUCATION
+Bachelor of Science in Computer Science
+University of Technology | 2014-2018
+
+CERTIFICATIONS
+- AWS Certified Developer
+- Certified Scrum Master
