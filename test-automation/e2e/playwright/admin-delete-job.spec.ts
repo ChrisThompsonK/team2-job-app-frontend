@@ -3,7 +3,8 @@ import { LoginPage } from './pages/login.page.js';
 
 test.describe('Admin Delete Job Role', () => {
   test('Admin can delete a job role', async ({ page }) => {
-    test.setTimeout(60000);
+    // Note: Test timeout is configured globally in playwright.config.ts
+    // Individual tests should not override the global timeout setting
 
     // Step 1: Login as admin
     const loginPage = new LoginPage(page);

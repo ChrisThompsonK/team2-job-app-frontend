@@ -153,9 +153,6 @@ Then('I should see the products inventory', async function (this: CustomWorld) {
   // Check if we're on the inventory page (products page)
   const currentUrl = this.page.url();
   expect(currentUrl).toContain('/inventory.html');
-
-  // Additional check: look for product elements (if they exist)
-  // This would be more robust in a real implementation
 });
 
 /**

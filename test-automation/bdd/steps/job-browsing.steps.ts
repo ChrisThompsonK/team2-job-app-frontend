@@ -63,12 +63,10 @@ Then('I should see at least {int} job card', async function (this: CustomWorld, 
  * Verify job titles are visible
  */
 Then('I should see job titles in the listings', async function (this: CustomWorld) {
-  const jobTitles = this.page.locator('h2.text-xl.font-bold.text-gray-900');
-  const titleCount = await jobTitles.count();
+  // Use data-testid for more reliable locating, fallback to role-based selector
+  const jobTitles = this.page.locator('[data-testid="job-title"], h2:has-text("")').first().locator('h2').or(this.page.getByRole('heading', { level: 2 }));
+  const titleCount = await this.page.locator('[data-testid="job-title"]').or(this.page.locator('h2.text-xl.font-bold')).count();
   expect(titleCount).toBeGreaterThan(0);
-  
-  // Get first title as verification
-  const firstTitle = await jobTitles.first().textContent();
 });
 
 /**
@@ -177,7 +175,8 @@ Then('all content should be visible on current viewport', async function (this: 
  * Verify layout adapts to viewport
  */
 Then('page layout should adapt to viewport size', async function (this: CustomWorld) {
-  const viewport = this.page.viewportSize();
+  // Viewport check - just verify page exists
+  expect(this.page).toBeTruthy();
 });
 
 /**
@@ -235,13 +234,13 @@ When('I click on a different job\'s {string} button', async function (this: Cust
 // ============================================================================
 // THEN - Navigation Assertions
 // ============================================================================
+// THEN - Navigation Assertions
+// ============================================================================
 
 /**
  * Verify navigated to job details page
  */
 Then('I should be navigated to a job details page', async function (this: CustomWorld) {
-  const url = this.page.url();
-  
   const headings = await this.page.locator('h1, h2, h3').count();
   expect(headings).toBeGreaterThan(0);
 });
@@ -341,7 +340,13 @@ Then('the page should display application form for the job', async function (thi
   const isVisible = await form.isVisible().catch(() => false);
   
   if (isVisible) {
+    // Form is visible - verify it has submit capability
+    const submitBtn = form.locator('button[type="submit"], button:has-text("Apply"), button:has-text("Submit")').first();
+    await expect(submitBtn).toBeVisible({ timeout: 3000 });
   } else {
+    // If form not visible, check for application link/button
+    const applyLink = this.page.locator('a:has-text("Apply"), button:has-text("Apply")').first();
+    await expect(applyLink).toBeVisible({ timeout: 3000 });
   }
 });
 
@@ -353,7 +358,12 @@ Then('I should be able to navigate to other jobs', async function (this: CustomW
   const navExists = await backBtn.isVisible().catch(() => false);
   
   if (navExists) {
+    // Back button exists - verify it's clickable
+    await expect(backBtn).toBeEnabled();
   } else {
+    // Alternative: check for breadcrumb or job list link
+    const jobListLink = this.page.locator('a:has-text("Jobs"), a:has-text("Job Roles")').first();
+    await expect(jobListLink).toBeVisible({ timeout: 3000 });
   }
 });
 

@@ -14,7 +14,7 @@ test.describe('Cross-Browser Compatibility Tests', () => {
   test.describe('Desktop Browser Compatibility', () => {
     test('should load homepage on Chromium', async ({ page, browserName }) => {
       test.skip(browserName !== 'chromium', 'Chromium-only test');
-      test.setTimeout(20000);
+      // Note: Test timeout is configured globally in playwright.config.ts
       
       await page.goto(baseUrl, { timeout: 15000 });
       await page.waitForLoadState('networkidle');
@@ -26,7 +26,7 @@ test.describe('Cross-Browser Compatibility Tests', () => {
 
     test('should load homepage on Firefox', async ({ page, browserName }) => {
       test.skip(browserName !== 'firefox', 'Firefox-only test');
-      test.setTimeout(20000);
+      // Note: Test timeout is configured globally in playwright.config.ts
       
       await page.goto(baseUrl, { timeout: 15000 });
       await page.waitForLoadState('networkidle');
@@ -38,7 +38,7 @@ test.describe('Cross-Browser Compatibility Tests', () => {
 
     test('should load homepage on WebKit', async ({ page, browserName }) => {
       test.skip(browserName !== 'webkit', 'WebKit-only test');
-      test.setTimeout(20000);
+      // Note: Test timeout is configured globally in playwright.config.ts
       
       await page.goto(baseUrl, { timeout: 15000 });
       await page.waitForLoadState('networkidle');
@@ -51,7 +51,7 @@ test.describe('Cross-Browser Compatibility Tests', () => {
 
   test.describe('Mobile Device Compatibility', () => {
     test('should work on iPhone viewport', async ({ page }) => {
-      test.setTimeout(20000);
+      // Note: Test timeout is configured globally in playwright.config.ts
       await page.setViewportSize({ width: 390, height: 844 });
       await page.goto(baseUrl, { timeout: 15000 });
       await page.waitForLoadState('networkidle');
@@ -61,7 +61,7 @@ test.describe('Cross-Browser Compatibility Tests', () => {
     });
 
     test('should work on Android viewport', async ({ page }) => {
-      test.setTimeout(20000);
+      // Note: Test timeout is configured globally in playwright.config.ts
       await page.setViewportSize({ width: 412, height: 915 });
       await page.goto(baseUrl, { timeout: 15000 });
       await page.waitForLoadState('networkidle');
@@ -71,7 +71,7 @@ test.describe('Cross-Browser Compatibility Tests', () => {
     });
 
     test('should work on tablet viewport', async ({ page }) => {
-      test.setTimeout(20000);
+      // Note: Test timeout is configured globally in playwright.config.ts
       await page.setViewportSize({ width: 768, height: 1024 });
       await page.goto(baseUrl, { timeout: 15000 });
       await page.waitForLoadState('networkidle');
@@ -83,7 +83,7 @@ test.describe('Cross-Browser Compatibility Tests', () => {
 
   test.describe('Screen Resolution Compatibility', () => {
     test('should work on 1920x1080 (Full HD)', async ({ page }) => {
-      test.setTimeout(20000);
+      // Note: Test timeout is configured globally in playwright.config.ts
       await page.setViewportSize({ width: 1920, height: 1080 });
       await page.goto(baseUrl, { timeout: 15000 });
       await page.waitForLoadState('networkidle');
@@ -93,7 +93,7 @@ test.describe('Cross-Browser Compatibility Tests', () => {
     });
 
     test('should work on 1366x768 (HD)', async ({ page }) => {
-      test.setTimeout(20000);
+      // Note: Test timeout is configured globally in playwright.config.ts
       await page.setViewportSize({ width: 1366, height: 768 });
       await page.goto(baseUrl, { timeout: 15000 });
       await page.waitForLoadState('networkidle');
@@ -103,7 +103,7 @@ test.describe('Cross-Browser Compatibility Tests', () => {
     });
 
     test('should work on 2560x1440 (2K)', async ({ page }) => {
-      test.setTimeout(20000);
+      // Note: Test timeout is configured globally in playwright.config.ts
       await page.setViewportSize({ width: 2560, height: 1440 });
       await page.goto(baseUrl, { timeout: 15000 });
       await page.waitForLoadState('networkidle');
@@ -115,7 +115,7 @@ test.describe('Cross-Browser Compatibility Tests', () => {
 
   test.describe('Navigation Compatibility', () => {
     test('should navigate to job roles across browsers', async ({ page }) => {
-      test.setTimeout(20000);
+      // Note: Test timeout is configured globally in playwright.config.ts
       await page.goto(baseUrl, { timeout: 15000 });
       await page.waitForLoadState('networkidle');
       
@@ -134,7 +134,7 @@ test.describe('Cross-Browser Compatibility Tests', () => {
 
   test.describe('Performance Compatibility', () => {
     test('should load homepage quickly', async ({ page }) => {
-      test.setTimeout(20000);
+      // Note: Test timeout is configured globally in playwright.config.ts
       const startTime = Date.now();
       
       await page.goto(baseUrl, { timeout: 15000 });
