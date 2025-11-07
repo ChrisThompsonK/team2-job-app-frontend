@@ -11,7 +11,7 @@ const defaultConfig = {
     'test-automation/support/*.ts',
     'test-automation/bdd/steps/*.ts',
   ],
-
+  // ihcihwciwencewnj
   // Feature files
   paths: ['test-automation/bdd/features/**/*.feature'],
 
