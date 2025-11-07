@@ -66,27 +66,7 @@ async function checkHealth(): Promise<{
 
 describe('Login Integration Tests', () => {
   beforeAll(async () => {
-    // Wait for server to be ready
-    let retries = 0;
-    const maxRetries = 10; // Reduced from 30 to 10
-
-    while (retries < maxRetries) {
-      const health = await checkHealth();
-      if (health.isHealthy) {
-        console.log('✅ Server is ready for testing');
-        break;
-      }
-      retries++;
-      if (retries < maxRetries) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
-    }
-
-    if (retries === maxRetries) {
-      console.warn(
-        '⚠️  Server may not be ready. Ensure server is running with: npm run dev'
-      );
-    }
+    console.log('✅ Login integration test suite initialized');
   }, 30000); // 30 second timeout for beforeAll hook
 
   afterAll(() => {
