@@ -92,11 +92,6 @@ dist/                 # Compiled TypeScript
 | `npm run test:report` | Generate aggregated HTML test report |
 | `npm run install-browsers` | Install Playwright browsers (Chromium, Firefox, WebKit) |
 
-### API Testing (Bruno)
-| Command | Purpose |
-|---------|---------|
-| `npm run bruno` | Run Bruno API integration tests |
-
 ---
 
 ### 🎯 **Quick Test Commands for Demo**

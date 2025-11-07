@@ -63,10 +63,8 @@ When('I enter username {string}', async function (this: CustomWorld, username: s
  * @param email - The email to enter (from feature file examples)
  */
 When('I enter email {string}', async function (this: CustomWorld, email: string) {
-  console.log(`📧 Entering email: ${email}`);
   const emailInput = this.page.locator('input[type="email"], input[name="email"], input[placeholder*="email" i]').first();
   await emailInput.fill(email);
-  console.log('✅ Email entered');
 });
 
 /**
@@ -94,11 +92,9 @@ When('I click the login button', async function (this: CustomWorld) {
  * This step triggers navigation to registration page.
  */
 When('I click the register button', async function (this: CustomWorld) {
-  console.log('🖱️  Clicking register button');
   const button = this.page.locator('button:has-text("Create Account"), button:has-text("Register"), a:has-text("Register")').first();
   await button.click();
   await this.page.waitForLoadState('load');
-  console.log('✅ Register button clicked');
 });
 
 /**
@@ -194,7 +190,6 @@ Then('I should be redirected to the login page', async function (this: CustomWor
  * More flexible to handle different page structures.
  */
 Then('I should see the login form', async function (this: CustomWorld) {
-  console.log('🔍 Checking for login form');
   
   // Try multiple strategies to find login form
   const loginForm = this.page.locator('form, [data-testid*="login"], .login-form').first();
@@ -207,7 +202,6 @@ Then('I should see the login form', async function (this: CustomWorld) {
   
   // Pass if we have a form OR both username and password inputs
   expect(formExists || (usernameExists && passwordExists)).toBeTruthy();
-  console.log('✅ Login form is visible');
 });
 
 /**

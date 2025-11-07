@@ -200,18 +200,3 @@ After(async function (this: CustomWorld, scenario) {
     throw error;
   }
 });
-
-/**
- * Optional: Additional hook for debugging
- *
- * This hook logs step information for debugging purposes.
- * Enable this if you need detailed step-by-step logging.
- */
-/*
-Before(function(this: CustomWorld, { pickle }) {
-  console.log(`\n📝 Steps in scenario "${pickle.name}":`);
-  pickle.steps.forEach((step, index) => {
-    console.log(`   ${index + 1}. ${step.type} ${step.text}`);
-  });
-});
-*/
