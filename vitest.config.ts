@@ -10,7 +10,7 @@ export default defineConfig({
     environment: 'node',
     
     // Include patterns for test files
-    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}', 'test-automation/integration/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     
     // Exclude patterns
     exclude: [

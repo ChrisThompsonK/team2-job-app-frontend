@@ -1,0 +1,60 @@
+meta {
+  name: Health Check Test
+  type: http
+  seq: 0
+}
+
+get {
+  url: http://localhost:3000/api/health
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.status: eq ok
+}
+
+tests {
+  test("should return 200 status", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("should have status: ok", function() {
+    const data = res.getBody();
+    expect(data.status).to.equal('ok');
+  });
+
+  test("should have backend connection status", function() {
+    const data = res.getBody();
+    expect(data.backend).to.be.oneOf(['connected', 'error', 'unreachable']);
+  });
+
+  test("response time should be less than 3 seconds", function() {
+    expect(res.getResponseTime()).to.be.below(3000);
+  });
+}
+
+docs {
+  # Health Check Test
+  
+  This test validates that the application is running and can connect to the backend.
+  
+  ## Test Scenarios
+  1. GET request to /api/health endpoint
+  2. Expects 200 status code
+  3. Validates JSON response structure
+  4. Checks backend connectivity status
+  
+  ## Prerequisites
+  - Frontend server must be running on http://localhost:3000
+  - Backend API should be running (will show connection status)
+  
+  ## Expected Behavior
+  - Returns health status of the application
+  - Indicates backend connectivity
+  - Provides debugging information
+  
+  ## Run this test first
+  This test should be run before other tests to ensure the app is running.
+}

@@ -1,0 +1,67 @@
+meta {
+  name: Login Validation Test
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:3000/login
+  body: formUrlEncoded
+  auth: none
+}
+
+headers {
+  Content-Type: application/x-www-form-urlencoded
+}
+
+body:form-urlencoded {
+  email: 
+  password: 
+}
+
+assert {
+  res.status: eq 400
+}
+
+tests {
+  test("should return 400 for empty credentials", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+
+  test("should return HTML with validation errors", function() {
+    const contentType = res.getHeader('content-type');
+    expect(contentType).to.include('text/html');
+  });
+
+  test("response should contain validation error messages", function() {
+    const body = res.getBody();
+    expect(body).to.be.a('string');
+    // Should contain the login form with error messages
+    expect(body).to.include('login');
+  });
+
+  test("response time should be less than 1 second", function() {
+    expect(res.getResponseTime()).to.be.below(1000);
+  });
+}
+
+docs {
+  # Login Validation Test
+  
+  This test validates that empty/missing credentials are properly validated.
+  
+  ## Test Scenarios
+  1. POST request to /login endpoint with empty email and password
+  2. Expects 400 (Bad Request - validation error)
+  3. Should return HTML with validation error messages
+  4. Should not create authentication session
+  
+  ## Prerequisites
+  - Frontend server must be running on http://localhost:3000
+  
+  ## Expected Behavior
+  - Empty credentials should fail validation
+  - Error messages should be displayed
+  - Login form should be re-rendered with errors
+  - No session should be created
+}
