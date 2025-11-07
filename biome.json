@@ -1,7 +1,7 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
 	"files": {
-		"includes": ["src/**/*", "public/js/**/*"],
+		"includes": ["src/**/*", "public/js/**/*", "test-automation/**/*"],
 		"ignoreUnknown": false
 	},
 	"linter": {

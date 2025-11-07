@@ -23,6 +23,9 @@ src/
 ├── views/             # Nunjucks templates
 └── styles/            # Tailwind CSS input
 
+test-automation/
+└── integration/       # Integration tests (Vitest + API)
+
 public/css/           # Compiled CSS output
 dist/                 # Compiled TypeScript
 ```
@@ -54,65 +57,25 @@ dist/                 # Compiled TypeScript
 | `npm run test:run` | **Run all unit tests once** (271 tests) |
 | `npm run test:coverage` | Generate coverage report (80%+ coverage) |
 | `npm run test:integration` | **Run integration tests** (14 tests) |
-| `npm run test:integration:watch` | Integration tests in watch mode |
-| `npm run test:integration:ui` | Integration tests with UI dashboard |
-
-### Testing - E2E (Playwright)
-| Command | Purpose |
-|---------|---------|
-| `npm run test:playwright` | **Run all Playwright E2E tests** (6 tests, all browsers) |
-| `npm run test:playwright:chromium` | Run on Chromium only |
-| `npm run test:playwright:firefox` | Run on Firefox only |
-| `npm run test:playwright:webkit` | Run on WebKit/Safari only |
-| `npm run test:playwright:headed` | Run with visible browser window |
-| `npm run test:playwright:debug` | Debug mode with inspector |
-| `npm run test:playwright:ui` | Interactive test UI |
-| `npm run test:playwright:report` | View HTML test report |
-
-### Testing - BDD (Cucumber)
-| Command | Purpose |
-|---------|---------|
-| `npm run test:e2e` | **Run all Cucumber BDD scenarios** (28 scenarios) |
-| `npm run test:e2e:tags` | Run scenarios with specific tag (e.g., `@smoke`) |
-| `npm run test:e2e:parallel` | Run scenarios in parallel |
-| `npm run test:e2e:debug` | Debug mode with fail-fast |
-
-### Testing - Compatibility
-| Command | Purpose |
-|---------|---------|
-| `npm run test:compatibility` | **Run cross-browser compatibility tests** (all browsers) |
-| `npm run test:compatibility:chromium` | Compatibility tests on Chromium |
-| `npm run test:compatibility:firefox` | Compatibility tests on Firefox |
-| `npm run test:compatibility:webkit` | Compatibility tests on WebKit |
 
 ### Testing - Reports & All Tests
 | Command | Purpose |
 |---------|---------|
 | `npm run test:all` | **Run unit tests + generate combined report** |
 | `npm run test:report` | Generate aggregated HTML test report |
-| `npm run install-browsers` | Install Playwright browsers (Chromium, Firefox, WebKit) |
 
 ---
 
-### 🎯 **Quick Test Commands for Demo**
+### 🎯 **Quick Test Commands**
 
 ```bash
-# 1. Unit Tests (fastest - 2 seconds)
+# 1. Unit Tests (fastest - 1-2 seconds)
 npm run test:run
 
-# 2. Integration Tests (API tests - 1.3 seconds)
+# 2. Integration Tests (API tests - 1-2 seconds)
 npm run test:integration
 
-# 3. E2E Tests - Playwright (browser automation - 20 seconds)
-npm run test:playwright
-
-# 4. BDD Tests - Cucumber (Gherkin scenarios - 36 seconds)
-npm run test:e2e
-
-# 5. Compatibility Tests (cross-browser - 1 minute)
-npm run test:compatibility
-
-# 6. View Combined Report (all frameworks)
+# 3. View Combined Report
 npm run test:report
 open test-results/test-report.html
 ```
@@ -163,8 +126,70 @@ npm run check         # Pre-commit checks
 
 ## ✅ Testing Framework
 
-### Multi-Layer Test Automation
-The project uses **five complementary testing approaches** for comprehensive quality assurance:
+### Test Suite
+The project uses **Vitest** for both unit and integration testing with comprehensive coverage:
+
+#### 1. **Unit Tests** (TypeScript/Vitest)
+- Component and function-level testing
+- Fast, isolated, focused on logic
+- 257 tests covering controllers, services, and utilities
+- Coverage tracking via V8
+- Run: `npm run test:run`
+
+#### 2. **Integration Tests** (TypeScript/Vitest)
+- Real HTTP request testing against running server
+- Login workflow validation (valid/invalid/validation scenarios)
+- Health checks and error handling
+- 14 tests covering critical API flows
+- Run: `npm run test:integration`
+
+### 📊 **Test Summary**
+
+| Test Type | Count | Speed | Command |
+|-----------|-------|-------|---------|
+| **Unit Tests** | 257 ✅ | ~1s | `npm run test:run` |
+| **Integration Tests** | 14 ✅ | ~1s | `npm run test:run` |
+| **TOTAL** | **271** | ~2s | `npm run test:run` |
+
+**Pass Rate: 100%** 🎉
+
+### ✅ Code Quality
+
+### Pre-Commit Checklist
+- `npm run type-check` → No TypeScript errors
+- `npm run check` → Biome formatting & linting passes
+- `npm run test:run` → All tests pass
+
+### Guidelines
+- MVC architecture (Controllers → Services → Models)
+- Dependency injection for testability
+- Named exports (ES modules)
+- No `any` types (TypeScript strict mode)
+- Try/catch error handling in controllers
+- 80%+ coverage target for new code
+
+## 📚 Documentation
+- `.github/instructions/` - Project standards & guidelines
+  - `testing.instructions.md` - Comprehensive testing framework guide
+  - `feature-implementation.instructions.md` - Feature development standards
+  - `code_quality.instructions.md` - Code quality requirements
+  - `dependency_management.instructions.md` - Dependency troubleshooting
+- `docs/axios-usage-example.md` - API integration examples
+- `spec/` - Feature specification documents
+
+## 🔐 Environment Setup
+
+Backend API runs on `http://localhost:8000/api`
+Frontend dev server runs on `http://localhost:3000`
+
+Add `.env` if needed for custom API endpoints:
+```
+API_BASE_URL=http://localhost:8000
+```
+
+## 📝 License
+Kainos 2025
+
 
 ---
 
@@ -206,84 +231,10 @@ npm run test:integration:ui
 ```
 
 **Coverage**: 14 tests passing
-**Speed**: ~1.3 seconds
+**Speed**: ~1-2 seconds
 **Location**: `test-automation/integration/*.test.ts`
 
 ---
-
-### 3. 🎭 **Playwright E2E Tests**
-Browser automation testing with Page Object Model across multiple browsers.
-
-```bash
-# Run all Playwright tests (all browsers)
-npm run test:playwright
-
-# Run specific browser
-npm run test:playwright:chromium    # Chrome/Edge
-npm run test:playwright:firefox     # Firefox
-npm run test:playwright:webkit      # Safari
-
-# Debug and view results
-npm run test:playwright:headed      # Visible browser
-npm run test:playwright:debug       # Step-by-step debugger
-npm run test:playwright:ui          # Interactive test UI
-npm run test:playwright:report      # View HTML report
-```
-
-**Coverage**: 6 tests passing (Chromium, Firefox, WebKit)
-**Speed**: ~20 seconds
-**Location**: `test-automation/e2e/playwright/*.spec.ts`
-**Page Objects**: `test-automation/e2e/playwright/pages/*.page.ts`
-
-**Architecture**:
-- ✅ Page Object Model (POM) pattern
-- ✅ Semantic locators (getByRole, getByLabel)
-- ✅ Screenshot/video capture on failure
-- ✅ Realistic user flows (complete journeys, not isolated clicks)
-
----
-
-### 4. 🥒 **Cucumber BDD Tests**
-Behavior-Driven Development with Gherkin scenarios and shared Page Objects.
-
-```bash
-# Run all BDD scenarios
-npm run test:e2e
-
-# Run specific tags
-npm run test:e2e:tags "@smoke"
-
-# Run in parallel
-npm run test:e2e:parallel
-
-# Debug mode
-npm run test:e2e:debug
-```
-
-**Coverage**: 28 scenarios (6 passed, others pending implementation)
-**Speed**: ~36 seconds
-**Features**: `test-automation/bdd/features/*.feature`
-**Steps**: `test-automation/bdd/steps/*.steps.ts`
-**Shared POM**: Uses same Page Objects as Playwright (`test-automation/e2e/pages/`)
-
-**Example Gherkin**:
-```gherkin
-Feature: Job Application
-  Scenario: User can apply for a job
-    Given I am on the job roles listing page
-    When I click the first "Apply Now" button
-    Then I should see the application form
-```
-
-**Integration**: Cucumber BDD tests use the **same Page Object Model** as Playwright tests for consistency and maintainability. Both frameworks share:
-- Page Objects in `test-automation/e2e/pages/`
-- Common locator patterns
-- Unified navigation strategies
-
----
-
-### 5. 🌐 **Compatibility Tests**
-Cross-browser and multi-device compatibility validation.
 
 ```bash
 # Run all compatibility tests (all browsers)
