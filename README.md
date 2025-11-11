@@ -29,17 +29,36 @@ dist/                 # Compiled TypeScript
 
 ## 🛠️ Available Scripts
 
+### Development & Build
 | Command | Purpose |
 |---------|---------|
 | `npm run dev` | Dev server with hot reload |
 | `npm run build` | Production build |
 | `npm run start` | Start production server |
-| `npm run test` | Tests in watch mode |
-| `npm run test:run` | Run all tests once |
+
+### Testing
+| Command | Purpose |
+|---------|---------|
+| `npm run test` | Unit tests in watch mode (Vitest) |
+| `npm run test:run` | Run all unit tests once |
+| `npm run test:coverage` | Generate coverage report |
+| `npm run e2e` | Run E2E tests (Playwright) |
+| `npm run e2e:run` | Run E2E tests with HTML report |
+| `npm run e2e:ui` | Run E2E tests in UI mode |
+| `npm run e2e:debug` | Run E2E tests in debug mode |
+| `npm run e2e:report` | View last E2E test report |
+
+### Code Quality
+| Command | Purpose |
+|---------|---------|
 | `npm run type-check` | TypeScript validation |
 | `npm run check` | Format + lint (run before commits) |
+| `npm run lint` | Lint with Biome |
+| `npm run format` | Format with Biome |
 
 ## 🔧 Quick Start
+
+### Local Development
 ```bash
 npm install
 npm run dev           # Start local server
@@ -47,13 +66,26 @@ npm run test          # Run tests
 npm run check         # Pre-commit checks
 ```
 
+### Docker
+```bash
+docker build -t team2-job-app-frontend:v1.0.0 .
+docker run -p 3000:3000 \
+  -e SESSION_SECRET=your-secret-key \
+  -e API_BASE_URL=http://host.docker.internal:8000 \
+  team2-job-app-frontend:v1.0.0
+```
+
+See [DOCKER.md](DOCKER.md) for complete Docker documentation.
+
 ## 🏗️ Tech Stack
 
 **Runtime & Language**: Node.js 18+, TypeScript 5.9+ (strict mode)
 **Framework**: Express 5.1+, Nunjucks templates
 **Frontend**: Tailwind CSS 4, DaisyUI 5.1, Lucide icons
 **API**: Axios 1.12, Express Session
-**Testing**: Vitest (242 tests, 80%+ coverage)
+**Testing**: 
+  - Unit/Integration: Vitest (242 tests, 80%+ coverage)
+  - E2E: Playwright (cross-browser testing)
 **Quality**: Biome (formatter/linter), ES Modules
 
 ## 📋 Key Features by Section
@@ -82,6 +114,31 @@ npm run check         # Pre-commit checks
 - View applicant list with pagination
 - Download resumes and read cover letters
 - Status tracking with color-coded badges
+
+## 🧪 Testing
+
+### Unit & Integration Tests (Vitest)
+```bash
+npm run test              # Watch mode
+npm run test:run          # Single run
+npm run test:coverage     # Coverage report
+```
+
+### End-to-End Tests (Playwright)
+Playwright provides cross-browser E2E testing with:
+- **Multi-browser testing**: Chromium, Firefox, WebKit
+- **Mobile testing**: Pixel 5, iPhone 12 emulation
+- **Screenshots & videos**: Captured on test failures
+- **Trace recording**: Full trace for debugging
+
+```bash
+npm run e2e               # Run in headless mode
+npm run e2e:ui            # Interactive UI mode
+npm run e2e:debug         # Debug mode with inspector
+npm run e2e:report        # View HTML test report
+```
+
+**E2E Test Location**: `tests/e2e/**/*.spec.ts`
 
 ## ✅ Code Quality
 

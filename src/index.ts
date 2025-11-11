@@ -2,9 +2,9 @@
  * Main entry point for the Express application
  */
 
-import "dotenv/config";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import "dotenv/config";
 import express, {
 	type Application,
 	type Request,
@@ -13,6 +13,7 @@ import express, {
 import session from "express-session";
 import multer from "multer";
 import nunjucks from "nunjucks";
+import SessionFileStore from "session-file-store";
 import "./types/session.js";
 import { APP_CONFIG, generateSessionSecret } from "./config/constants.js";
 import { AdminController } from "./controllers/admin-controller.js";
@@ -230,13 +231,25 @@ class App {
 			);
 		}
 
+		// Use file-based session store for persistence across restarts
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const FileStore = (SessionFileStore as any)(session);
+		const sessionStore = new FileStore({
+			path: "./data/sessions",
+			ttl: 86400 * 7, // 7 days
+		});
+
 		this.server.use(
 			session({
+				store: sessionStore,
 				secret: sessionSecret,
 				resave: false,
 				saveUninitialized: false,
 				cookie: {
-					secure: process.env["NODE_ENV"] === "production", // HTTPS in production
+					// Use secure cookies in production HTTPS, but allow http in Docker/local dev
+					secure:
+						process.env["NODE_ENV"] === "production" &&
+						process.env["SECURE_COOKIES"] !== "false",
 					httpOnly: true,
 					maxAge: APP_CONFIG.SESSION.COOKIE_MAX_AGE,
 				},
@@ -367,7 +380,7 @@ class App {
 			this.adminController.exportJobRoles
 		);
 		this.server.post(
-			"/admin/job-roles",
+			"/job-roles",
 			requireAdmin,
 			this.adminController.createJobRole
 		);

@@ -21,6 +21,11 @@ pids
 coverage/
 *.lcov
 
+# Playwright E2E tests
+playwright-report/
+test-results/
+.auth/
+
 # nyc test coverage
 .nyc_output
 
