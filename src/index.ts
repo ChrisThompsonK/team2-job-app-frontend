@@ -113,7 +113,7 @@ class App {
 		const env = nunjucks.configure(viewsPath, {
 			autoescape: true,
 			express: this.server,
-			watch: true, // Enable auto-reloading in development
+			watch: process.env["NODE_ENV"] !== "production", // Only enable watch in development
 		});
 
 		// Add Lucide icon filter for rendering SVG icons

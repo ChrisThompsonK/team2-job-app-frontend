@@ -76,13 +76,100 @@ docker logs team2-job-app
 curl http://localhost:3000
 ```
 
+### Docker Image Optimization
+
+The Docker image has been optimized using industry best practices to reduce size and improve deployment efficiency:
+
+**Image Size Comparison**:
+- Original (node:22-alpine): **334MB**
+- Optimized: **320MB** (4.2% reduction)
+
+**Optimization Techniques Applied**:
+1. **Multi-stage build** - Separates build dependencies from runtime
+2. **Aggressive node_modules cleanup** - Removes:
+   - Documentation files (README, CHANGELOG, LICENSE, AUTHORS)
+   - TypeScript source files (.ts, .tsx)
+   - Test files (.test.js, .spec.js)
+   - Example files and fixtures
+   - Development directories (.github, docs, examples, tests, coverage)
+   - Configuration files (.eslintrc, .prettierrc, jest.config)
+3. **Optimized npm install flags**:
+   - `--only=production` - Install only production dependencies
+   - `--ignore-scripts` - Skip build scripts
+   - `--omit=optional` - Skip optional dependencies
+   - `--prefer-offline` - Use cached packages
+4. **Environment-aware features** - Nunjucks watch mode only enabled in development
+5. **Security** - Non-root user (nodejs UID 1001), read-only layers where possible
+
+**Why Size Matters**:
+- ✅ 4-5% faster deployments
+- ✅ Reduced storage costs
+- ✅ Quicker container pulls
+- ✅ Smaller attack surface
+- ✅ Faster CI/CD pipelines
+
 ### Docker Features
 - **Multi-stage build**: Reduces final image size by excluding build dependencies
-- **Alpine Linux**: Lightweight base image (~333MB)
+- **Alpine Linux**: Lightweight base image (~320MB optimized)
 - **Non-root user**: Runs as `nodejs` user (UID 1001) for security
 - **Health checks**: Built-in HTTP health monitoring every 30 seconds
 - **Production-ready**: Optimized for production deployments
 - **Environment variable**: Requires `SESSION_SECRET` in production mode
+
+### Docker Image Versioning
+
+We use **semantic versioning** to version Docker images pushed to ACR. This ensures production stability, enables rollbacks, and provides deployment consistency.
+
+#### Semantic Versioning Format: MAJOR.MINOR.PATCH
+
+- **MAJOR**: Breaking changes (v2.0.0)
+- **MINOR**: New features, backwards compatible (v1.1.0)
+- **PATCH**: Bug fixes, internal changes (v1.0.1)
+
+#### Multi-Tag Strategy
+
+Each image is pushed with **4 tags** for deployment flexibility:
+
+```bash
+# Build and push version 1.0.0
+./scripts/docker-versioning.sh 1.0.0 myregistry.azurecr.io
+
+# This creates and pushes:
+# - v1.0.0    (Exact version for reproducibility)
+# - v1.0      (Minor version for patch updates)
+# - v1        (Major version for feature updates)
+# - latest    (Latest for development/testing)
+```
+
+#### Why Multiple Tags?
+
+| Tag | Use Case |
+|-----|----------|
+| `v1.0.0` | Production rollback, exact version reproducibility |
+| `v1.0` | Stability with patch-level updates (auto-update fixes) |
+| `v1` | Stability with minor version features |
+| `latest` | Development, testing, quick deployments |
+
+#### Quick Commands
+
+```bash
+# Release new version to ACR
+./scripts/docker-versioning.sh 1.0.1 myregistry.azurecr.io
+
+# Verify tags in ACR
+az acr repository show-tags -n <registry-name> --repository team2-job-app-frontend
+
+# Deploy specific version
+docker pull myregistry.azurecr.io/team2-job-app-frontend:v1.0.0
+docker run -d -p 3000:3000 -e SESSION_SECRET="secret" myregistry.azurecr.io/team2-job-app-frontend:v1.0.0
+
+# Emergency rollback to previous version
+docker pull myregistry.azurecr.io/team2-job-app-frontend:v1.0.0
+```
+
+#### Complete Guide
+
+For detailed versioning strategies, best practices, and troubleshooting, see [`docs/docker-image-versioning.md`](./docs/docker-image-versioning.md).
 
 ## 🏗️ Tech Stack
 

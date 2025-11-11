@@ -13,6 +13,8 @@ These instructions define how tasks should be completed and what artifacts shoul
 - **DO NOT** create markdown files summarizing completed tasks unless explicitly requested
 - **DO NOT** create change logs or summary documents after completing work
 - **DO NOT** generate documentation files to describe what was done
+- **DO NOT** create new `.md` files in `docs/` or elsewhere without explicit request
+- **NEVER** create analysis files, optimization reports, or similar documentation files
 
 ### Focus on Code and Required Updates
 When completing a task, ONLY:
@@ -32,6 +34,8 @@ When completing a task, ONLY:
 - **Change logs**: Unless part of an official CHANGELOG.md maintenance task
 - **Completion reports**: No summary documents after finishing work
 - **Process documentation**: Unless explicitly requested by the user
+- **Analysis files**: No optimization reports, findings docs, or similar
+- **New .md files**: Never create new documentation files without explicit request
 
 ## Communication Style
 

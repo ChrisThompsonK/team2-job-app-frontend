@@ -41,9 +41,7 @@ tests
 .circleci
 
 # Documentation
-docs
-README.md
-CHANGELOG.md
+*.md
 
 # Misc
 .editorconfig

@@ -6,8 +6,9 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies with npm ci for reproducible builds
+RUN npm ci --prefer-offline --ignore-scripts && \
+    npm cache clean --force
 
 # Copy source code
 COPY . .
@@ -15,7 +16,7 @@ COPY . .
 # Build TypeScript and CSS - Explicitly specify tsconfig
 RUN npm run build:css && ./node_modules/.bin/tsc -p tsconfig.json
 
-# Production stage
+# Production stage - Using alpine for minimal size
 FROM node:22-alpine
 
 WORKDIR /app
@@ -26,18 +27,50 @@ ENV NODE_ENV=production
 # Copy package files
 COPY package*.json ./
 
-# Install production dependencies only
-RUN npm ci --only=production && \
-    npm cache clean --force
+# Install production dependencies only with minimal footprint
+RUN npm ci --only=production --ignore-scripts --omit=optional && \
+    npm cache clean --force && \
+    rm -rf ~/.npm /tmp/*
 
-# Copy built application from builder stage
+# Aggressive node_modules cleanup - remove all unnecessary files
+RUN find /app/node_modules -type f \( \
+    -name "*.md" -o \
+    -name "*.ts" -o \
+    -name "*.tsx" -o \
+    -name "*.test.js" -o \
+    -name "*.spec.js" -o \
+    -name "*.example.js" -o \
+    -name "*.d.ts.map" -o \
+    -name "README*" -o \
+    -name "CHANGELOG*" -o \
+    -name "LICENSE*" -o \
+    -name "AUTHORS*" -o \
+    -name "HISTORY*" -o \
+    -name ".eslintrc*" -o \
+    -name ".prettierrc*" -o \
+    -name "jest.config.*" \) -delete && \
+    find /app/node_modules -type d \( \
+    -name ".github" -o \
+    -name "docs" -o \
+    -name "examples" -o \
+    -name "test" -o \
+    -name "tests" -o \
+    -name "__tests__" -o \
+    -name "fixtures" -o \
+    -name "coverage" -o \
+    -name ".git" \) -exec rm -rf {} + 2>/dev/null || true
+
+# Copy built application from builder stage (only compiled JS)
 COPY --from=builder /app/dist ./dist
 
-# Copy public assets
+# Copy public assets (minified CSS already included)
 COPY --from=builder /app/public ./public
 
 # Copy views (Nunjucks templates)
 COPY --from=builder /app/src/views ./dist/views
+
+# Remove development files not needed at runtime
+RUN rm -f dist/*.test.js dist/**/*.test.js
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
