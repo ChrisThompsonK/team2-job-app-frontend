@@ -47,6 +47,43 @@ npm run test          # Run tests
 npm run check         # Pre-commit checks
 ```
 
+## 🐳 Docker Deployment
+
+### Build and Run with Docker
+
+**Build the Docker image:**
+```bash
+docker build -t team2-job-app-frontend:1.0.0 -t team2-job-app-frontend:latest .
+```
+
+**Run the container:**
+```bash
+docker run -d -p 3000:3000 \
+  -e SESSION_SECRET="your-secret-key" \
+  --name team2-job-app \
+  team2-job-app-frontend:latest
+```
+
+**Verify it's working:**
+```bash
+# Check container status
+docker ps | grep team2-job-app
+
+# View logs
+docker logs team2-job-app
+
+# Test endpoint
+curl http://localhost:3000
+```
+
+### Docker Features
+- **Multi-stage build**: Reduces final image size by excluding build dependencies
+- **Alpine Linux**: Lightweight base image (~333MB)
+- **Non-root user**: Runs as `nodejs` user (UID 1001) for security
+- **Health checks**: Built-in HTTP health monitoring every 30 seconds
+- **Production-ready**: Optimized for production deployments
+- **Environment variable**: Requires `SESSION_SECRET` in production mode
+
 ## 🏗️ Tech Stack
 
 **Runtime & Language**: Node.js 18+, TypeScript 5.9+ (strict mode)
