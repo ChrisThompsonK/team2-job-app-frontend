@@ -69,8 +69,8 @@ docker run -p 3000:3000 \
   --network app-network \
   -e NODE_ENV=production \
   -e SESSION_SECRET=your-secret-key-here \
-  -e API_BASE_URL=http://team2-backend:8000 \
-  -e AUTH_API_BASE_URL=http://team2-backend:8000/api/auth \
+  -e API_BASE_URL=http://backend:8000 \
+  -e AUTH_API_BASE_URL=http://backend:8000/api/auth \
   team2-job-app-frontend:v1.0.0
 ```
 
@@ -100,8 +100,8 @@ Create a `.env.docker` file:
 ```bash
 NODE_ENV=production
 SESSION_SECRET=your-secret-key-here
-API_BASE_URL=http://team2-backend:8000
-AUTH_API_BASE_URL=http://team2-backend:8000/api/auth
+API_BASE_URL=http://backend:8000
+AUTH_API_BASE_URL=http://backend:8000/api/auth
 PORT=3000
 ```
 
@@ -143,16 +143,16 @@ See [DOCKER_NETWORKING.md](../DOCKER_NETWORKING.md) for detailed networking setu
 |----------|-------------|-----------------|------------|
 | `NODE_ENV` | Environment mode | `production` | `production` |
 | `SESSION_SECRET` | Secret key for sessions | `${SESSION_SECRET}` or hardcoded | `your-secret-key-here` |
-| `API_BASE_URL` | Backend API URL | `http://team2-backend:8000` | `http://team2-backend:8000` (if networked) or `http://host.docker.internal:8000` |
-| `AUTH_API_BASE_URL` | Auth API URL | `http://team2-backend:8000/api/auth` | `http://team2-backend:8000/api/auth` (if networked) |
+| `API_BASE_URL` | Backend API URL | `http://backend:8000` | `http://backend:8000` (if networked) or `http://host.docker.internal:8000` |
+| `AUTH_API_BASE_URL` | Auth API URL | `http://backend:8000/api/auth` | `http://backend:8000/api/auth` (if networked) |
 | `PORT` | Application port (optional) | `3000` | `3000` |
 
 ### API URL Configuration Guide
 
 **Inside Docker Network** (When backend is also in Docker):
 ```bash
-API_BASE_URL=http://team2-backend:8000
-AUTH_API_BASE_URL=http://team2-backend:8000/api/auth
+API_BASE_URL=http://backend:8000
+AUTH_API_BASE_URL=http://backend:8000/api/auth
 ```
 
 **Host Machine** (Using Docker Desktop on Mac/Windows):
@@ -253,8 +253,8 @@ services:
     environment:
       - NODE_ENV=production
       - SESSION_SECRET=your-secret-key-here
-      - API_BASE_URL=http://team2-backend:8000
-      - AUTH_API_BASE_URL=http://team2-backend:8000/api/auth
+      - API_BASE_URL=http://backend:8000
+      - AUTH_API_BASE_URL=http://backend:8000/api/auth
     depends_on:
       - backend
     restart: unless-stopped
@@ -324,7 +324,7 @@ docker logs team2-frontend-test
 
 3. Test connectivity from frontend container:
    ```bash
-   docker exec -it team2-job-app-frontend curl http://team2-backend:8000/health
+   docker exec -it team2-job-app-frontend curl http://backend:8000/health
    ```
 
 4. Verify environment variables:

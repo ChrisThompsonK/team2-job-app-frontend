@@ -12,7 +12,7 @@ services:
       - SECURE_COOKIES=false
       # Backend API URLs
       # Options:
-      # 1. Backend in separate Docker container: http://team2-backend:8000
+      # 1. Backend in separate Docker container: http://backend:8000
       # 2. Backend on host machine: http://host.docker.internal:8000
       # 3. Backend on remote server: http://your-server.com:8000
       - API_BASE_URL=${API_BASE_URL:-http://host.docker.internal:8000}
