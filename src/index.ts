@@ -282,6 +282,11 @@ class App {
 		this.server.post("/register", this.authController.postRegister);
 		this.server.post("/logout", this.userController.postLogout);
 
+		// Simple health check endpoint for Docker/container health monitoring
+		this.server.get("/health", (_req: Request, res: Response) => {
+			res.status(200).json({ status: "ok" });
+		});
+
 		// Health check endpoint to test backend connectivity
 		this.server.get("/api/health", async (_req: Request, res: Response) => {
 			try {

@@ -27,9 +27,12 @@ services:
     # Connect to the backend network (optional - only needed if backend is in Docker)
     networks:
       - app-network
+    # Persist session data across container restarts
+    volumes:
+      - session-data:/app/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
       interval: 30s
       timeout: 3s
       start_period: 5s
@@ -69,6 +72,11 @@ networks:
   app-network:
     driver: bridge
 
+volumes:
+  session-data:
+    driver: local
+
+# Uncomment if backend service is also running in this compose stack
 # volumes:
 #   db-data:
 #     driver: local

@@ -9,9 +9,8 @@ WORKDIR /app
 # Copy package files
 COPY package.json package-lock.json* ./
 
-# Install dependencies
-RUN npm ci --only=production && \
-    npm cache clean --force
+# Install dependencies (optimized with flags to reduce build time)
+RUN npm ci --only=production --no-audit --no-fund
 
 # Build stage
 FROM base AS builder
@@ -20,8 +19,8 @@ WORKDIR /app
 # Copy package files
 COPY package.json package-lock.json* ./
 
-# Install all dependencies (including dev dependencies for build)
-RUN npm ci
+# Install all dependencies (including dev dependencies for build, optimized)
+RUN npm ci --no-audit --no-fund
 
 # Copy application source code
 COPY . .
