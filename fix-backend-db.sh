@@ -8,7 +8,7 @@ set -e
 echo "🔧 Fixing Backend Database..."
 echo ""
 
-BACKEND_DIR="/Users/ryan.magee/github/Job_Application/team2-job-app-backend"
+BACKEND_DIR="${BACKEND_DIR:-../team2-job-app-backend}"
 
 # Check if backend directory exists
 if [ ! -d "$BACKEND_DIR" ]; then

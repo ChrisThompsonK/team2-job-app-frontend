@@ -232,8 +232,11 @@ class App {
 		}
 
 		// Use file-based session store for persistence across restarts
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const FileStore = (SessionFileStore as any)(session);
+		// Define minimal type for FileStore constructor
+		type FileStoreConstructor = new (
+			options: Record<string, unknown>
+		) => session.Store;
+		const FileStore = SessionFileStore(session) as FileStoreConstructor;
 		const sessionStore = new FileStore({
 			path: "./data/sessions",
 			ttl: 86400 * 7, // 7 days
@@ -385,7 +388,7 @@ class App {
 			this.adminController.exportJobRoles
 		);
 		this.server.post(
-			"/job-roles",
+			"/admin/job-roles",
 			requireAdmin,
 			this.adminController.createJobRole
 		);

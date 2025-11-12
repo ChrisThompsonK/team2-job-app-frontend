@@ -325,7 +325,9 @@ docker logs team2-frontend-test
 3. Test connectivity from frontend container:
     ```bash
     docker exec -it team2-job-app-frontend curl http://team2-backend:8000/health
-    ```4. Verify environment variables:
+    ```
+
+4. Verify environment variables:
    ```bash
    docker exec team2-job-app-frontend env | grep API_BASE_URL
    ```

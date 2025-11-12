@@ -8,7 +8,7 @@ set -e
 echo "🔧 Fixing Backend Docker Setup..."
 echo ""
 
-BACKEND_DIR="/Users/ryan.magee/github/Job_Application/team2-job-app-backend"
+BACKEND_DIR="${BACKEND_DIR:-../team2-job-app-backend}"
 
 cd "$BACKEND_DIR"
 
