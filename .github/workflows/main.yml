@@ -1,0 +1,29 @@
+# 1. Give your workflow a name
+name: My First Workflow
+
+# 2. Set up the triggers (the "when")
+on:
+  # Run on pushes to the "main" branch
+  push:
+    branches: [ main ]
+    
+  # Run on any pull request
+  pull_request:
+
+# 3. List the jobs (the "what")
+jobs:
+  # You can have many jobs, but we just need one
+  run-a-simple-job:
+  
+    # 4. Tell it what runner (workshop) to use
+    runs-on: ubuntu-latest
+    
+    # 5. List the steps for this job
+    steps:
+      # This is the "checkout" action you wanted
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      # This is the "print a message" step
+      - name: Display a simple message
+        run: echo "Hello, GitHub Actions! My first workflow is running! 👋"
