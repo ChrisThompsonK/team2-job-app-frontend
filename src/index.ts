@@ -2,9 +2,9 @@
  * Main entry point for the Express application
  */
 
+import "dotenv/config";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import "dotenv/config";
 import express, {
 	type Application,
 	type Request,
@@ -232,11 +232,7 @@ class App {
 		}
 
 		// Use file-based session store for persistence across restarts
-		// Define minimal type for FileStore constructor
-		type FileStoreConstructor = new (
-			options: Record<string, unknown>
-		) => session.Store;
-		const FileStore = SessionFileStore(session) as FileStoreConstructor;
+		const FileStore = SessionFileStore(session);
 		const sessionStore = new FileStore({
 			path: "./data/sessions",
 			ttl: 86400 * 7, // 7 days

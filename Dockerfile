@@ -33,12 +33,6 @@ RUN npm run build:css:prod && \
 FROM base AS runner
 WORKDIR /app
 
-# Set NODE_ENV to production
-ENV NODE_ENV=production
-# Default API URL (can be overridden at runtime)
-ENV API_BASE_URL=http://team2-backend:8000
-ENV AUTH_API_BASE_URL=http://team2-backend:8000/api/auth
-
 # Create a non-root user for security
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 appuser

@@ -67,15 +67,101 @@ npm run check         # Pre-commit checks
 ```
 
 ### Docker
+
+#### Quick Start with Docker Compose (Recommended)
+
+For full-stack setup (frontend + backend):
 ```bash
-docker build -t team2-job-app-frontend:v1.0.0 .
-docker run -p 3000:3000 \
-  -e SESSION_SECRET=your-secret-key \
-  -e API_BASE_URL=http://host.docker.internal:8000 \
-  team2-job-app-frontend:v1.0.0
+# From project root
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop containers
+docker-compose down
 ```
 
-See [DOCKER.md](DOCKER.md) for complete Docker documentation.
+This will:
+- ✅ Start backend on http://localhost:8000
+- ✅ Start frontend on http://localhost:3000
+- ✅ Automatically configure backend API URLs
+- ✅ Create a shared Docker network for communication
+
+#### Build and Run Manually
+
+```bash
+# Build the image
+docker build -t team2-job-app-frontend:latest .
+
+# Run with backend on Docker network
+docker network create app-network
+docker run -p 3000:3000 \
+  --network app-network \
+  -e NODE_ENV=production \
+  -e SESSION_SECRET=your-secret-key \
+  -e API_BASE_URL=http://team2-backend:8000 \
+  -e AUTH_API_BASE_URL=http://team2-backend:8000/api/auth \
+  team2-job-app-frontend:latest
+
+# Run with backend on host machine
+docker run -p 3000:3000 \
+  -e NODE_ENV=production \
+  -e SESSION_SECRET=your-secret-key \
+  -e API_BASE_URL=http://host.docker.internal:8000 \
+  -e AUTH_API_BASE_URL=http://host.docker.internal:8000/api/auth \
+  team2-job-app-frontend:latest
+```
+
+#### Docker Features
+
+- ✅ **Multi-stage build** - Optimized for production (~231MB)
+- ✅ **Minimal base image** - Node.js 18 Alpine
+- ✅ **Security** - Runs as non-root user (appuser:1001)
+- ✅ **Health checks** - Built-in health monitoring
+- ✅ **Production ready** - Only production dependencies included
+
+#### Required Environment Variables
+
+| Variable | Description | Docker Compose | Manual Run |
+|----------|-------------|----------------|------------|
+| `NODE_ENV` | Environment mode | `production` | `production` |
+| `SESSION_SECRET` | Secret key for sessions | Set in compose | `your-secret-key` |
+| `API_BASE_URL` | Backend API URL | `http://team2-backend:8000` | See examples above |
+| `AUTH_API_BASE_URL` | Auth API URL | `http://team2-backend:8000/api/auth` | See examples above |
+
+#### API URL Configuration
+
+**Inside Docker Network** (backend also in Docker):
+```bash
+API_BASE_URL=http://team2-backend:8000
+AUTH_API_BASE_URL=http://team2-backend:8000/api/auth
+```
+
+**Host Machine** (Docker Desktop on Mac/Windows):
+```bash
+API_BASE_URL=http://host.docker.internal:8000
+AUTH_API_BASE_URL=http://host.docker.internal:8000/api/auth
+```
+
+#### Troubleshooting
+
+```bash
+# View logs
+docker logs team2-frontend
+
+# Check health status
+docker inspect --format='{{json .State.Health}}' team2-frontend
+
+# Access container shell
+docker exec -it team2-frontend sh
+
+# Test backend connectivity from container
+docker exec -it team2-frontend curl http://team2-backend:8000/health
+
+# Rebuild without cache
+docker build --no-cache -t team2-job-app-frontend:latest .
+```
 
 ## 🏗️ Tech Stack
 
