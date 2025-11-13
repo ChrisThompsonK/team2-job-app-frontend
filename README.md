@@ -163,6 +163,108 @@ docker exec -it team2-frontend curl http://team2-backend:8000/health
 docker build --no-cache -t team2-job-app-frontend:latest .
 ```
 
+## 🔄 CI/CD Pipeline
+
+### GitHub Actions Workflow
+
+The project uses GitHub Actions for continuous integration and deployment on all branches:
+
+#### Jobs Overview
+
+**1. Code Quality Checks** (`code-quality`)
+Runs on every push and pull request:
+- ✅ TypeScript type checking
+- ✅ Biome format validation
+- ✅ Biome linting checks
+- ✅ Unit tests with coverage
+- ✅ Production build verification
+- ✅ Uploads coverage reports (7-day retention)
+- ✅ Uploads build artifacts (7-day retention)
+
+**2. Docker Build** (`docker-build`)
+Runs after quality checks pass:
+- 🐳 Builds Docker container image
+- 🏷️ Multi-tag strategy (SHA, branch, latest)
+- 💾 Layer caching for faster builds
+- ✅ Container startup validation
+- 📊 Build information display
+
+#### Image Tagging Strategy
+
+Every build creates multiple tags for flexibility:
+
+```bash
+team2-job-app-frontend:abc1234        # Git SHA (always created)
+team2-job-app-frontend:main           # Branch name (always created)
+team2-job-app-frontend:latest         # Latest stable (main branch only)
+team2-job-app-frontend:uptGitignore   # Feature branches (sanitized name)
+```
+
+**Tag Purposes:**
+- **Git SHA** (`abc1234`): Unique identifier for each commit, enables rollback
+- **Branch name** (`main`, `feature-login`): Easy reference for branch-specific builds
+- **`latest`**: Only on main branch, represents the most recent stable version
+
+#### Build Performance
+
+| Metric | Cold Build | Cached Build |
+|--------|-----------|--------------|
+| **Duration** | ~2-3 minutes | ~30-60 seconds |
+| **Cache Strategy** | GitHub Actions cache | Layer reuse |
+| **Timeout** | 10 minutes | 10 minutes |
+
+**Optimization Features:**
+- GitHub Actions cache for Docker layers (`cache-from: type=gha`)
+- Multi-stage Dockerfile reduces final image size
+- Parallel job execution when possible
+
+#### Failure Handling
+
+If the Docker build fails:
+
+1. ❌ The workflow stops and marks the check as **failed**
+2. 📋 Build logs are available in the GitHub Actions UI
+3. 🧪 Container startup test provides immediate feedback
+4. ♻️ Previous successful images remain available
+5. 🔔 GitHub sends notification to commit author
+
+**Common Failure Scenarios:**
+- Dockerfile syntax errors
+- Missing dependencies in build stage
+- Container startup failures
+- Health check timeouts
+
+#### Running CI Checks Locally
+
+Before pushing, run the same checks locally to catch issues early:
+
+```bash
+# Code quality checks
+npm run type-check        # TypeScript validation
+npm run check             # Biome format + lint
+npm run test:run          # All unit tests
+npm run build             # Production build
+
+# Docker build (replicates CI)
+docker build -t team2-job-app-frontend:local .
+docker run -p 3000:3000 team2-job-app-frontend:local
+
+# Test image startup
+docker ps | grep team2-job-app-frontend
+```
+
+#### Workflow File Location
+
+`.github/workflows/code-quality.yml`
+
+#### Future Enhancements
+
+- 🔐 Image vulnerability scanning (Trivy/Snyk)
+- 📦 Push to Azure Container Registry
+- 🔏 Image signing for security
+- 🚀 Automated deployment to staging/production
+- 📊 Performance metrics collection
+
 ## 🏗️ Tech Stack
 
 **Runtime & Language**: Node.js 18+, TypeScript 5.9+ (strict mode)
@@ -257,4 +359,4 @@ API_BASE_URL=http://localhost:8000
 ```
 
 ## 📝 License
-Kainos 2025
+Kainos 2025 !!

@@ -76,6 +76,8 @@ web_modules/
 .env.test
 .env.production
 .env.local
+.env.docker
+.env*.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -171,3 +173,40 @@ terraform/
 *.backup
 .terraform/
 terraform.tfstate.local-backup-*
+
+# Docker
+docker-compose.override.yml
+.docker/
+
+# Azure
+.azure/
+
+# Screenshots and test artifacts
+screenshots/
+test-results.json
+test-results.xml
+*.png
+*.jpg
+*.jpeg
+!docs/**/*.png
+!docs/**/*.jpg
+!public/**/*.png
+!public/**/*.jpg
+
+# Setup and documentation files (optional - keep scripts in repo)
+# SETUP-INSTRUCTIONS.txt
+# DOCKER-DEPLOYMENT.md
+# AZURE-QUICKSTART.md
+
+# Vitest
+.vitest/
+
+# TypeScript incremental compilation
+*.tsbuildinfo
+.tsbuildinfo
+
+# Session storage
+sessions/
+
+# Uploaded files
+uploads/
