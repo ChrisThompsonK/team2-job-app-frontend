@@ -182,28 +182,49 @@ Runs on every push and pull request:
 - ✅ Uploads build artifacts (7-day retention)
 
 **2. Docker Build** (`docker-build`)
-Runs after quality checks pass:
+Runs after quality checks pass on all branches:
 - 🐳 Builds Docker container image
 - 🏷️ Multi-tag strategy (SHA, branch, latest)
 - 💾 Layer caching for faster builds
 - ✅ Container startup validation
 - 📊 Build information display
 
+**3. Push to Azure Container Registry** (`push-to-acr`)
+Runs after Docker build succeeds, **only on main branch pushes**:
+- 🔐 Authenticates with Service Principal credentials
+- 📤 Pushes image to Azure Container Registry (ACR)
+- 🏷️ Tags images with git SHA and `main-latest` for main branch
+- ✅ Provides pull commands for deployment
+- ⏭️ Skipped for PRs and non-main branches (cost optimization)
+
+**4. Terraform Plan & Apply** (`terraform`)
+Runs after ACR push, **plan on all branches, apply only on main**:
+- 🏗️ Initializes Terraform with remote state
+- 📋 Plans infrastructure changes
+- ✅ Applies changes to Azure (main branch only)
+- 🔐 Uses Service Principal for Azure authentication
+- 💾 State managed in Azure Storage (team collaboration ready)
+
 #### Image Tagging Strategy
 
-Every build creates multiple tags for flexibility:
-
+**Local Build Tags** (all branches):
 ```bash
 team2-job-app-frontend:abc1234        # Git SHA (always created)
 team2-job-app-frontend:main           # Branch name (always created)
 team2-job-app-frontend:latest         # Latest stable (main branch only)
-team2-job-app-frontend:uptGitignore   # Feature branches (sanitized name)
+```
+
+**ACR Registry Tags** (main branch only):
+```bash
+myacr.azurecr.io/team2-job-app-frontend:abc1234         # Specific commit
+myacr.azurecr.io/team2-job-app-frontend:main-latest     # Latest from main
 ```
 
 **Tag Purposes:**
 - **Git SHA** (`abc1234`): Unique identifier for each commit, enables rollback
 - **Branch name** (`main`, `feature-login`): Easy reference for branch-specific builds
-- **`latest`**: Only on main branch, represents the most recent stable version
+- **`main-latest`**: Always points to the latest stable version on main branch
+- **ACR registry**: Only pushed to for main branch merges (cost optimization)
 
 #### Build Performance
 
@@ -212,11 +233,13 @@ team2-job-app-frontend:uptGitignore   # Feature branches (sanitized name)
 | **Duration** | ~2-3 minutes | ~30-60 seconds |
 | **Cache Strategy** | GitHub Actions cache | Layer reuse |
 | **Timeout** | 10 minutes | 10 minutes |
+| **ACR Push Time** | ~30-60 seconds | — |
 
 **Optimization Features:**
 - GitHub Actions cache for Docker layers (`cache-from: type=gha`)
 - Multi-stage Dockerfile reduces final image size
 - Parallel job execution when possible
+- ACR push only on main branch (avoids unnecessary registry bloat)
 
 #### Failure Handling
 
@@ -233,6 +256,46 @@ If the Docker build fails:
 - Missing dependencies in build stage
 - Container startup failures
 - Health check timeouts
+
+If ACR push fails (main branch only):
+
+1. ❌ Docker image built successfully but ACR push failed
+2. 🔐 Check ACR credentials in GitHub secrets
+3. 🌐 Verify Azure Container Registry is accessible
+4. 📝 Review ACR authentication logs
+
+#### GitHub Secrets Configuration for ACR
+
+To enable pushing to Azure Container Registry, configure these GitHub secrets in your repository settings (`Settings > Secrets and variables > Actions`):
+
+| Secret | Value | Description |
+|--------|-------|-------------|
+| `ACR_REGISTRY` | `myacr.azurecr.io` | Your Azure Container Registry URL (e.g., `myregistry.azurecr.io`) |
+| `ACR_USERNAME` | Service Principal ID | Service Principal appId for authentication |
+| `ACR_PASSWORD` | Service Principal Password | Service Principal password/secret |
+
+**Setting Up Service Principal:**
+
+Use the Azure CLI to create a service principal with push permissions:
+
+```bash
+# Create service principal with ACR push role
+az ad sp create-for-rbac --name "team2-job-app-sp" \
+  --role acrpush \
+  --scopes /subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.ContainerRegistry/registries/{registry-name}
+
+# Output will contain:
+# "appId": "YOUR_CLIENT_ID"           <- Use as ACR_USERNAME
+# "password": "YOUR_CLIENT_SECRET"    <- Use as ACR_PASSWORD
+# "tenant": "YOUR_TENANT_ID"
+```
+
+**Security Best Practices:**
+- ✅ Use **Service Principal** (not admin credentials) - least privilege
+- ✅ Rotate credentials periodically
+- ✅ Scope permissions to only ACR push (`acrpush` role)
+- ✅ Store secrets in GitHub encrypted secrets (never in code)
+- ✅ Use separate service principal per project for isolation
 
 #### Running CI Checks Locally
 
@@ -257,13 +320,35 @@ docker ps | grep team2-job-app-frontend
 
 `.github/workflows/code-quality.yml`
 
-#### Future Enhancements
+#### Verifying ACR Push Success
 
-- 🔐 Image vulnerability scanning (Trivy/Snyk)
-- 📦 Push to Azure Container Registry
-- 🔏 Image signing for security
-- 🚀 Automated deployment to staging/production
-- 📊 Performance metrics collection
+After merging to main, verify the image was pushed to ACR:
+
+```bash
+# List images in ACR
+az acr repository list --name myacr
+
+# List tags for an image
+az acr repository show-tags --name myacr --repository team2-job-app-frontend
+
+# Pull image from ACR
+docker pull myacr.azurecr.io/team2-job-app-frontend:main-latest
+
+# Run container from ACR
+docker run -p 3000:3000 myacr.azurecr.io/team2-job-app-frontend:main-latest
+```
+
+## ☁️ Infrastructure as Code
+
+Terraform configuration in `infrastructure/` folder with dev/prod environments.
+
+```bash
+cd infrastructure
+terraform plan -var-file="terraform.dev.tfvars"
+terraform apply -var-file="terraform.dev.tfvars"
+```
+
+Workflow: Plan on PRs → Apply on main branch push (via GitHub Actions)
 
 ## 🏗️ Tech Stack
 

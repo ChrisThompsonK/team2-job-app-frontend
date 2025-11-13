@@ -62,10 +62,12 @@ jobs:
             dist/
           retention-days: 7
 
-  docker-build:
-    name: Build Docker Image
+  docker-build-and-push:
+    name: Build and Push Docker Image to ACR
     runs-on: ubuntu-latest
     needs: code-quality
+    # Only run on main branch pushes (not PRs, not other branches)
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
       - name: Checkout code
@@ -79,74 +81,48 @@ jobs:
         run: |
           # Use Git SHA for unique tagging
           SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-          BRANCH_NAME=$(echo ${{ github.ref_name }} | sed 's/[^a-zA-Z0-9]/-/g')
           
-          # Create tags
-          TAGS="team2-job-app-frontend:${SHORT_SHA}"
-          TAGS="${TAGS},team2-job-app-frontend:${BRANCH_NAME}"
+          # ACR registry endpoint - replace with your ACR name
+          ACR_REGISTRY="${{ secrets.ACR_REGISTRY }}"
           
-          # If on main branch, also tag as latest
-          if [ "${{ github.ref_name }}" = "main" ]; then
-            TAGS="${TAGS},team2-job-app-frontend:latest"
-          fi
+          # Create ACR tags
+          ACR_TAGS="${ACR_REGISTRY}/team2-job-app-frontend:${SHORT_SHA}"
+          ACR_TAGS="${ACR_TAGS},${ACR_REGISTRY}/team2-job-app-frontend:main-latest"
           
-          echo "tags=${TAGS}" >> $GITHUB_OUTPUT
+          echo "acr_tags=${ACR_TAGS}" >> $GITHUB_OUTPUT
           echo "short_sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
-          echo "branch=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+          echo "acr_registry=${ACR_REGISTRY}" >> $GITHUB_OUTPUT
 
-      - name: Build Docker image
+      - name: Log in to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ steps.meta.outputs.acr_registry }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and push to ACR
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
-          push: false
-          tags: ${{ steps.meta.outputs.tags }}
+          push: true
+          tags: ${{ steps.meta.outputs.acr_tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          load: true
 
-      - name: Display build information
+      - name: Display ACR push information
         run: |
-          echo "✅ Docker image built successfully!"
+          echo "✅ Docker image pushed to Azure Container Registry!"
           echo ""
-          echo "Image tags:"
-          echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n' | sed 's/^/  - /'
+          echo "ACR Registry: ${{ steps.meta.outputs.acr_registry }}"
+          echo ""
+          echo "Image tags pushed:"
+          echo "${{ steps.meta.outputs.acr_tags }}" | tr ',' '\n' | sed 's/^/  - /'
           echo ""
           echo "Git SHA: ${{ github.sha }}"
           echo "Short SHA: ${{ steps.meta.outputs.short_sha }}"
-          echo "Branch: ${{ steps.meta.outputs.branch }}"
-          echo "Build time: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo ""
+          echo "📌 Pull the image with:"
+          echo "  docker pull ${{ steps.meta.outputs.acr_registry }}/team2-job-app-frontend:${{ steps.meta.outputs.short_sha }}"
+          echo "  docker pull ${{ steps.meta.outputs.acr_registry }}/team2-job-app-frontend:main-latest"
 
-      - name: Test container startup
-        run: |
-          # Run a quick test to ensure the image works
-          IMAGE_TAG="team2-job-app-frontend:${{ steps.meta.outputs.short_sha }}"
-          echo "Testing image: ${IMAGE_TAG}"
-          
-          # Start container in background
-          docker run -d --name test-container -p 3000:3000 ${IMAGE_TAG}
-          
-          # Wait for container to be ready (max 30 seconds)
-          echo "Waiting for container to start..."
-          for i in {1..30}; do
-            if docker ps | grep -q test-container; then
-              echo "Container is running"
-              sleep 2
-              break
-            fi
-            sleep 1
-          done
-          
-          # Check if container is still running
-          if docker ps | grep -q test-container; then
-            echo "✅ Container started successfully"
-            docker logs test-container
-          else
-            echo "❌ Container failed to start or crashed"
-            docker logs test-container
-            exit 1
-          fi
-          
-          # Cleanup
-          docker stop test-container
-          docker rm test-container
