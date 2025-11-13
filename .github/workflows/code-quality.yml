@@ -4,9 +4,9 @@ on:
   # Run on pull requests to any branch
   pull_request:
     branches: ["*"]
-  # Run on pushes to main branch
+  # Run on pushes to any branch
   push:
-    branches: ["main"]
+    branches: ["*"]
   # Manual trigger for testing
   workflow_dispatch:
 
