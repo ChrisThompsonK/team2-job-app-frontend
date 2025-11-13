@@ -93,19 +93,12 @@ jobs:
           echo "short_sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
           echo "acr_registry=${ACR_REGISTRY}" >> $GITHUB_OUTPUT
 
-      - name: Log in to Azure Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ steps.meta.outputs.acr_registry }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
-
       - name: Build and push to ACR
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
-          push: true
+          push: false
           tags: ${{ steps.meta.outputs.acr_tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
