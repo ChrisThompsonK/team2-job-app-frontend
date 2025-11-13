@@ -6,7 +6,7 @@ on:
     branches: ["*"]
   # Run on pushes to any branch
   push:
-    branches: ["**"]
+    branches: ["*"]
 
 env:
   NODE_VERSION: "20"
