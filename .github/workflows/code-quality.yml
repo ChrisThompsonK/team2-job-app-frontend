@@ -58,3 +58,9 @@ jobs:
           path: |
             dist/
           retention-days: 7
+
+      - name: Build Docker image
+        run: |
+          docker build -t team2-job-app:${{ github.sha }} -t team2-job-app:latest .
+          echo "✅ Docker image built successfully"
+          docker images | grep team2-job-app
