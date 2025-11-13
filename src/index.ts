@@ -13,6 +13,7 @@ import express, {
 import session from "express-session";
 import multer from "multer";
 import nunjucks from "nunjucks";
+import SessionFileStore from "session-file-store";
 import "./types/session.js";
 import { APP_CONFIG, generateSessionSecret } from "./config/constants.js";
 import { AdminController } from "./controllers/admin-controller.js";
@@ -230,13 +231,24 @@ class App {
 			);
 		}
 
+		// Use file-based session store for persistence across restarts
+		const FileStore = SessionFileStore(session);
+		const sessionStore = new FileStore({
+			path: "./data/sessions",
+			ttl: 86400 * 7, // 7 days
+		});
+
 		this.server.use(
 			session({
+				store: sessionStore,
 				secret: sessionSecret,
 				resave: false,
 				saveUninitialized: false,
 				cookie: {
-					secure: process.env["NODE_ENV"] === "production", // HTTPS in production
+					// Use secure cookies in production HTTPS, but allow http in Docker/local dev
+					secure:
+						process.env["NODE_ENV"] === "production" &&
+						process.env["SECURE_COOKIES"] !== "false",
 					httpOnly: true,
 					maxAge: APP_CONFIG.SESSION.COOKIE_MAX_AGE,
 				},
@@ -268,6 +280,11 @@ class App {
 		this.server.get("/register", this.authController.getRegister);
 		this.server.post("/register", this.authController.postRegister);
 		this.server.post("/logout", this.userController.postLogout);
+
+		// Simple health check endpoint for Docker/container health monitoring
+		this.server.get("/health", (_req: Request, res: Response) => {
+			res.status(200).json({ status: "ok" });
+		});
 
 		// Health check endpoint to test backend connectivity
 		this.server.get("/api/health", async (_req: Request, res: Response) => {
