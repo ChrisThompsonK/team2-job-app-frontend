@@ -63,6 +63,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t team2-job-app:${{ github.sha }} -t team2-job-app:latest .
+          # Use short SHA for cleaner tagging
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          docker build -t team2-job-app:${SHORT_SHA} -t team2-job-app:latest .
           echo "✅ Docker image built successfully"
           docker images | grep team2-job-app
