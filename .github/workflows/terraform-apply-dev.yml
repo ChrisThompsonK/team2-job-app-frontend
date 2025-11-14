@@ -33,7 +33,15 @@ jobs:
 
       - name: Terraform Initialize
         working-directory: ./infrastructure
-        run: terraform init -backend-config="backend.${{ env.ENVIRONMENT }}.tfvars" -upgrade
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=terraform-state-rg" \
+            -backend-config="storage_account_name=tfstateteam2" \
+            -backend-config="container_name=terraform-state" \
+            -backend-config="key=dev.tfstate" \
+            -backend-config="use_azuread_auth=false" \
+            -backend-config="use_msi=false" \
+            -upgrade
 
       - name: Terraform Validate
         working-directory: ./infrastructure
