@@ -170,6 +170,7 @@ terraform/
 *.tfstate
 *.tfstate.*
 *.tfvars
+!infrastructure/terraform.*.tfvars
 *.backup
 .terraform/
 terraform.tfstate.local-backup-*
