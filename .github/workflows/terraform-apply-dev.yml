@@ -13,6 +13,10 @@ env:
   ENVIRONMENT: dev
   TF_VERSION: 1.5.7
   ARM_SKIP_PROVIDER_REGISTRATION: "true"
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
 jobs:
   terraform-apply:
@@ -26,19 +30,6 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
-
-      - name: Azure CLI login
-        env:
-          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        run: |
-          az login --service-principal \
-            --username ${AZURE_CLIENT_ID} \
-            --password ${AZURE_CLIENT_SECRET} \
-            --tenant ${AZURE_TENANT_ID}
-          az account set --subscription ${AZURE_SUBSCRIPTION_ID}
 
       - name: Terraform Initialize
         working-directory: ./infrastructure
