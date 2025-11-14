@@ -31,26 +31,37 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: Terraform Initialize (backend only if secrets available)
+      - name: Terraform Initialize (backend required)
         working-directory: ./infrastructure
         run: |
-          if [ -z "$ARM_CLIENT_ID" ] || [ -z "$ARM_CLIENT_SECRET" ]; then
-            echo "⚠️  Azure secrets not configured, initializing without backend..."
-            terraform init -backend=false -upgrade
-          else
-            echo "✅ Azure secrets available, initializing with backend..."
-            terraform init \
-              -backend-config="resource_group_name=terraform-state-rg" \
-              -backend-config="storage_account_name=tfstateteam2" \
-              -backend-config="container_name=terraform-state" \
-              -backend-config="key=dev.tfstate" \
-              -backend-config="use_azuread_auth=false" \
-              -backend-config="use_msi=false" \
-              -upgrade
+          # Check if Azure secrets are configured
+          if [ -z "$ARM_CLIENT_ID" ] || [ -z "$ARM_CLIENT_SECRET" ] || [ -z "$ARM_TENANT_ID" ] || [ -z "$ARM_SUBSCRIPTION_ID" ]; then
+            echo "❌ ERROR: Azure secrets not configured in GitHub Actions"
+            echo ""
+            echo "Required secrets:"
+            echo "  - AZURE_CLIENT_ID"
+            echo "  - AZURE_CLIENT_SECRET"
+            echo "  - AZURE_TENANT_ID"
+            echo "  - AZURE_SUBSCRIPTION_ID"
+            echo ""
+            echo "Set these in: Repository Settings → Secrets and variables → Actions"
+            exit 1
           fi
+          
+          echo "✅ Azure secrets detected, initializing Terraform backend..."
+          terraform init \
+            -backend-config="resource_group_name=terraform-state-rg" \
+            -backend-config="storage_account_name=tfstateteam2" \
+            -backend-config="container_name=terraform-state" \
+            -backend-config="key=dev.tfstate" \
+            -backend-config="use_azuread_auth=false" \
+            -backend-config="use_msi=false" \
+            -upgrade
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Validate
         working-directory: ./infrastructure
