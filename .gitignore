@@ -190,10 +190,7 @@ test-results.xml
 *.png
 *.jpg
 *.jpeg
-!docs/**/*.png
-!docs/**/*.jpg
-!public/**/*.png
-!public/**/*.jpg
+
 
 # Setup and documentation files (optional - keep scripts in repo)
 # SETUP-INSTRUCTIONS.txt
@@ -212,3 +209,13 @@ sessions/
 
 # Uploaded files
 uploads/
+
+# Local Terraform files
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+.tfvars.json
+override.tf.json
+crash.log
+crash.*.log
