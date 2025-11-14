@@ -167,12 +167,19 @@ src/spec/
 # Terraform files and folders
 terraform/
 *.tf
+!infrastructure/**/*.tf
 *.tfstate
 *.tfstate.*
-*.tfvars
-*.backup
 .terraform/
 terraform.tfstate.local-backup-*
+
+# Terraform variable files - ignore all by default
+*.tfvars
+# But allow dev environment config (no secrets)
+!infrastructure/dev.tfvars
+# And allow dev backend config (no secrets)
+!infrastructure/backend.dev.tfvars
+*.backup
 
 # Docker
 docker-compose.override.yml
