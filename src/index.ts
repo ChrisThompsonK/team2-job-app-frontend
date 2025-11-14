@@ -3,7 +3,6 @@
  */
 
 import "dotenv/config";
-import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import express, {
@@ -11,7 +10,10 @@ import express, {
 	type Request,
 	type Response,
 } from "express";
+import session from "express-session";
+import multer from "multer";
 import nunjucks from "nunjucks";
+import sessionFileStore from "session-file-store";
 import "./types/session.js";
 import { APP_CONFIG, generateSessionSecret } from "./config/constants.js";
 import { AdminController } from "./controllers/admin-controller.js";
@@ -23,14 +25,6 @@ import { requireAdmin } from "./middleware/auth-middleware.js";
 import { AxiosApplicationService } from "./services/axios-application-service.js";
 import { AxiosJobRoleService } from "./services/axios-job-role-service.js";
 import { JobRoleValidator } from "./utils/job-role-validator.js";
-
-const require = createRequire(import.meta.url);
-// biome-ignore lint/suspicious/noExplicitAny: CommonJS modules without proper ESM type definitions
-const expressSession = require("express-session") as any;
-// biome-ignore lint/suspicious/noExplicitAny: CommonJS modules without proper ESM type definitions
-const multerPackage = require("multer") as any;
-// biome-ignore lint/suspicious/noExplicitAny: CommonJS modules without proper ESM type definitions
-const SessionFileStore = require("session-file-store") as any;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,8 +46,7 @@ class App {
 	private applicationController: ApplicationController;
 	private userController: UserController;
 	private authController: AuthController;
-	// biome-ignore lint/suspicious/noExplicitAny: multer type not properly available
-	private upload: any;
+	private upload: multer.Multer;
 
 	constructor(config: AppConfig) {
 		this.config = config;
@@ -78,16 +71,15 @@ class App {
 		this.authController = new AuthController();
 
 		// Configure multer for file uploads
-		this.upload = multerPackage({
-			storage: multerPackage.memoryStorage(),
+		this.upload = multer({
+			storage: multer.memoryStorage(),
 			limits: {
 				fileSize: 5 * 1024 * 1024, // 5MB limit
 			},
 			fileFilter: (
 				_req: Request,
-				// biome-ignore lint/suspicious/noExplicitAny: multer types not properly available
-				file: any,
-				cb: (error: Error | null, acceptFile?: boolean) => void
+				file: Express.Multer.File,
+				cb: multer.FileFilterCallback
 			) => {
 				// Accept only PDF, DOC, and DOCX files
 				const allowedMimes = [
@@ -244,14 +236,14 @@ class App {
 		}
 
 		// Use file-based session store for persistence across restarts
-		const FileStore = SessionFileStore(expressSession);
+		const FileStore = sessionFileStore(session);
 		const sessionStore = new FileStore({
 			path: "./data/sessions",
 			ttl: 86400 * 7, // 7 days
 		});
 
 		this.server.use(
-			expressSession({
+			session({
 				store: sessionStore,
 				secret: sessionSecret,
 				resave: false,
@@ -275,11 +267,8 @@ class App {
 
 		// Middleware to make user session available to all views
 		this.server.use((req, res, next) => {
-			// biome-ignore lint/suspicious/noExplicitAny: session types augmented but not recognized due to CommonJS require
-			const reqWithSession = req as any;
-			res.locals["user"] = reqWithSession.session?.user || null;
-			res.locals["isAuthenticated"] =
-				reqWithSession.session?.isAuthenticated || false;
+			res.locals["user"] = req.session.user || null;
+			res.locals["isAuthenticated"] = req.session.isAuthenticated || false;
 			next();
 		});
 
@@ -475,13 +464,11 @@ class App {
 				res: express.Response,
 				next: express.NextFunction
 			) => {
-				if (err instanceof multerPackage.MulterError) {
+				if (err instanceof multer.MulterError) {
 					// Handle multer-specific errors
 					let message = "File upload error occurred.";
 
-					// biome-ignore lint/suspicious/noExplicitAny: multer types not properly available
-					const multerErr = err as any;
-					switch (multerErr.code) {
+					switch (err.code) {
 						case "LIMIT_FILE_SIZE":
 							message =
 								"File is too large. Maximum file size is 5MB. Please upload a smaller file.";
