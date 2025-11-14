@@ -167,9 +167,13 @@ src/spec/
 # Terraform files and folders
 terraform/
 *.tf
+!infrastructure/**/*.tf
 *.tfstate
 *.tfstate.*
 *.tfvars
+!infrastructure/dev.tfvars
+!infrastructure/prod.tfvars
+!infrastructure/backend.*.tfvars
 *.backup
 .terraform/
 terraform.tfstate.local-backup-*
