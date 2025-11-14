@@ -13,7 +13,7 @@ import express, {
 import session from "express-session";
 import multer from "multer";
 import nunjucks from "nunjucks";
-import SessionFileStore from "session-file-store";
+import sessionFileStore from "session-file-store";
 import "./types/session.js";
 import { APP_CONFIG, generateSessionSecret } from "./config/constants.js";
 import { AdminController } from "./controllers/admin-controller.js";
@@ -76,7 +76,11 @@ class App {
 			limits: {
 				fileSize: 5 * 1024 * 1024, // 5MB limit
 			},
-			fileFilter: (_req, file, cb) => {
+			fileFilter: (
+				_req: Request,
+				file: Express.Multer.File,
+				cb: multer.FileFilterCallback
+			) => {
 				// Accept only PDF, DOC, and DOCX files
 				const allowedMimes = [
 					"application/pdf",
@@ -232,7 +236,7 @@ class App {
 		}
 
 		// Use file-based session store for persistence across restarts
-		const FileStore = SessionFileStore(session);
+		const FileStore = sessionFileStore(session);
 		const sessionStore = new FileStore({
 			path: "./data/sessions",
 			ttl: 86400 * 7, // 7 days
@@ -263,8 +267,8 @@ class App {
 
 		// Middleware to make user session available to all views
 		this.server.use((req, res, next) => {
-			res.locals["user"] = req.session["user"] || null;
-			res.locals["isAuthenticated"] = req.session["isAuthenticated"] || false;
+			res.locals["user"] = req.session.user || null;
+			res.locals["isAuthenticated"] = req.session.isAuthenticated || false;
 			next();
 		});
 
@@ -437,8 +441,18 @@ class App {
 			this.applicationController.downloadCv
 		);
 
+		// 404 handler - must come after all routes but before error handling
+		this.setup404Handler();
+
 		// Error handling middleware - must be last
 		this.setupErrorHandling();
+	}
+
+	private setup404Handler(): void {
+		// 404 handler for all unmatched routes
+		this.server.use((_req: Request, res: Response) => {
+			res.status(404).render("404.njk");
+		});
 	}
 
 	private setupErrorHandling(): void {
