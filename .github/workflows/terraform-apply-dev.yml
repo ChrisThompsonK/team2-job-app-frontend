@@ -1,0 +1,55 @@
+name: "Terraform Apply - Dev"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'infrastructure/**'
+
+permissions:
+  contents: read
+
+env:
+  ENVIRONMENT: dev
+  TF_VERSION: 1.5.7
+  ARM_SKIP_PROVIDER_REGISTRATION: "true"
+
+jobs:
+  terraform-apply:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Azure CLI login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform Initialize
+        working-directory: ./infrastructure
+        run: terraform init -backend-config="backend.${{ env.ENVIRONMENT }}.tfvars" -upgrade
+
+      - name: Terraform Validate
+        working-directory: ./infrastructure
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: ./infrastructure
+        run: terraform plan -var-file="${{ env.ENVIRONMENT }}.tfvars" -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: ./infrastructure
+        run: terraform apply -auto-approve tfplan
+
+      - name: Output Results
+        working-directory: ./infrastructure
+        run: terraform output
