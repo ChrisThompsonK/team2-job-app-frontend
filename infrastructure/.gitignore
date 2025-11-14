@@ -23,7 +23,14 @@ Thumbs.db
 .env
 .env.local
 .env.*.local
+*.env
 
 # Terraform plan outputs
 *.tfplan
 plan.json
+tfplan-*
+
+# Sensitive variable files (if someone accidentally creates them)
+secrets.tfvars
+*.secret.tfvars
+*-secrets.tfvars
