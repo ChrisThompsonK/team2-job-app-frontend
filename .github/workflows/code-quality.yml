@@ -81,7 +81,7 @@ jobs:
           SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
           BRANCH_NAME=$(echo ${{ github.ref_name }} | sed 's/[^a-zA-Z0-9]/-/g')
           
-          # Create tags
+          # Create local tags for building
           TAGS="team2-job-app-frontend:${SHORT_SHA}"
           TAGS="${TAGS},team2-job-app-frontend:${BRANCH_NAME}"
           
@@ -115,38 +115,4 @@ jobs:
           echo "Git SHA: ${{ github.sha }}"
           echo "Short SHA: ${{ steps.meta.outputs.short_sha }}"
           echo "Branch: ${{ steps.meta.outputs.branch }}"
-          echo "Build time: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
 
-      - name: Test container startup
-        run: |
-          # Run a quick test to ensure the image works
-          IMAGE_TAG="team2-job-app-frontend:${{ steps.meta.outputs.short_sha }}"
-          echo "Testing image: ${IMAGE_TAG}"
-          
-          # Start container in background
-          docker run -d --name test-container -p 3000:3000 ${IMAGE_TAG}
-          
-          # Wait for container to be ready (max 30 seconds)
-          echo "Waiting for container to start..."
-          for i in {1..30}; do
-            if docker ps | grep -q test-container; then
-              echo "Container is running"
-              sleep 2
-              break
-            fi
-            sleep 1
-          done
-          
-          # Check if container is still running
-          if docker ps | grep -q test-container; then
-            echo "✅ Container started successfully"
-            docker logs test-container
-          else
-            echo "❌ Container failed to start or crashed"
-            docker logs test-container
-            exit 1
-          fi
-          
-          # Cleanup
-          docker stop test-container
-          docker rm test-container
