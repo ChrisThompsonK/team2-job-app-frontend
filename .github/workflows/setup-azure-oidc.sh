@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-# Azure OIDC Setup Script for GitHub Actions
-# This script automates the setup of Azure Service Principal with OIDC for Terraform deployments
+# Azure Service Principal Setup Script for GitHub Actions
+# This script creates a service principal for Terraform deployments
 
-echo "🚀 Azure OIDC Setup for GitHub Actions"
-echo "======================================="
+echo "🚀 Azure Service Principal Setup for GitHub Actions"
+echo "====================================================="
 echo ""
 
 # Check if Azure CLI is installed
@@ -32,85 +32,34 @@ echo ""
 
 # Configuration
 APP_NAME="github-actions-terraform-sp"
-GITHUB_ORG="ChrisThompsonK"
-GITHUB_REPO="team2-job-app-frontend"
 
 echo "📝 Configuration:"
 echo "   Service Principal: $APP_NAME"
-echo "   GitHub Repo: $GITHUB_ORG/$GITHUB_REPO"
+echo "   Scope: Subscription"
 echo ""
 
-read -p "Continue with this configuration? (y/n) " -n 1 -r
+read -p "Continue? (y/n) " -n 1 -r
 echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo "Aborted."
     exit 1
 fi
 
-# Step 1: Create Service Principal
+# Create Service Principal
 echo ""
-echo "Step 1: Creating Service Principal..."
+echo "Creating Service Principal..."
 SP_OUTPUT=$(az ad sp create-for-rbac \
     --name "$APP_NAME" \
     --role Contributor \
     --scopes /subscriptions/$SUBSCRIPTION_ID \
-    --sdk-auth 2>&1)
+    --sdk-auth)
 
-if [ $? -ne 0 ]; then
-    echo "⚠️  Service Principal may already exist, attempting to get existing..."
-    APP_ID=$(az ad sp list --display-name "$APP_NAME" --query "[0].appId" -o tsv)
-else
-    APP_ID=$(echo $SP_OUTPUT | jq -r '.clientId')
-fi
-
-TENANT_ID=$(az account show --query tenantId -o tsv)
-
-echo "✅ Service Principal ready"
-echo "   Client ID: $APP_ID"
-echo "   Tenant ID: $TENANT_ID"
+echo "✅ Service Principal created"
 echo ""
 
-# Step 2: Create Federated Credentials
-echo "Step 2: Creating Federated Credentials..."
-
-# For main branch
-echo "   Creating credential for main branch..."
-az ad app federated-credential create \
-    --id $APP_ID \
-    --parameters "{
-        \"name\": \"github-actions-main\",
-        \"issuer\": \"https://token.actions.githubusercontent.com\",
-        \"subject\": \"repo:$GITHUB_ORG/$GITHUB_REPO:ref:refs/heads/main\",
-        \"audiences\": [\"api://AzureADTokenExchange\"]
-    }" 2>/dev/null || echo "   (main credential may already exist)"
-
-# For pull requests
-echo "   Creating credential for pull requests..."
-az ad app federated-credential create \
-    --id $APP_ID \
-    --parameters "{
-        \"name\": \"github-actions-pr\",
-        \"issuer\": \"https://token.actions.githubusercontent.com\",
-        \"subject\": \"repo:$GITHUB_ORG/$GITHUB_REPO:pull_request\",
-        \"audiences\": [\"api://AzureADTokenExchange\"]
-    }" 2>/dev/null || echo "   (PR credential may already exist)"
-
-# For all branches
-echo "   Creating credential for all branches..."
-az ad app federated-credential create \
-    --id $APP_ID \
-    --parameters "{
-        \"name\": \"github-actions-branches\",
-        \"issuer\": \"https://token.actions.githubusercontent.com\",
-        \"subject\": \"repo:$GITHUB_ORG/$GITHUB_REPO:ref:refs/heads/*\",
-        \"audiences\": [\"api://AzureADTokenExchange\"]
-    }" 2>/dev/null || echo "   (branch credential may already exist)"
-
-echo "✅ Federated credentials configured"
-echo ""
-
-# Step 3: Grant Storage Access
-echo "Step 3: Granting Storage Access for Terraform State..."
+# Grant Storage Access
+echo "Granting Storage Access for Terraform State..."
+APP_ID=$(echo $SP_OUTPUT | jq -r '.clientId')
 STORAGE_ACCOUNT_ID=$(az storage account show \
     --name aistatemgmt \
     --resource-group terraform-state-mgmt \
@@ -120,33 +69,30 @@ if [ -n "$STORAGE_ACCOUNT_ID" ]; then
     az role assignment create \
         --assignee $APP_ID \
         --role "Storage Blob Data Contributor" \
-        --scope $STORAGE_ACCOUNT_ID 2>/dev/null || echo "   (role assignment may already exist)"
+        --scope $STORAGE_ACCOUNT_ID 2>/dev/null || echo "   (role may already exist)"
     echo "✅ Storage access granted"
 else
-    echo "⚠️  Storage account 'aistatemgmt' not found. You may need to create it or grant access manually."
+    echo "⚠️  Storage account 'aistatemgmt' not found"
 fi
 echo ""
 
-# Step 4: Display GitHub Secrets
+# Display GitHub Secret
 echo "=========================================="
-echo "✅ Azure OIDC Setup Complete!"
+echo "✅ Setup Complete!"
 echo "=========================================="
 echo ""
-echo "🔐 Add these secrets to your GitHub repository:"
-echo "   https://github.com/$GITHUB_ORG/$GITHUB_REPO/settings/secrets/actions"
+echo "🔐 Add this secret to your GitHub repository:"
+echo "   https://github.com/ChrisThompsonK/team2-job-app-frontend/settings/secrets/actions"
 echo ""
-echo "Secret Name             | Value"
-echo "------------------------|--------------------------------------"
-echo "AZURE_CLIENT_ID         | $APP_ID"
-echo "AZURE_TENANT_ID         | $TENANT_ID"
-echo "AZURE_SUBSCRIPTION_ID   | $SUBSCRIPTION_ID"
+echo "Secret Name: AZURE_CREDENTIALS"
 echo ""
-echo "📋 Copy and paste commands:"
+echo "Secret Value (copy everything below):"
+echo "-----------------------------------"
+echo "$SP_OUTPUT"
+echo "-----------------------------------"
 echo ""
-echo "gh secret set AZURE_CLIENT_ID -b \"$APP_ID\""
-echo "gh secret set AZURE_TENANT_ID -b \"$TENANT_ID\""
-echo "gh secret set AZURE_SUBSCRIPTION_ID -b \"$SUBSCRIPTION_ID\""
+echo "Or use GitHub CLI:"
 echo ""
-echo "Or add manually via GitHub UI."
+echo "gh secret set AZURE_CREDENTIALS --body '$SP_OUTPUT'"
 echo ""
-echo "🎉 Once secrets are added, push a commit to trigger the pipeline!"
+echo "🎉 Once secret is added, push a commit to trigger the pipeline!"

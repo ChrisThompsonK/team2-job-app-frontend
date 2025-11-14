@@ -2,122 +2,94 @@
 
 ## ✅ Pipeline is READY - Just needs Azure auth!
 
-Your Terraform deployment pipeline is configured and pushed to GitHub. You just need to set up Azure authentication.
+Your Terraform deployment pipeline is configured and pushed to GitHub. You just need one Azure secret.
 
-## 🎯 Two Options to Set Up
+## 🎯 Setup in 2 Steps
 
-### Option 1: Automated Script (EASIEST)
+### Step 1: Run Setup Script
 
 ```bash
-# Run the setup script
 ./.github/workflows/setup-azure-oidc.sh
 ```
 
-This script will:
-1. Create Azure Service Principal
-2. Configure OIDC federated credentials
-3. Grant storage access for Terraform state
-4. Show you the GitHub secrets to add
+This creates an Azure Service Principal and shows you the JSON to add to GitHub.
 
-### Option 2: Manual Setup (DETAILED)
-
-Follow the complete guide: `.github/workflows/AZURE_OIDC_SETUP.md`
-
-## 🔐 Required GitHub Secrets
-
-After running the script, add these 3 secrets to your GitHub repo:
+### Step 2: Add GitHub Secret
 
 1. Go to: https://github.com/ChrisThompsonK/team2-job-app-frontend/settings/secrets/actions
 2. Click "New repository secret"
-3. Add each secret:
-
-| Secret Name | Description |
-|-------------|-------------|
-| `AZURE_CLIENT_ID` | Service Principal Application ID |
-| `AZURE_TENANT_ID` | Azure Active Directory Tenant ID |
-| `AZURE_SUBSCRIPTION_ID` | Your Azure Subscription ID |
+3. Name: `AZURE_CREDENTIALS`
+4. Value: Paste the JSON from the script output
 
 **OR** use GitHub CLI:
 ```bash
-gh secret set AZURE_CLIENT_ID -b "your-client-id"
-gh secret set AZURE_TENANT_ID -b "your-tenant-id"
-gh secret set AZURE_SUBSCRIPTION_ID -b "your-subscription-id"
+# The script will show you the exact command to run
+gh secret set AZURE_CREDENTIALS --body '<json-from-script>'
 ```
 
-## 🧪 Test the Pipeline
+## ✅ That's It!
 
-Once secrets are added:
+Once the secret is added, the pipeline works automatically:
+
+- **Any branch push** → Terraform plan (preview)
+- **Main branch push** → Terraform plan + apply (deploys!)
+
+## 🧪 Test It
 
 ```bash
-# Test on feature branch (plan only, no apply)
+# Test on feature branch
 git checkout -b test/pipeline
-echo "# Testing" >> README.md
-git add .
-git commit -m "test: pipeline"
+echo "# Test" >> README.md
+git add . && git commit -m "test: pipeline"
 git push origin test/pipeline
 
-# Check: https://github.com/ChrisThompsonK/team2-job-app-frontend/actions
-# You should see terraform-plan run successfully
+# Check GitHub Actions
+open https://github.com/ChrisThompsonK/team2-job-app-frontend/actions
 ```
 
 ## 📊 What Happens
 
-### On any branch:
-- ✅ Code quality checks
-- ✅ Docker image build
-- ✅ **Terraform plan** (preview)
-- ⏭️ Terraform apply (skipped)
+**Feature branches:**
+- ✅ Terraform plan shows preview
+- ⏭️ Terraform apply skipped
 
-### On main branch:
-- ✅ Code quality checks
-- ✅ Docker image build
-- ✅ **Terraform plan** (creates artifact)
-- ✅ **Terraform apply** (deploys!)
+**Main branch:**
+- ✅ Terraform plan creates deployment plan
+- ✅ Terraform apply deploys infrastructure!
 
 ## 🎯 What Gets Deployed
 
-Currently just a simple resource group:
-- **Name**: `team2-job-app-dev-rg`
-- **Location**: UK South
-- **Tags**: Project, Environment, ManagedBy
+Simple resource group to start:
+- Name: `team2-job-app-dev-rg`
+- Location: UK South  
+- Tags: Project, Environment, ManagedBy
 
-## ⚡ Quick Commands Reference
+## ⚡ Quick Commands
 
 ```bash
-# Run setup script
+# Setup
 ./.github/workflows/setup-azure-oidc.sh
 
-# Test Terraform locally
+# Test locally
 cd infrastructure
-terraform fmt
 terraform init
 terraform plan -var-file=dev.tfvars
 
-# Check GitHub Actions
+# View GitHub Actions
 open https://github.com/ChrisThompsonK/team2-job-app-frontend/actions
-
-# View deployed resources
-az group show --name team2-job-app-dev-rg
 ```
 
 ## 🆘 Troubleshooting
 
-**Pipeline fails with "Invalid client secret"**
-- Federated credentials not set up → Run setup script again
-
 **"Failed to get storage account"**
-- Service principal needs storage access → Run setup script
+→ Service principal needs storage access (script handles this)
 
 **Pipeline not running**
-- Check GitHub secrets are set correctly
-- Verify branch name matches conditional logic
+→ Check AZURE_CREDENTIALS secret is set
 
-## 📚 Full Documentation
-
-- **Testing Guide**: `.github/workflows/TESTING_GUIDE.md`
-- **Setup Guide**: `.github/workflows/AZURE_OIDC_SETUP.md`
-- **Pipeline Reference**: `.github/workflows/TERRAFORM_PIPELINE.md`
+**Terraform fails**
+→ Check the JSON secret is complete and valid
 
 ---
 
-**TL;DR**: Run `./.github/workflows/setup-azure-oidc.sh`, add the 3 secrets to GitHub, push a commit. Done! 🎉
+**KISS**: One script, one secret, done! 🎉
