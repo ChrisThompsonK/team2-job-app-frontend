@@ -13,10 +13,6 @@ env:
   ENVIRONMENT: dev
   TF_VERSION: 1.5.7
   ARM_SKIP_PROVIDER_REGISTRATION: "true"
-  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
 jobs:
   terraform-apply:
@@ -31,24 +27,29 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
+      - name: Set Azure credentials as environment variables
+        run: |
+          echo "Setting ARM_* env vars for Terraform..."
+          echo "ARM_CLIENT_ID=$(jq -r .clientId <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=$(jq -r .clientSecret <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=$(jq -r .subscriptionId <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=$(jq -r .tenantId <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
+
       - name: Terraform Initialize (backend required)
         working-directory: ./infrastructure
         run: |
           # Check if Azure secrets are configured
           if [ -z "$ARM_CLIENT_ID" ] || [ -z "$ARM_CLIENT_SECRET" ] || [ -z "$ARM_TENANT_ID" ] || [ -z "$ARM_SUBSCRIPTION_ID" ]; then
-            echo "❌ ERROR: Azure secrets not configured in GitHub Actions"
+            echo "❌ ERROR: Azure credentials not configured in GitHub Actions"
             echo ""
-            echo "Required secrets:"
-            echo "  - AZURE_CLIENT_ID"
-            echo "  - AZURE_CLIENT_SECRET"
-            echo "  - AZURE_TENANT_ID"
-            echo "  - AZURE_SUBSCRIPTION_ID"
+            echo "Required secret:"
+            echo "  - AZURE_CREDENTIALS (JSON format with clientId, clientSecret, subscriptionId, tenantId)"
             echo ""
-            echo "Set these in: Repository Settings → Secrets and variables → Actions"
+            echo "Set this in: Repository Settings → Secrets and variables → Actions"
             exit 1
           fi
           
-          echo "✅ Azure secrets detected, initializing Terraform backend..."
+          echo "✅ Azure credentials detected, initializing Terraform backend..."
           terraform init \
             -backend-config="resource_group_name=terraform-state-rg" \
             -backend-config="storage_account_name=tfstateteam2" \
@@ -57,11 +58,6 @@ jobs:
             -backend-config="use_azuread_auth=false" \
             -backend-config="use_msi=false" \
             -upgrade
-        env:
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Validate
         working-directory: ./infrastructure
