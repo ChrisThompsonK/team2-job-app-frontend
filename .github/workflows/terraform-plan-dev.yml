@@ -1,0 +1,95 @@
+name: "Terraform Plan - Dev"
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'infrastructure/**'
+      - '.github/workflows/terraform-plan-dev.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  ENVIRONMENT: dev
+  TF_VERSION: 1.5.7
+  ARM_SKIP_PROVIDER_REGISTRATION: "true"
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Set Azure credentials as environment variables
+        run: |
+          echo "Setting ARM_* env vars for Terraform..."
+          echo "ARM_CLIENT_ID=$(jq -r .clientId <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=$(jq -r .clientSecret <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=$(jq -r .subscriptionId <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=$(jq -r .tenantId <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
+
+      - name: Terraform Format Check
+        working-directory: ./infrastructure
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Initialize (backend required)
+        working-directory: ./infrastructure
+        run: |
+          # Check if Azure secrets are configured
+          if [ -z "$ARM_CLIENT_ID" ] || [ -z "$ARM_CLIENT_SECRET" ] || [ -z "$ARM_TENANT_ID" ] || [ -z "$ARM_SUBSCRIPTION_ID" ]; then
+            echo "❌ ERROR: Azure credentials not configured in GitHub Actions"
+            echo ""
+            echo "Required secret:"
+            echo "  - AZURE_CREDENTIALS (JSON format with clientId, clientSecret, subscriptionId, tenantId)"
+            echo ""
+            echo "Set this in: Repository Settings → Secrets and variables → Actions"
+            exit 1
+          fi
+          
+          echo "✅ Azure credentials detected, initializing Terraform backend..."
+          terraform init \
+            -backend-config="resource_group_name=terraform-state-rg" \
+            -backend-config="storage_account_name=tfstateteam2" \
+            -backend-config="container_name=terraform-state" \
+            -backend-config="key=dev.tfstate" \
+            -backend-config="use_azuread_auth=false" \
+            -backend-config="use_msi=false" \
+            -upgrade
+
+      - name: Terraform Validate
+        working-directory: ./infrastructure
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: ./infrastructure
+        run: terraform plan -var-file="${{ env.ENVIRONMENT }}.tfvars" -no-color -out=tfplan
+
+      - name: Upload Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-${{ env.ENVIRONMENT }}
+          path: infrastructure/tfplan
+          retention-days: 1
+
+      - name: Comment PR with Plan
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = require('child_process').execSync('cd infrastructure && terraform show -no-color tfplan').toString();
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Terraform Plan - ${process.env.ENVIRONMENT}\n\`\`\`\n${plan.substring(0, 3000)}\`\`\``
+            });
