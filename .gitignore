@@ -170,7 +170,6 @@ terraform/
 *.tfstate
 *.tfstate.*
 *.tfvars
-!infrastructure/terraform.*.tfvars
 *.backup
 .terraform/
 terraform.tfstate.local-backup-*
@@ -189,10 +188,6 @@ test-results.xml
 *.png
 *.jpg
 *.jpeg
-!docs/**/*.png
-!docs/**/*.jpg
-!public/**/*.png
-!public/**/*.jpg
 
 # Setup and documentation files (optional - keep scripts in repo)
 # SETUP-INSTRUCTIONS.txt
