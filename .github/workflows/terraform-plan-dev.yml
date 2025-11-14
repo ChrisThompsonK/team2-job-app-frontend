@@ -53,7 +53,7 @@ jobs:
         run: terraform plan -var-file="${{ env.ENVIRONMENT }}.tfvars" -no-color -out=tfplan
 
       - name: Upload Plan
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tfplan-${{ env.ENVIRONMENT }}
           path: infrastructure/tfplan
