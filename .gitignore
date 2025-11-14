@@ -173,7 +173,6 @@ terraform/
 terraform.tfstate.local-backup-*
 
 # Terraform variable files - ignore all by default
-*.tfvars
 *.backup
 
 # Docker
