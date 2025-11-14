@@ -3,6 +3,7 @@
  */
 
 import "dotenv/config";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import express, {
@@ -10,10 +11,7 @@ import express, {
 	type Request,
 	type Response,
 } from "express";
-import session from "express-session";
-import multer from "multer";
 import nunjucks from "nunjucks";
-import SessionFileStore from "session-file-store";
 import "./types/session.js";
 import { APP_CONFIG, generateSessionSecret } from "./config/constants.js";
 import { AdminController } from "./controllers/admin-controller.js";
@@ -25,6 +23,14 @@ import { requireAdmin } from "./middleware/auth-middleware.js";
 import { AxiosApplicationService } from "./services/axios-application-service.js";
 import { AxiosJobRoleService } from "./services/axios-job-role-service.js";
 import { JobRoleValidator } from "./utils/job-role-validator.js";
+
+const require = createRequire(import.meta.url);
+// biome-ignore lint/suspicious/noExplicitAny: CommonJS modules without proper ESM type definitions
+const expressSession = require("express-session") as any;
+// biome-ignore lint/suspicious/noExplicitAny: CommonJS modules without proper ESM type definitions
+const multerPackage = require("multer") as any;
+// biome-ignore lint/suspicious/noExplicitAny: CommonJS modules without proper ESM type definitions
+const SessionFileStore = require("session-file-store") as any;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -46,7 +52,8 @@ class App {
 	private applicationController: ApplicationController;
 	private userController: UserController;
 	private authController: AuthController;
-	private upload: multer.Multer;
+	// biome-ignore lint/suspicious/noExplicitAny: multer type not properly available
+	private upload: any;
 
 	constructor(config: AppConfig) {
 		this.config = config;
@@ -71,12 +78,17 @@ class App {
 		this.authController = new AuthController();
 
 		// Configure multer for file uploads
-		this.upload = multer({
-			storage: multer.memoryStorage(),
+		this.upload = multerPackage({
+			storage: multerPackage.memoryStorage(),
 			limits: {
 				fileSize: 5 * 1024 * 1024, // 5MB limit
 			},
-			fileFilter: (_req, file, cb) => {
+			fileFilter: (
+				_req: Request,
+				// biome-ignore lint/suspicious/noExplicitAny: multer types not properly available
+				file: any,
+				cb: (error: Error | null, acceptFile?: boolean) => void
+			) => {
 				// Accept only PDF, DOC, and DOCX files
 				const allowedMimes = [
 					"application/pdf",
@@ -232,14 +244,14 @@ class App {
 		}
 
 		// Use file-based session store for persistence across restarts
-		const FileStore = SessionFileStore(session);
+		const FileStore = SessionFileStore(expressSession);
 		const sessionStore = new FileStore({
 			path: "./data/sessions",
 			ttl: 86400 * 7, // 7 days
 		});
 
 		this.server.use(
-			session({
+			expressSession({
 				store: sessionStore,
 				secret: sessionSecret,
 				resave: false,
@@ -263,8 +275,11 @@ class App {
 
 		// Middleware to make user session available to all views
 		this.server.use((req, res, next) => {
-			res.locals["user"] = req.session["user"] || null;
-			res.locals["isAuthenticated"] = req.session["isAuthenticated"] || false;
+			// biome-ignore lint/suspicious/noExplicitAny: session types augmented but not recognized due to CommonJS require
+			const reqWithSession = req as any;
+			res.locals["user"] = reqWithSession.session?.user || null;
+			res.locals["isAuthenticated"] =
+				reqWithSession.session?.isAuthenticated || false;
 			next();
 		});
 
@@ -437,8 +452,18 @@ class App {
 			this.applicationController.downloadCv
 		);
 
+		// 404 handler - must come after all routes but before error handling
+		this.setup404Handler();
+
 		// Error handling middleware - must be last
 		this.setupErrorHandling();
+	}
+
+	private setup404Handler(): void {
+		// 404 handler for all unmatched routes
+		this.server.use((_req: Request, res: Response) => {
+			res.status(404).render("404.njk");
+		});
 	}
 
 	private setupErrorHandling(): void {
@@ -450,11 +475,13 @@ class App {
 				res: express.Response,
 				next: express.NextFunction
 			) => {
-				if (err instanceof multer.MulterError) {
+				if (err instanceof multerPackage.MulterError) {
 					// Handle multer-specific errors
 					let message = "File upload error occurred.";
 
-					switch (err.code) {
+					// biome-ignore lint/suspicious/noExplicitAny: multer types not properly available
+					const multerErr = err as any;
+					switch (multerErr.code) {
 						case "LIMIT_FILE_SIZE":
 							message =
 								"File is too large. Maximum file size is 5MB. Please upload a smaller file.";
