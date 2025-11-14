@@ -28,12 +28,17 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Azure CLI login
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: |
           az login --service-principal \
-            -u ${{ secrets.AZURE_CLIENT_ID }} \
-            -p ${{ secrets.AZURE_CLIENT_SECRET }} \
-            --tenant ${{ secrets.AZURE_TENANT_ID }}
-          az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+            -u ${AZURE_CLIENT_ID} \
+            -p ${AZURE_CLIENT_SECRET} \
+            --tenant ${AZURE_TENANT_ID}
+          az account set --subscription ${AZURE_SUBSCRIPTION_ID}
 
       - name: Terraform Initialize
         working-directory: ./infrastructure
