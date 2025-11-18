@@ -104,7 +104,7 @@ jobs:
           echo "ARM_TENANT_ID=$(jq -r .tenantId <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
 
   terraform: 
-    name: Does Terraform things
+    name: Run Terraform Steps
     runs-on: ubuntu-latest
     needs: docker-build
 
