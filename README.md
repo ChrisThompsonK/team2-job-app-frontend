@@ -1,6 +1,6 @@
 # Team 2 Job App Frontend
 
-[![Code Quality](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/code-quality.yml/badge.svg)](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/code-quality.yml) [![Formatted with Biome](https://img.shields.io/badge/Formatted_with-Biome-60a5fa?style=flat&logo=biome)](https://biomejs.dev/)
+[![CI/CD Pipeline](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/ci-cd-pipeline.yml/badge.svg)](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/ci-cd-pipeline.yml) [![Formatted with Biome](https://img.shields.io/badge/Formatted_with-Biome-60a5fa?style=flat&logo=biome)](https://biomejs.dev/)
 
 A modern, accessible job application portal built with Node.js, TypeScript, Express, Nunjucks, Tailwind CSS, and DaisyUI.
 
@@ -167,141 +167,198 @@ docker build --no-cache -t team2-job-app-frontend:latest .
 
 ### GitHub Actions Workflow
 
-The project uses GitHub Actions for continuous integration and deployment on all branches:
+The project uses a multi-stage GitHub Actions pipeline for continuous integration and deployment. The pipeline runs on all pushes, pull requests, and can be triggered manually via `workflow_dispatch`.
 
-#### Jobs Overview
+[![CI/CD Pipeline](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/ci-cd-pipeline.yml/badge.svg)](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/ci-cd-pipeline.yml)
 
-**1. Code Quality Checks** (`code-quality`)
+#### Pipeline Stages
+
+**Stage 1: Code Quality & Linting** (`code-quality`)
 Runs on every push and pull request:
-- ✅ TypeScript type checking
-- ✅ Biome format validation
-- ✅ Biome linting checks
-- ✅ Unit tests with coverage
-- ✅ Production build verification
-- ✅ Uploads coverage reports (7-day retention)
-- ✅ Uploads build artifacts (7-day retention)
+- ✅ Node.js 20 setup with npm caching
+- ✅ Dependency installation (`npm ci`)
+- ✅ Biome format and lint checks (`npm run check`)
+- ✅ TypeScript type validation (`npm run type-check`)
 
-**2. Docker Build** (`docker-build`)
-Runs after quality checks pass on all branches:
-- 🐳 Builds Docker container image
-- 🏷️ Multi-tag strategy (SHA, branch, latest)
-- 💾 Layer caching for faster builds
-- ✅ Container startup validation
-- 📊 Build information display
+**Stage 2: Unit & Integration Tests** (`test`)
+Runs after code quality checks pass:
+- 🧪 Unit test execution (`npm run test:run`)
+- 📊 Coverage report generation (`npm run test:coverage`)
+- ✅ Ensures all tests pass before proceeding
 
-**3. Push to Azure Container Registry** (`push-to-acr`)
-Runs after Docker build succeeds, **only on main branch pushes**:
-- 🔐 Authenticates with Service Principal credentials
-- 📤 Pushes image to Azure Container Registry (ACR)
-- 🏷️ Tags images with git SHA and `main-latest` for main branch
-- ✅ Provides pull commands for deployment
-- ⏭️ Skipped for PRs and non-main branches (cost optimization)
+**Stage 3: Build Application** (`build-app`)
+Runs after tests pass:
+- 🏗️ Full production build (`npm run build`)
+- 📦 Compiles TypeScript and processes CSS
+- ✅ Verifies application can be built successfully
 
-**4. Terraform Plan & Apply** (`terraform`)
-Runs after ACR push, **plan on all branches, apply only on main**:
-- 🏗️ Initializes Terraform with remote state
-- 📋 Plans infrastructure changes
-- ✅ Applies changes to Azure (main branch only)
-- 🔐 Uses Service Principal for Azure authentication
-- 💾 State managed in Azure Storage (team collaboration ready)
+**Stage 4: Build Docker Image** (`build-docker`)
+Runs after successful application build:
+- 🐳 Multi-stage Docker image build
+- 🏷️ Smart tagging strategy (SHA, branch, latest)
+- 💾 GitHub Actions cache optimization
+- 🧪 Container startup health test (30s timeout)
+- 📊 Build metadata and timing information
+
+**Stage 5: Deploy to Azure Container Registry** (`deploy-to-acr`)
+**Only runs on main branch pushes:**
+- 🔐 Azure authentication via service principal
+- 📤 Push to Azure Container Registry
+- 🏷️ Tags: version + latest
+- 💾 Registry-based build cache
+- ✅ Image verification in ACR
 
 #### Image Tagging Strategy
 
 **Local Build Tags** (all branches):
 ```bash
-team2-job-app-frontend:abc1234        # Git SHA (always created)
-team2-job-app-frontend:main           # Branch name (always created)
-team2-job-app-frontend:latest         # Latest stable (main branch only)
+team2-job-app-frontend:<git-sha>     # e.g., team2-job-app-frontend:abc1234
+team2-job-app-frontend:<branch>      # e.g., team2-job-app-frontend:main
+team2-job-app-frontend:latest        # Only on main branch
 ```
 
-**ACR Registry Tags** (main branch only):
+**Azure Container Registry Tags** (main branch only):
 ```bash
-myacr.azurecr.io/team2-job-app-frontend:abc1234         # Specific commit
-myacr.azurecr.io/team2-job-app-frontend:main-latest     # Latest from main
+<acr-server>/job-app-frontend:<version>    # e.g., 1.0.0, pr-42
+<acr-server>/job-app-frontend:latest       # Always points to latest main
 ```
 
-**Tag Purposes:**
-- **Git SHA** (`abc1234`): Unique identifier for each commit, enables rollback
-- **Branch name** (`main`, `feature-login`): Easy reference for branch-specific builds
-- **`main-latest`**: Always points to the latest stable version on main branch
-- **ACR registry**: Only pushed to for main branch merges (cost optimization)
+**Tag Strategy Details:**
+- **Git SHA tags**: Unique identifier for each commit, enables precise rollbacks
+- **Branch tags**: Easy reference for branch-specific testing
+- **Version tags**: Semantic versioning from package.json
+- **PR tags**: Special tags for pull request builds (pr-{number})
+- **Latest tag**: Only created for main branch builds
 
-#### Build Performance
+#### Build Performance & Optimization
 
-| Metric | Cold Build | Cached Build |
-|--------|-----------|--------------|
-| **Duration** | ~2-3 minutes | ~30-60 seconds |
-| **Cache Strategy** | GitHub Actions cache | Layer reuse |
-| **Timeout** | 10 minutes | 10 minutes |
-| **ACR Push Time** | ~30-60 seconds | — |
+| Stage | Duration (Cached) | Duration (Clean) |
+|-------|------------------|------------------|
+| Code Quality | ~30s | ~1 min |
+| Tests | ~15s | ~30s |
+| Build App | ~20s | ~45s |
+| Docker Build | ~1 min | ~3 min |
+| ACR Deploy | ~45s | ~1 min |
 
 **Optimization Features:**
-- GitHub Actions cache for Docker layers (`cache-from: type=gha`)
-- Multi-stage Dockerfile reduces final image size
-- Parallel job execution when possible
-- ACR push only on main branch (avoids unnecessary registry bloat)
+- ✅ GitHub Actions cache for npm dependencies
+- ✅ Docker layer caching (GitHub Actions cache backend)
+- ✅ Registry-based cache for ACR builds (main branch)
+- ✅ Parallel job execution where possible
+- ✅ Conditional deployment (main branch only)
 
-#### Failure Handling
 
-If the Docker build fails:
+#### Pipeline Failure Handling
 
-1. ❌ The workflow stops and marks the check as **failed**
-2. 📋 Build logs are available in the GitHub Actions UI
-3. 🧪 Container startup test provides immediate feedback
-4. ♻️ Previous successful images remain available
-5. 🔔 GitHub sends notification to commit author
+**If a stage fails:**
+
+1. ❌ Pipeline stops at the failed stage
+2. 📋 Detailed logs available in GitHub Actions UI
+3. 🔔 GitHub sends failure notification to commit author
+4. ♻️ Previous successful builds remain available
+5. 🔄 Push fixes and pipeline re-runs automatically
 
 **Common Failure Scenarios:**
-- Dockerfile syntax errors
-- Missing dependencies in build stage
-- Container startup failures
-- Health check timeouts
 
-If ACR push fails (main branch only):
+| Stage | Common Issues | Solution |
+|-------|--------------|----------|
+| Code Quality | Format/lint errors, type errors | Run `npm run check` and `npm run type-check` locally |
+| Tests | Failing tests, coverage drops | Run `npm run test:coverage` locally to debug |
+| Build | TypeScript compilation errors | Run `npm run build` to see detailed errors |
+| Docker Build | Dockerfile syntax, missing files | Test build locally: `docker build -t test .` |
+| ACR Deploy | Auth failures, network issues | Verify Azure credentials and ACR access |
 
-1. ❌ Docker image built successfully but ACR push failed
-2. 🔐 Check ACR credentials in GitHub secrets
-3. 🌐 Verify Azure Container Registry is accessible
-4. 📝 Review ACR authentication logs
+#### Required GitHub Secrets
 
-#### GitHub Secrets Configuration for ACR
+Configure these secrets in repository settings (`Settings > Secrets and variables > Actions`):
 
-To enable pushing to Azure Container Registry, configure these GitHub secrets in your repository settings (`Settings > Secrets and variables > Actions`):
+| Secret Name | Description | How to Get |
+|------------|-------------|------------|
+| `AZURE_CREDENTIALS` | Service principal JSON | See setup below |
+| `AZURE_ACR_LOGIN_SERVER` | ACR login server URL | e.g., `myregistry.azurecr.io` |
 
-| Secret | Value | Description |
-|--------|-------|-------------|
-| `ACR_REGISTRY` | `myacr.azurecr.io` | Your Azure Container Registry URL (e.g., `myregistry.azurecr.io`) |
-| `ACR_USERNAME` | Service Principal ID | Service Principal appId for authentication |
-| `ACR_PASSWORD` | Service Principal Password | Service Principal password/secret |
-
-**Setting Up Service Principal:**
-
-Use the Azure CLI to create a service principal with push permissions:
+**Setting Up Azure Credentials:**
 
 ```bash
-# Create service principal with ACR push role
-az ad sp create-for-rbac --name "team2-job-app-sp" \
-  --role acrpush \
-  --scopes /subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.ContainerRegistry/registries/{registry-name}
+# Create a service principal with ACR push permissions
+az ad sp create-for-rbac \
+  --name "github-actions-job-app-frontend" \
+  --role "AcrPush" \
+  --scopes /subscriptions/{subscription-id}/resourceGroups/{rg-name}/providers/Microsoft.ContainerRegistry/registries/{acr-name} \
+  --sdk-auth
 
-# Output will contain:
-# "appId": "YOUR_CLIENT_ID"           <- Use as ACR_USERNAME
-# "password": "YOUR_CLIENT_SECRET"    <- Use as ACR_PASSWORD
-# "tenant": "YOUR_TENANT_ID"
+# Output JSON - copy entire output to AZURE_CREDENTIALS secret
+{
+  "clientId": "...",
+  "clientSecret": "...",
+  "subscriptionId": "...",
+  "tenantId": "...",
+  ...
+}
+```
+
+**Get ACR Login Server:**
+
+```bash
+# Get your ACR login server
+az acr show --name <acr-name> --query loginServer --output tsv
+# Example output: myregistry.azurecr.io
 ```
 
 **Security Best Practices:**
-- ✅ Use **Service Principal** (not admin credentials) - least privilege
-- ✅ Rotate credentials periodically
-- ✅ Scope permissions to only ACR push (`acrpush` role)
-- ✅ Store secrets in GitHub encrypted secrets (never in code)
-- ✅ Use separate service principal per project for isolation
+- ✅ Use service principal with minimal permissions (AcrPush role only)
+- ✅ Separate credentials per environment/project
+- ✅ Rotate credentials regularly
+- ✅ Never commit credentials to code
+- ✅ Use GitHub encrypted secrets for storage
 
-#### Running CI Checks Locally
 
-Before pushing, run the same checks locally to catch issues early:
+#### Running Pipeline Checks Locally
+
+Validate your changes before pushing to avoid pipeline failures:
 
 ```bash
+# Complete pre-commit validation
+npm run check              # Format + lint
+npm run type-check         # TypeScript validation
+npm run test:run           # Run all tests
+npm run test:coverage      # Verify coverage
+npm run build              # Test production build
+
+# Docker build test (optional)
+docker build -t team2-job-app-frontend:test .
+docker run -p 3000:3000 \
+  -e SESSION_SECRET=test-secret \
+  -e API_BASE_URL=http://localhost:8000 \
+  -e AUTH_API_BASE_URL=http://localhost:8000/api/auth \
+  team2-job-app-frontend:test
+```
+
+**Quick Pre-Push Checklist:**
+- ✅ `npm run check` passes
+- ✅ `npm run type-check` passes
+- ✅ `npm run test:run` passes
+- ✅ All changes committed
+- ✅ Meaningful commit message
+
+#### Monitoring Pipeline Status
+
+**View Pipeline:**
+- Navigate to `Actions` tab in GitHub repository
+- Select `CI/CD Pipeline` workflow
+- View individual run details
+
+**Status Badges:**
+Add to your PR descriptions or documentation:
+```markdown
+![CI/CD](https://github.com/ChrisThompsonK/team2-job-app-frontend/actions/workflows/ci-cd-pipeline.yml/badge.svg?branch=your-branch)
+```
+
+**Notifications:**
+- GitHub automatically notifies on failures
+- Configure additional notifications in repository settings
+- Integration with Slack/Teams available via GitHub Apps
+
 # Code quality checks
 npm run type-check        # TypeScript validation
 npm run check             # Biome format + lint
