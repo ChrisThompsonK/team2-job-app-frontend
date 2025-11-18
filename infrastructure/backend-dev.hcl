@@ -3,4 +3,5 @@ resource_group_name  = "rg-terraform-state-dev"
 storage_account_name = "sttfstatedev001"
 container_name       = "tfstate"
 key                  = "team2-job-app-frontend-dev.tfstate"
-use_azuread_auth     = true
+use_oidc             = false
+use_cli              = false
