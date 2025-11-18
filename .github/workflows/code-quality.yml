@@ -117,6 +117,11 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Terraform Format Check
+        run: terraform fmt -check
+        
+      - name: Terraform Plan
+        run: terraform plan
   docker-push:
     name: Build and Push to ACR
     runs-on: ubuntu-latest
@@ -168,6 +173,3 @@ jobs:
           echo "Image tags:"
           echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n' | sed 's/^/  - /'
   
-  
-
-
