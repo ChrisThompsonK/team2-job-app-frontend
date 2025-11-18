@@ -43,6 +43,9 @@ jobs:
       - name: Run tests with coverage
         run: npm run test:coverage
 
+      - name: Build project
+        run: npm run build
+
   docker-build:
     name: Build Docker Image
     runs-on: ubuntu-latest
@@ -100,9 +103,6 @@ jobs:
           echo "ARM_SUBSCRIPTION_ID=$(jq -r .subscriptionId <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
           echo "ARM_TENANT_ID=$(jq -r .tenantId <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
 
-      - name: Terraform Init
-        run: terraform init
-
   docker-push:
     name: Build and Push to ACR
     runs-on: ubuntu-latest
@@ -153,5 +153,12 @@ jobs:
           echo "Registry: ${{ env.REGISTRY_NAME }}.azurecr.io"
           echo "Image tags:"
           echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n' | sed 's/^/  - /'
+  
+  terraform: 
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      
+    - name: Terraform Init
+      run: terraform init
 
 
