@@ -10,7 +10,7 @@ on:
 
 env:
   NODE_VERSION: "20"
-  REGISTRY_NAME: team2jobappacr
+  REGISTRY_NAME: aiacademy25
   IMAGE_NAME: team2-job-app-frontend
 
 jobs:
