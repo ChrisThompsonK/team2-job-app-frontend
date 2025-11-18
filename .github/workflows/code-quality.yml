@@ -10,6 +10,8 @@ on:
 
 env:
   NODE_VERSION: "20"
+  REGISTRY_NAME: team2jobappacr
+  IMAGE_NAME: team2-job-app-frontend
 
 jobs:
   code-quality:
@@ -48,6 +50,7 @@ jobs:
     name: Build Docker Image
     runs-on: ubuntu-latest
     needs: code-quality
+    if: github.ref != 'refs/heads/main'
     
     steps:
       - name: Checkout code
@@ -66,11 +69,6 @@ jobs:
           # Create local tags for building
           TAGS="team2-job-app-frontend:${SHORT_SHA}"
           TAGS="${TAGS},team2-job-app-frontend:${BRANCH_NAME}"
-          
-          # If on main branch, also tag as latest
-          if [ "${{ github.ref_name }}" = "main" ]; then
-            TAGS="${TAGS},team2-job-app-frontend:latest"
-          fi
           
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
           echo "short_sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
@@ -97,4 +95,55 @@ jobs:
           echo "Git SHA: ${{ github.sha }}"
           echo "Short SHA: ${{ steps.meta.outputs.short_sha }}"
           echo "Branch: ${{ steps.meta.outputs.branch }}"
+
+  docker-push:
+    name: Build and Push to ACR
+    runs-on: ubuntu-latest
+    needs: code-quality
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: ACR Login
+        run: az acr login --name ${{ env.REGISTRY_NAME }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Generate image tags
+        id: meta
+        run: |
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          
+          TAGS="${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${SHORT_SHA}"
+          TAGS="${TAGS},${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest"
+          
+          echo "tags=${TAGS}" >> $GITHUB_OUTPUT
+          echo "short_sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Display push information
+        run: |
+          echo "✅ Docker image pushed successfully to ACR!"
+          echo ""
+          echo "Registry: ${{ env.REGISTRY_NAME }}.azurecr.io"
+          echo "Image tags:"
+          echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n' | sed 's/^/  - /'
+
 
