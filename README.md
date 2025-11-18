@@ -171,39 +171,38 @@ The project uses GitHub Actions for continuous integration and deployment on all
 
 #### Jobs Overview
 
-**1. Code Quality Checks** (`code-quality`)
+
+**1. Code Quality Checks** (`code-quality.yml`)
 Runs on every push and pull request:
-- ✅ TypeScript type checking
-- ✅ Biome format validation
-- ✅ Biome linting checks
-- ✅ Unit tests with coverage
-- ✅ Production build verification
-- ✅ Uploads coverage reports (7-day retention)
-- ✅ Uploads build artifacts (7-day retention)
+  - ✅ TypeScript type checking
+  - ✅ Biome format validation
+  - ✅ Biome linting checks
+  - ✅ Unit tests with coverage
+  - ✅ Production build verification
+  - ✅ Uploads coverage reports (7-day retention)
+  - ✅ Uploads build artifacts (7-day retention)
 
-**2. Docker Build** (`docker-build`)
-Runs after quality checks pass on all branches:
-- 🐳 Builds Docker container image
-- 🏷️ Multi-tag strategy (SHA, branch, latest)
-- 💾 Layer caching for faster builds
-- ✅ Container startup validation
-- 📊 Build information display
+**2. Docker Build & Push to ACR** (`docker-acr.yml`)
+Runs after quality checks pass:
+  - 🐳 Builds Docker container image
+  - 🏷️ Multi-tag strategy (SHA, branch, latest)
+  - 💾 Layer caching for faster builds
+  - ✅ Container startup validation
+  - 📊 Build information display
+  - 🔐 Authenticates with Service Principal credentials (from GitHub secrets)
+  - 📤 Pushes image to Azure Container Registry (ACR) **only on main branch**
+  - 🏷️ Tags images with git SHA and `main-latest` for main branch
+  - ✅ Provides pull commands for deployment
+  - ⏭️ Skipped for PRs and non-main branches (cost optimization)
 
-**3. Push to Azure Container Registry** (`push-to-acr`)
-Runs after Docker build succeeds, **only on main branch pushes**:
-- 🔐 Authenticates with Service Principal credentials
-- 📤 Pushes image to Azure Container Registry (ACR)
-- 🏷️ Tags images with git SHA and `main-latest` for main branch
-- ✅ Provides pull commands for deployment
-- ⏭️ Skipped for PRs and non-main branches (cost optimization)
-
-**4. Terraform Plan & Apply** (`terraform`)
+**3. Terraform Plan & Apply** (`terraform.yml`)
 Runs after ACR push, **plan on all branches, apply only on main**:
-- 🏗️ Initializes Terraform with remote state
-- 📋 Plans infrastructure changes
-- ✅ Applies changes to Azure (main branch only)
-- 🔐 Uses Service Principal for Azure authentication
-- 💾 State managed in Azure Storage (team collaboration ready)
+  - 🏗️ Initializes Terraform with remote state
+  - 📋 Plans infrastructure changes
+  - ✅ Applies changes to Azure (main branch only)
+  - 🔐 Uses Service Principal for Azure authentication
+  - 💾 State managed in Azure Storage (team collaboration ready)
+
 
 #### Image Tagging Strategy
 
@@ -216,8 +215,8 @@ team2-job-app-frontend:latest         # Latest stable (main branch only)
 
 **ACR Registry Tags** (main branch only):
 ```bash
-myacr.azurecr.io/team2-job-app-frontend:abc1234         # Specific commit
-myacr.azurecr.io/team2-job-app-frontend:main-latest     # Latest from main
+<acr-login-server>/team2-job-app-frontend:abc1234         # Specific commit
+<acr-login-server>/team2-job-app-frontend:main-latest     # Latest from main
 ```
 
 **Tag Purposes:**
@@ -264,15 +263,20 @@ If ACR push fails (main branch only):
 3. 🌐 Verify Azure Container Registry is accessible
 4. 📝 Review ACR authentication logs
 
+
 #### GitHub Secrets Configuration for ACR
 
 To enable pushing to Azure Container Registry, configure these GitHub secrets in your repository settings (`Settings > Secrets and variables > Actions`):
 
 | Secret | Value | Description |
 |--------|-------|-------------|
-| `ACR_REGISTRY` | `myacr.azurecr.io` | Your Azure Container Registry URL (e.g., `myregistry.azurecr.io`) |
+| `ACR_LOGIN_SERVER` | `myacr.azurecr.io` | Your Azure Container Registry login server (e.g., `myregistry.azurecr.io`) |
 | `ACR_USERNAME` | Service Principal ID | Service Principal appId for authentication |
 | `ACR_PASSWORD` | Service Principal Password | Service Principal password/secret |
+| `ACR_NAME` | Registry name | The name of your ACR (e.g., `myacr`) |
+| `AZURE_CLIENT_ID` | Service Principal ID | For Azure login step |
+| `AZURE_CLIENT_SECRET` | Service Principal Secret | For Azure login step |
+| `AZURE_TENANT_ID` | Tenant ID | For Azure login step |
 
 **Setting Up Service Principal:**
 
@@ -296,6 +300,29 @@ az ad sp create-for-rbac --name "team2-job-app-sp" \
 - ✅ Scope permissions to only ACR push (`acrpush` role)
 - ✅ Store secrets in GitHub encrypted secrets (never in code)
 - ✅ Use separate service principal per project for isolation
+
+#### Docker Build & Push Workflow
+
+The workflow file is located at `.github/workflows/docker-acr.yml` and will:
+
+- Build the Docker image on every push
+- Only push to ACR when the branch is `main`
+- Use Service Principal credentials from GitHub secrets for authentication
+- Tag images as `<acr-login-server>/team2-job-app-frontend:abc1234` and `<acr-login-server>/team2-job-app-frontend:main-latest`
+- Verify the image exists in ACR after push
+
+**Example push verification:**
+
+```bash
+# List images in ACR
+az acr repository list --name <acr-name>
+
+# List tags for an image
+az acr repository show-tags --name <acr-name> --repository team2-job-app-frontend
+
+# Pull image from ACR
+docker pull <acr-login-server>/team2-job-app-frontend:main-latest
+```
 
 #### Running CI Checks Locally
 
