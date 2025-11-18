@@ -155,10 +155,15 @@ jobs:
           echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n' | sed 's/^/  - /'
   
   terraform: 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
-      
-    - name: Terraform Init
-      run: terraform init
+    name: Does Terraform things
+    runs-on: ubuntu-latest
+    needs: docker-push
+
+    steps:
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        run: terraform init
 
 
