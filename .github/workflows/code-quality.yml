@@ -103,6 +103,9 @@ jobs:
 
     steps:
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set Azure credentials as environment variables
         run: |
           echo "Setting ARM_* env vars for Terraform..."
@@ -115,16 +118,18 @@ jobs:
         uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
+        working-directory: ${{ github.workspace }}/terraform
         run: terraform init
 
       - name: Terraform Format Check
+        working-directory: ${{ github.workspace }}/terraform
         run: |
           echo "Running terraform fmt -check -diff..."
           terraform fmt -check -diff || (echo "Terraform files are not formatted. Run 'terraform fmt' to fix." && exit 1)
 
       - name: Terraform Plan
         id: tfplan
-        working-directory: terraform
+        working-directory: ${{ github.workspace }}/terraform
         run: terraform plan 
 
   docker-push:
