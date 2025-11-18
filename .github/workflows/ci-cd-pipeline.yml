@@ -229,3 +229,98 @@ jobs:
           azcliversion: latest
           inlineScript: |
             az acr repository show-tags --name $(echo ${{ secrets.AZURE_ACR_LOGIN_SERVER }} | cut -d'.' -f1) --repository job-app-frontend
+
+  # Stage 6: Terraform Infrastructure Deployment
+  terraform-deploy:
+    name: Terraform Infrastructure
+    runs-on: ubuntu-latest
+    needs: [build-docker]
+    # Run Terraform plan on all branches, but only apply on main
+    if: always() && needs.build-docker.result == 'success'
+
+    env:
+      TF_VAR_environment: dev
+      TF_VAR_location: "UK South"
+      TF_VAR_project_name: "team2-job-app"
+      ARM_SKIP_PROVIDER_REGISTRATION: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.0"
+
+      - name: Terraform Format Check
+        id: fmt
+        run: terraform fmt -check -recursive
+        working-directory: ./infrastructure
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+        working-directory: ./infrastructure
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
+        working-directory: ./infrastructure
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          terraform plan -var-file=dev.tfvars -out=tfplan
+          echo "exitcode=$?" >> $GITHUB_OUTPUT
+        working-directory: ./infrastructure
+        continue-on-error: true
+
+      - name: Display Terraform Plan
+        run: |
+          echo "### Terraform Plan Output 📋" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "Event: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.plan.outcome }}" == "success" ]; then
+            echo "✅ Plan created successfully!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Plan failed!" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Terraform Apply
+        id: apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "🚀 Applying Terraform changes to Azure..."
+          terraform apply -auto-approve tfplan
+        working-directory: ./infrastructure
+
+      - name: Display Apply Status
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "### Terraform Apply Result 🎯" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.apply.outcome }}" == "success" ]; then
+            echo "✅ Infrastructure deployed successfully!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Deployment failed!" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Display Plan-Only Message
+        if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+        run: |
+          echo "### Terraform Plan Only ℹ️" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This is not the main branch or not a push event." >> $GITHUB_STEP_SUMMARY
+          echo "Terraform apply will only run on main branch pushes." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Current branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "Event type: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
