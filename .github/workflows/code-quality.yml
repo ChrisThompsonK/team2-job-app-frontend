@@ -100,15 +100,16 @@ jobs:
     name: Run Terraform Steps
     runs-on: ubuntu-latest
     needs: docker-build
+    concurrency:
+      group: terraform-${{ github.ref }}
+      cancel-in-progress: false
 
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set Azure credentials as environment variables
+      - name: Set Azure credentials
         run: |
-          echo "Setting ARM_* env vars for Terraform..."
           echo "ARM_CLIENT_ID=$(jq -r .clientId <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
           echo "ARM_CLIENT_SECRET=$(jq -r .clientSecret <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
           echo "ARM_SUBSCRIPTION_ID=$(jq -r .subscriptionId <<< '${{ secrets.AZURE_CREDENTIALS }}')" >> $GITHUB_ENV
@@ -117,35 +118,27 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
-      - name: Verify Terraform Directory
-        run: |
-          ls -la
-          ls -la terraform/
-
       - name: Terraform Init
-        run: |
-          cd terraform
-          terraform init
+        working-directory: terraform
+        run: terraform init
 
       - name: Terraform Format Check
-        run: |
-          cd terraform
-          terraform fmt -check -diff
+        working-directory: terraform
+        run: terraform fmt -check -diff
 
       - name: Terraform Validate
-        run: |
-          cd terraform
-          terraform validate
+        working-directory: terraform
+        run: terraform validate
 
       - name: Terraform Plan
-        run: |
-          cd terraform
-          terraform plan
+        working-directory: terraform
+        run: terraform plan -out=tfplan
+        continue-on-error: true
 
       - name: Terraform Apply
-        run: |
-          cd terraform
-          terraform apply -auto-approve 
+        working-directory: terraform
+        run: terraform apply -auto-approve tfplan
+        if: success() 
 
   docker-push:
     name: Build and Push to ACR
