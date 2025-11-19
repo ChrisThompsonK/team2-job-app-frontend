@@ -123,14 +123,19 @@ jobs:
 
       - name: Terraform Format Check
         working-directory: ${{ github.workspace }}/terraform
-        run: |
-          echo "Running terraform fmt -check -diff..."
-          terraform fmt -check -diff || (echo "Terraform files are not formatted. Run 'terraform fmt' to fix." && exit 1)
+        run: terraform fmt -check -diff
+
+      - name: Terraform Validate
+        working-directory: ${{ github.workspace }}/terraform
+        run: terraform validate
 
       - name: Terraform Plan
-        id: tfplan
         working-directory: ${{ github.workspace }}/terraform
-        run: terraform plan 
+        run: terraform plan
+
+      - name: Terraform Apply
+        working-directory: ${{ github.workspace }}/terraform
+        run: terraform apply -auto-approve 
 
   docker-push:
     name: Build and Push to ACR
