@@ -118,23 +118,23 @@ jobs:
         uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
-        working-directory: ${{ github.workspace }}/terraform
+        working-directory: ./terraform
         run: terraform init
 
       - name: Terraform Format Check
-        working-directory: ${{ github.workspace }}/terraform
+        working-directory: ./terraform
         run: terraform fmt -check -diff
 
       - name: Terraform Validate
-        working-directory: ${{ github.workspace }}/terraform
+        working-directory: ./terraform
         run: terraform validate
 
       - name: Terraform Plan
-        working-directory: ${{ github.workspace }}/terraform
+        working-directory: ./terraform
         run: terraform plan
 
       - name: Terraform Apply
-        working-directory: ${{ github.workspace }}/terraform
+        working-directory: ./terraform
         run: terraform apply -auto-approve 
 
   docker-push:
