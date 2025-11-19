@@ -117,20 +117,35 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      - name: Verify Terraform Directory
+        run: |
+          ls -la
+          ls -la terraform/
+
       - name: Terraform Init
-        run: terraform -chdir=terraform init
+        run: |
+          cd terraform
+          terraform init
 
       - name: Terraform Format Check
-        run: terraform -chdir=terraform fmt -check -diff
+        run: |
+          cd terraform
+          terraform fmt -check -diff
 
       - name: Terraform Validate
-        run: terraform -chdir=terraform validate
+        run: |
+          cd terraform
+          terraform validate
 
       - name: Terraform Plan
-        run: terraform -chdir=terraform plan
+        run: |
+          cd terraform
+          terraform plan
 
       - name: Terraform Apply
-        run: terraform -chdir=terraform apply -auto-approve 
+        run: |
+          cd terraform
+          terraform apply -auto-approve 
 
   docker-push:
     name: Build and Push to ACR
