@@ -131,14 +131,24 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
+        id: plan
         working-directory: terraform
-        run: terraform plan -out=tfplan
-        continue-on-error: true
+        run: |
+          terraform plan -out=tfplan -detailed-exitcode || export TF_PLAN_EXIT=$?
+          echo "exitcode=${TF_PLAN_EXIT:-0}" >> $GITHUB_OUTPUT
+          if [ "${TF_PLAN_EXIT:-0}" -eq 1 ]; then
+            echo "❌ Terraform Plan failed with errors"
+            exit 1
+          fi
+          exit 0
 
       - name: Terraform Apply
         working-directory: terraform
-        run: terraform apply -auto-approve tfplan
-        if: success() 
+        run: |
+          echo "📦 Applying Terraform changes..."
+          terraform apply -auto-approve tfplan
+          echo "✅ Terraform apply completed successfully"
+        if: steps.plan.outputs.exitcode != '1' 
 
   docker-push:
     name: Build and Push to ACR
