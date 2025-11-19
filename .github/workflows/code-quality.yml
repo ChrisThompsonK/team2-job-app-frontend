@@ -102,6 +102,8 @@ jobs:
     needs: docker-build
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set Azure credentials as environment variables
         run: |
@@ -113,9 +115,25 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.0
 
       - name: Terraform Init
+        working-directory: ./infrastructure
         run: terraform init
+
+      - name: Terraform Validate
+        working-directory: ./infrastructure
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: ./infrastructure
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply (main only)
+        if: github.ref == 'refs/heads/main'
+        working-directory: ./infrastructure
+        run: terraform apply -auto-approve tfplan
 
   docker-push:
     name: Build and Push to ACR
@@ -167,7 +185,7 @@ jobs:
           echo "Registry: ${{ env.REGISTRY_NAME }}.azurecr.io"
           echo "Image tags:"
           echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n' | sed 's/^/  - /'
-  
-  
+
+
 
 
