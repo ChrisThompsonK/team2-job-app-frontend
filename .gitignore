@@ -165,8 +165,8 @@ src/spec/
 *.temp
 
 # Terraform files and folders
-terraform/
-*.tf
+# terraform/ - REMOVED: We need to commit terraform configs
+# *.tf - REMOVED: We need to commit .tf files
 *.tfstate
 *.tfstate.*
 *.tfvars
@@ -210,3 +210,5 @@ sessions/
 
 # Uploaded files
 uploads/
+
+.vscode/mcp.json
