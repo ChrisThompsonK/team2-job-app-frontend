@@ -120,7 +120,16 @@ jobs:
 
       - name: Terraform Init
         working-directory: terraform
-        run: terraform init
+        run: terraform init -lock-timeout=5m
+
+      - name: Release Stale Lock (if needed)
+        working-directory: terraform
+        if: failure()
+        run: |
+          echo "⚠️ Init failed, attempting to release stale lock..."
+          terraform force-unlock -force $(terraform state list 2>/dev/null | head -1 || echo "manual-unlock") || true
+          terraform init -reconfigure -lock-timeout=5m
+        continue-on-error: false
 
       - name: Terraform Format Check
         working-directory: terraform
@@ -134,7 +143,7 @@ jobs:
         id: plan
         working-directory: terraform
         run: |
-          terraform plan -out=tfplan -detailed-exitcode || export TF_PLAN_EXIT=$?
+          terraform plan -out=tfplan -detailed-exitcode -lock-timeout=10m || export TF_PLAN_EXIT=$?
           echo "exitcode=${TF_PLAN_EXIT:-0}" >> $GITHUB_OUTPUT
           if [ "${TF_PLAN_EXIT:-0}" -eq 1 ]; then
             echo "❌ Terraform Plan failed with errors"
@@ -146,7 +155,7 @@ jobs:
         working-directory: terraform
         run: |
           echo "📦 Applying Terraform changes..."
-          terraform apply -auto-approve tfplan
+          terraform apply -auto-approve -lock-timeout=10m tfplan
           echo "✅ Terraform apply completed successfully"
         if: steps.plan.outputs.exitcode != '1' 
 
