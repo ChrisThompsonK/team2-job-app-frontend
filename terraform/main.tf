@@ -85,11 +85,6 @@ resource "azurerm_container_app" "frontend" {
         name        = "BACKEND_API_URL"
         secret_name = "api-base-url"
       }
-
-      env {
-        name        = "SESSION_SECRET"
-        secret_name = "session-secret"
-      }
     }
 
     min_replicas = 1
@@ -111,12 +106,6 @@ resource "azurerm_container_app" "frontend" {
   secret {
     name                = "api-base-url"
     key_vault_secret_id = "${data.azurerm_key_vault.kv.vault_uri}secrets/API-BASE-URL"
-    identity            = azurerm_user_assigned_identity.frontend_identity.id
-  }
-
-  secret {
-    name                = "session-secret"
-    key_vault_secret_id = "${data.azurerm_key_vault.kv.vault_uri}secrets/session-secret"
     identity            = azurerm_user_assigned_identity.frontend_identity.id
   }
 
