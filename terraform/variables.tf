@@ -9,3 +9,15 @@ variable "location" {
   description = "Azure location for resources"
   default     = "UK South"
 }
+
+variable "app_name" {
+  type        = string
+  description = "Name of the application"
+  default     = "team2-job-app"
+}
+
+variable "environment" {
+  type        = string
+  description = "Environment name (e.g., dev, staging, prod)"
+  default     = "dev"
+}
