@@ -147,7 +147,7 @@ jobs:
   docker-push:
     name: Build and Push to ACR
     runs-on: ubuntu-latest
-    needs: terraform
+    # needs: terraform
     # if: github.ref == 'refs/heads/main'
 
     steps:
