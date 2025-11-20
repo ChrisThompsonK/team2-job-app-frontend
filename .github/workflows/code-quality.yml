@@ -170,8 +170,8 @@ jobs:
         run: |
           SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
           
-          TAGS="${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${SHORT_SHA}"
-          TAGS="${TAGS},${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest"
+          TAGS="${{ env.REGISTRY_NAME }}-bbaue6bgenhkd0dj.azurecr.io/${{ env.IMAGE_NAME }}:${SHORT_SHA}"
+          TAGS="${TAGS},${{ env.REGISTRY_NAME }}-bbaue6bgenhkd0dj.azurecr.io/${{ env.IMAGE_NAME }}:latest"
           
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
           echo "short_sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
