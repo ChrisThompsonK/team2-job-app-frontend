@@ -21,3 +21,27 @@ variable "environment" {
   description = "Environment name (e.g., dev, staging, prod)"
   default     = "dev"
 }
+
+variable "acr_name" {
+  type        = string
+  description = "Name of the existing Azure Container Registry"
+  default     = "team2jobappacr"
+}
+
+variable "acr_resource_group_name" {
+  type        = string
+  description = "Resource group name of the existing Azure Container Registry"
+  default     = "team2-fs-test-rg-dev-rg"
+}
+
+variable "key_vault_name" {
+  type        = string
+  description = "Name of the existing Azure Key Vault"
+  default     = "team2-job-app-kv"
+}
+
+variable "key_vault_resource_group_name" {
+  type        = string
+  description = "Resource group name of the existing Azure Key Vault"
+  default     = "team2-fs-test-rg-dev-rg"
+}

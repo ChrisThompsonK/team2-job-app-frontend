@@ -3,6 +3,18 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 
+# Data source: Existing Azure Container Registry
+data "azurerm_container_registry" "acr" {
+  name                = var.acr_name
+  resource_group_name = var.acr_resource_group_name
+}
+
+# Data source: Existing Azure Key Vault
+data "azurerm_key_vault" "kv" {
+  name                = var.key_vault_name
+  resource_group_name = var.key_vault_resource_group_name
+}
+
 # User-Assigned Managed Identity for Container App
 resource "azurerm_user_assigned_identity" "container_identity" {
   name                = var.app_name
