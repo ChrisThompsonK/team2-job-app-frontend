@@ -49,13 +49,13 @@ variable "key_vault_resource_group_name" {
 variable "container_app_environment_name" {
   type        = string
   description = "Name of the existing Container App Environment"
-  default     = "aiacademy-cae"
+  default     = "team2-job-app-container-app-environment"
 }
 
 variable "container_app_environment_rg" {
   type        = string
   description = "Resource group name of the existing Container App Environment"
-  default     = "container-apps-env"
+  default     = "team2-job-app-shared-rg"
 }
 
 variable "container_image_tag" {
