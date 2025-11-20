@@ -1,7 +1,7 @@
 variable "resource_group_name" {
   type        = string
   description = "Name of the resource group to create"
-  default     = "team2-fs-test-rg-dev-rg"
+  default     = "team2-job-app-shared-rg"
 }
 
 variable "location" {
@@ -25,23 +25,23 @@ variable "environment" {
 variable "acr_name" {
   type        = string
   description = "Name of the existing Azure Container Registry"
-  default     = "team2jobappacr"
+  default     = "aiacademy25"
 }
 
 variable "acr_resource_group_name" {
   type        = string
   description = "Resource group name of the existing Azure Container Registry"
-  default     = "team2-fs-test-rg-dev-rg"
+  default     = "container-registry"
 }
 
 variable "key_vault_name" {
   type        = string
   description = "Name of the existing Azure Key Vault"
-  default     = "team2-job-app-kv"
+  default     = "team2-job-app-keyvault"
 }
 
 variable "key_vault_resource_group_name" {
   type        = string
   description = "Resource group name of the existing Azure Key Vault"
-  default     = "team2-fs-test-rg-dev-rg"
+  default     = "team2-job-app-shared-rg"
 }
