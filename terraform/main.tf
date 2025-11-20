@@ -72,18 +72,18 @@ resource "azurerm_container_app" "frontend" {
       memory = var.container_memory
 
       env {
-        name  = "NODE_ENV"
-        value = "production"
+        name        = "NODE_ENV"
+        secret_name = "node-env"
       }
 
       env {
-        name  = "PORT"
-        value = tostring(var.container_port)
+        name        = "PORT"
+        secret_name = "frontend-port"
       }
 
       env {
-        name  = "BACKEND_API_URL"
-        value = var.backend_api_url
+        name        = "BACKEND_API_URL"
+        secret_name = "api-base-url"
       }
 
       env {
@@ -94,6 +94,24 @@ resource "azurerm_container_app" "frontend" {
 
     min_replicas = 1
     max_replicas = 3
+  }
+
+  secret {
+    name                = "node-env"
+    key_vault_secret_id = "${data.azurerm_key_vault.kv.vault_uri}secrets/NODE-ENV"
+    identity            = azurerm_user_assigned_identity.frontend_identity.id
+  }
+
+  secret {
+    name                = "frontend-port"
+    key_vault_secret_id = "${data.azurerm_key_vault.kv.vault_uri}secrets/FRONTEND-PORT"
+    identity            = azurerm_user_assigned_identity.frontend_identity.id
+  }
+
+  secret {
+    name                = "api-base-url"
+    key_vault_secret_id = "${data.azurerm_key_vault.kv.vault_uri}secrets/API-BASE-URL"
+    identity            = azurerm_user_assigned_identity.frontend_identity.id
   }
 
   secret {
