@@ -87,3 +87,9 @@ variable "backend_api_url" {
   description = "Backend API URL for the frontend to connect to"
   default     = ""
 }
+
+variable "session_secret_value" {
+  type        = string
+  description = "Session secret value for frontend application"
+  sensitive   = true
+}

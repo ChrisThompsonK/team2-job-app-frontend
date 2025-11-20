@@ -47,6 +47,17 @@ resource "azurerm_role_assignment" "kv_secrets_user" {
   principal_id         = azurerm_user_assigned_identity.frontend_identity.principal_id
 }
 
+# Key Vault Secret: Session Secret for Frontend
+resource "azurerm_key_vault_secret" "session_secret" {
+  name         = "session-secret"
+  value        = var.session_secret_value
+  key_vault_id = data.azurerm_key_vault.kv.id
+
+  depends_on = [
+    azurerm_role_assignment.kv_secrets_user
+  ]
+}
+
 # Container App for Frontend
 resource "azurerm_container_app" "frontend" {
   name                         = "${var.app_name}-app"
@@ -122,6 +133,7 @@ resource "azurerm_container_app" "frontend" {
 
   depends_on = [
     azurerm_role_assignment.acr_pull,
-    azurerm_role_assignment.kv_secrets_user
+    azurerm_role_assignment.kv_secrets_user,
+    azurerm_key_vault_secret.session_secret
   ]
 }
