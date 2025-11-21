@@ -82,7 +82,7 @@ resource "azurerm_container_app" "frontend" {
       }
 
       env {
-        name        = "BACKEND_API_URL"
+        name        = "API_BASE_URL"
         secret_name = "api-base-url"
       }
     }
